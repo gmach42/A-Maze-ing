@@ -48,7 +48,7 @@ def find_path(
         return p
 
     while len(open_set) > 0:
-        curr_cost, curr_node = heappop(open_set)
+        _, curr_node = heappop(open_set)
         if curr_node == goal_node:
             goal_path = rebuild_path(goal_node)
             return goal_path
