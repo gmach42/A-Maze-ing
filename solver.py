@@ -4,10 +4,10 @@ from heapq import heappop, heappush
 
 class Border(IntFlag):
     EMPTY = 0
-    TOP = auto()
-    BOTTOM = auto()
-    LEFT = auto()
-    RIGHT = auto()
+    TOP = auto()  # 0001 = 1
+    BOTTOM = auto()  # 0010 = 2
+    LEFT = auto()  # 0100 = 4
+    RIGHT = auto()  # 1000 = 8
 
     @property
     def corner(self) -> bool:
@@ -30,38 +30,36 @@ class Border(IntFlag):
         return self.bit_count < 2
 
 
-def find_path(
-    g: dict, start_node: tuple[int, int], goal_node: tuple[int, int]
-) -> list | None:
-    open_set = [(0, start_node)]
-    came_from = {}
-    cost_so_far = {start_node: 0}
+def transform_to_decimal(maze: list[list[str]]) -> list[list[int]]:
+    for cell in maze:
+        cell = int(cell, 16)
+        if cell < 0 or cell > 15:
+            raise ValueError(f"Impossible Value for cell {cell}")
+    return maze
 
-    def heuristic(node: tuple[int, int], goal: tuple[int, int]):
-        return abs(node[0] - goal[0]) + abs(node[1] - goal[1])
 
-    def rebuild_path(n):
-        p = [n]
-        while n in came_from:
-            n = came_from[n]
-            p.append(n)
-        return p
+def get_neighbors(maze: list[list[int]], cell: tuple) -> list[tuple]:
+    row, col = cell
+    cell_walls: int = Border(maze[row][col])
+    neighbors: list[tuple] = []
 
-    while len(open_set) > 0:
-        _, curr_node = heappop(open_set)
-        if curr_node == goal_node:
-            goal_path = rebuild_path(goal_node)
-            return goal_path
+    # If no top wall -> there's a top neighbor (checking diff 0001)
+    if not (cell_walls & Border.TOP):
+        neighbors.append((row - 1, col))
 
-        for neighbor in g[curr_node]:
-            new_cost = cost_so_far.get(curr_node) + 1
-            if neighbor not in cost_so_far or new_cost < cost_so_far[neighbor]:
-                cost_so_far[neighbor] = new_cost
-                priority = new_cost + heuristic(neighbor, goal_node)
-                heappush(open_set, (priority, neighbor))
-                came_from[neighbor] = curr_node
+    # If no bottom wall -> there's a bottom neighbor (checking diff 0010)
+    if not (cell_walls & Border.BOTTOM):
+        neighbors.append((row + 1, col))
 
-    return None
+    # If no left wall -> there's a left neighbor (checking diff 0100)
+    if not (cell_walls & Border.LEFT):
+        neighbors.append((row, col - 1))
+
+    # If no right wall -> there's a right neighbor (checking diff 1000)
+    if not (cell_walls & Border.RIGHT):
+        neighbors.append((row, col + 1))
+
+    return neighbors
 
 
 def h(cell1: tuple[int, int], cell2: tuple[int, int]):
@@ -75,7 +73,7 @@ def h(cell1: tuple[int, int], cell2: tuple[int, int]):
     return abs(x1 - x2) + abs(y1 - y2)
 
 
-def find_path(maze: dict, start: tuple, end: tuple) -> list | None:
+def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | None:
     """
     A heap queue (also called a priority queue) is a special data structure
     that allows quick access to the smallest (min-heap) or largest (max-heap) element
@@ -85,34 +83,59 @@ def find_path(maze: dict, start: tuple, end: tuple) -> list | None:
     f(n) = g(n) + h(n)
     ```
     with
-    - f(n): total cost to reach cell n
+    - f(n): total cost to reach cell n -> The priority of the cell, the lower the better!
     - g(n): actual cost to reach cell n from start
     - h(n): heuristic (or estimated) cost to reach the goal from cell n
     """
-    # open_paths: list[(g_score, f_score, node)]
-    open_paths: list[(int, int, tuple)] = [(0, h(start, end), start)]
+    # open_paths: list[(f_score, node)] is a heap to rappidly find the
+    # node with the lowest score. Faster than using a classic list
+    open_paths: list[(int, tuple)] = [(h(start, end), start)]
+
+    # register the precedent node of each newly accessed node
     came_from = {}
-    cost_so_far = 0
 
-    while(open_paths):
-        curr_node = heappop(open_paths)
+    # regiter the "cost" (g(n)) to each cell visited
+    path_cost = {start: 0}
 
-
-
-
-
-
-
-
-
-
-
+    def reconstruct_path(node):
+        path = [node]
+        while node in came_from:
+            node = came_from[node]
+            path.append(node)
+        # reverse result to get from beginning to end
+        path.reverse()
+        return path
 
     while (len(open_paths) > 0):
-        curr_cost, curr_node = heappop(open_paths)
+        # get the best next cell to visit (the one with the lowest priority)
+        _, curr_node = heappop(open_paths)
         if curr_node == end:
-            return reconstruct_path(came_from, curr_node)
+            goal_path = reconstruct_path(end)
+            return goal_path
+        neighbors = get_neighbors(maze, curr_node)
+
+        # check all possible neighbor of the current cell and register new ones
+        for neighbor in neighbors:
+            new_cost = path_cost.get(curr_node) + 1
+            if neighbor not in path_cost or new_cost < path_cost[neighbor]:
+                path_cost[neighbor] = new_cost
+                # f(n) = g(n) + h(n)
+                priority = new_cost + h(neighbor, end)
+                heappush(open_paths, (priority, neighbor))
+                came_from[neighbor] = curr_node
 
 
+def main():
+    maze = [
+        [7, 1, 11, 13],
+        [5, 8, 5, 10],
+        [14, 6, 8, 13],
+        [7, 3, 2, 10]
+    ]
+    start = (0, 0)
+    end = (3, 3)
+    print(a_star_algorithm(maze, start, end))
 
 
+if __name__ == "__main__":
+    main()

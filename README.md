@@ -26,6 +26,11 @@ h(n) → It is the heuristic cost to reach to the goal cell from cell n. It is t
 
 from [A* algorithm](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92)
 
+Thought about doing an adjacency matrix but using a Border approach seems more practicable in our case
+
+Binary operator:
+https://github.com/Tutors42Lyon/bitwise_operations/tree/main
+
 ```python
 function A_Star(start, goal, h)
     // The set of discovered nodes that may need to be (re-)expanded.
