@@ -4,19 +4,19 @@ from heapq import heappop, heappush
 
 class Border(IntFlag):
     EMPTY = 0
-    TOP = auto()  # 0001 = 1
-    BOTTOM = auto()  # 0010 = 2
-    LEFT = auto()  # 0100 = 4
-    RIGHT = auto()  # 1000 = 8
+    NORTH = auto()  # 0001 = 1
+    SOUTH = auto()  # 0010 = 2
+    WEST = auto()  # 0100 = 4
+    EAST = auto()  # 1000 = 8
 
     @property
     def corner(self) -> bool:
         """Return a corn if it's a cell with 2 walls"""
         return self in (
-            self.TOP | self.LEFT,
-            self.TOP | self.RIGHT,
-            self.BOTTOM | self.LEFT,
-            self.BOTTOM | self.RIGHT,
+            self.NORTH | self.WEST,
+            self.NORTH | self.EAST,
+            self.SOUTH | self.WEST,
+            self.SOUTH | self.EAST,
         )
 
     @property
@@ -31,10 +31,14 @@ class Border(IntFlag):
 
 
 def transform_to_decimal(maze: list[list[str]]) -> list[list[int]]:
-    for cell in maze:
-        cell = int(cell, 16)
-        if cell < 0 or cell > 15:
-            raise ValueError(f"Impossible Value for cell {cell}")
+    for cells in maze:
+        for i, hex_value in enumerate(cells):
+            try:
+                cells[i] = int(hex_value, 16)
+                if cells[i] < 0 or cells[i] > 15:
+                    raise ValueError(f"Impossible Value for cell {cells[i]}")
+            except TypeError as e:
+                print(f"can't convert {cells[i]}: {e}")
     return maze
 
 
@@ -43,20 +47,20 @@ def get_neighbors(maze: list[list[int]], cell: tuple) -> list[tuple]:
     cell_walls: int = Border(maze[row][col])
     neighbors: list[tuple] = []
 
-    # If no top wall -> there's a top neighbor (checking diff 0001)
-    if not (cell_walls & Border.TOP):
+    # If no NORTH wall -> there's a NORTH neighbor (checking diff 0001)
+    if not (cell_walls & Border.NORTH):
         neighbors.append((row - 1, col))
 
-    # If no bottom wall -> there's a bottom neighbor (checking diff 0010)
-    if not (cell_walls & Border.BOTTOM):
+    # If no SOUTH wall -> there's a SOUTH neighbor (checking diff 0010)
+    if not (cell_walls & Border.SOUTH):
         neighbors.append((row + 1, col))
 
-    # If no left wall -> there's a left neighbor (checking diff 0100)
-    if not (cell_walls & Border.LEFT):
+    # If no WEST wall -> there's a WEST neighbor (checking diff 0100)
+    if not (cell_walls & Border.WEST):
         neighbors.append((row, col - 1))
 
-    # If no right wall -> there's a right neighbor (checking diff 1000)
-    if not (cell_walls & Border.RIGHT):
+    # If no EAST wall -> there's a EAST neighbor (checking diff 1000)
+    if not (cell_walls & Border.EAST):
         neighbors.append((row, col + 1))
 
     return neighbors
@@ -97,7 +101,8 @@ def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | 
     # regiter the "cost" (g(n)) to each cell visited
     path_cost = {start: 0}
 
-    def reconstruct_path(node):
+    def reconstruct_path(node: tuple) -> list[tuple]:
+        """return the list of nodes of the correct path to reach the end from the start"""
         path = [node]
         while node in came_from:
             node = came_from[node]
@@ -125,7 +130,43 @@ def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | 
                 came_from[neighbor] = curr_node
 
 
+def cardinal_direction(path: list[tuple]) -> str:
+    """transform the path into a string of direction"""
+    # iterate on the whole path except last node
+    directions: str = ""
+    for i in range(len(path) - 1):
+        curr_row, curr_col = path[i]
+        next_row, next_col = path[i + 1]
+
+        # Compare row change
+        if next_row < curr_row:
+            directions += "N"
+        elif next_row > curr_row:
+            directions += "S"
+        # Compare col change
+        elif next_col < curr_col:
+            directions += "W"
+        elif next_col > curr_col:
+            directions += "E"
+
+    return directions
+
+
+def display_list(lst: list[list]) -> None:
+    for line in lst:
+        print(line)
+
+
 def main():
+    test_hexa = [
+        ['A', 'C', '4', '6'],
+        ['4', '3', '7', '0'],
+        ['F', 'E', '9', '2']
+    ]
+    # testing if the hexa transformation works well
+    print("\nTesting a decimal converter for a maze input in hexadecimal")
+    print(transform_to_decimal(test_hexa))
+    print("\nTesting solver for the maze: ")
     maze = [
         [7, 1, 11, 13],
         [5, 8, 5, 10],
@@ -134,7 +175,14 @@ def main():
     ]
     start = (0, 0)
     end = (3, 3)
-    print(a_star_algorithm(maze, start, end))
+    print("Maze:")
+    display_list(maze)
+    print(f"\nstart: {start}")
+    print(f"end: {end}\n")
+    print("Solution:")
+    solution = a_star_algorithm(maze, start, end)
+    print(solution)
+    print(cardinal_direction(solution))
 
 
 if __name__ == "__main__":
