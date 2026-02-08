@@ -6,8 +6,8 @@ from src.errors import MazeGenerationErrors
 
 class MazeGenerator:
 
-    def __init__(self, width: int, height: int):
-        self.grid: list = np.zeros((width, height), np.int_)
+    def __init__(self, height: int, width: int):
+        self.grid: list = np.zeros((height, width), np.int_)
         self.width: int = width
         self.height: int = height
         self.cardinal_points: dict = {
@@ -110,12 +110,12 @@ class MazeGenerator:
 
 
 def main():
-    generator = MazeGenerator(5, 5)
+    generator = MazeGenerator(15, 20)
     print(generator.get_maze())
 
 
 if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(e)
+    # try:
+    main()
+    # except Exception as e:
+    #     print(e)
