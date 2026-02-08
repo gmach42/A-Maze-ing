@@ -1,5 +1,4 @@
 from enum import IntFlag, auto
-from heapq import heappop, heappush
 
 
 class Border(IntFlag):
@@ -113,7 +112,8 @@ def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | 
 
     while (len(open_paths) > 0):
         # get the best next cell to visit (the one with the lowest priority)
-        _, curr_node = heappop(open_paths)
+        open_paths.sort()
+        _, curr_node = open_paths.pop()
         if curr_node == end:
             goal_path = reconstruct_path(end)
             return goal_path
@@ -126,7 +126,7 @@ def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | 
                 path_cost[neighbor] = new_cost
                 # f(n) = g(n) + h(n)
                 priority = new_cost + h(neighbor, end)
-                heappush(open_paths, (priority, neighbor))
+                open_paths.append((priority, neighbor))
                 came_from[neighbor] = curr_node
 
 
