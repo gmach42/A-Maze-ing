@@ -29,7 +29,14 @@ class Border(IntFlag):
         return self.bit_count < 2
 
 
-def transform_to_decimal(maze: list[list[str]]) -> list[list[int]]:
+def str_to_decimal(maze: str) -> list[list[int]]:
+    """Parse string to list[list[char]] then transform each value into decimal"""
+    maze_lst = [list(line) for line in maze.splitlines()]
+    return hex_to_decimal(maze_lst)
+
+
+def hex_to_decimal(maze: list[list[str]]) -> list[list[int]]:
+    """Parse hexadecimal maze into a decimal one readable by the algorithm"""
     for cells in maze:
         for i, hex_value in enumerate(cells):
             try:
@@ -39,6 +46,16 @@ def transform_to_decimal(maze: list[list[str]]) -> list[list[int]]:
             except TypeError as e:
                 print(f"can't convert {cells[i]}: {e}")
     return maze
+
+
+def parse_maze_str(maze_str: str) -> list[list[int]]:
+    """Convert hex string maze to integer grid"""
+    lines = maze_str.strip().split('\n')
+    try:
+        res = [[int(char, 16) for char in line] for line in lines]
+        return res
+    except ValueError as e:
+        return f"Error while parsing maze_str: {e}"
 
 
 def get_neighbors(maze: list[list[int]], cell: tuple) -> list[tuple]:
@@ -76,7 +93,11 @@ def h(cell1: tuple[int, int], cell2: tuple[int, int]):
     return abs(x1 - x2) + abs(y1 - y2)
 
 
-def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | None:
+def a_star_algorithm(
+    maze: list[list[int]],
+    start: tuple,
+    end: tuple
+) -> list | None:
     """
     A heap queue (also called a priority queue) is a special data structure
     that allows quick access to the smallest (min-heap) or largest (max-heap) element
@@ -110,7 +131,7 @@ def a_star_algorithm(maze: list[list[int]], start: tuple, end: tuple) -> list | 
         path.reverse()
         return path
 
-    while (len(open_paths) > 0):
+    while len(open_paths) > 0:
         # get the best next cell to visit (the one with the lowest priority)
         open_paths.sort()
         _, curr_node = open_paths.pop()
@@ -159,20 +180,15 @@ def display_list(lst: list[list]) -> None:
 
 def main():
     test_hexa = [
-        ['A', 'C', '4', '6'],
-        ['4', '3', '7', '0'],
-        ['F', 'E', '9', '2']
+        ["A", "C", "4", "6"],
+        ["4", "3", "7", "0"],
+        ["F", "E", "9", "2"],
     ]
     # testing if the hexa transformation works well
     print("\nTesting a decimal converter for a maze input in hexadecimal")
-    print(transform_to_decimal(test_hexa))
+    print(hex_to_decimal(test_hexa))
     print("\nTesting solver for the maze: ")
-    maze = [
-        [7, 1, 11, 13],
-        [5, 8, 5, 10],
-        [14, 6, 8, 13],
-        [7, 3, 2, 10]
-    ]
+    maze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
     start = (0, 0)
     end = (3, 3)
     print("Maze:")
@@ -183,6 +199,15 @@ def main():
     solution = a_star_algorithm(maze, start, end)
     print(solution)
     print(cardinal_direction(solution))
+
+    print("Test splitlines :")
+    print(str_to_decimal("ABCDEF\n132\n"))
+
+    print("Test parse_maze_str:")
+    print(parse_maze_str("ABC2344Ai\ndwkodw"))
+    print(parse_maze_str("ABC2-3044A\n8"))
+    print(parse_maze_str("ABC23044A\n844"))
+    print(parse_maze_str("ABC230"))
 
 
 if __name__ == "__main__":
