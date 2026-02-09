@@ -70,15 +70,15 @@ def draw_maze_walls(mlx, mlx_ptr, win, maze, cell_size=50):
                 draw_line(mlx, mlx_ptr, win, x, y, x + cell_size, y,
                           0xFFFFFFFF)
 
-            if cell_value & 2:  # SOUTH wall
+            if cell_value & 4:  # SOUTH wall
                 draw_line(mlx, mlx_ptr, win, x, y + cell_size,
                           x + cell_size, y + cell_size, 0xFFFFFFFF)
 
-            if cell_value & 4:  # WEST wall
+            if cell_value & 8:  # WEST wall
                 draw_line(mlx, mlx_ptr, win, x, y, x, y + cell_size,
                           0xFFFFFFFF)
 
-            if cell_value & 8:  # EAST wall
+            if cell_value & 2:  # EAST wall
                 draw_line(mlx, mlx_ptr, win, x + cell_size, y,
                           x + cell_size, y + cell_size, 0xFFFFFFFF)
 
