@@ -1,36 +1,18 @@
-from enum import IntFlag, auto
+from enum import IntFlag
 
 
 class Border(IntFlag):
     EMPTY = 0
-    NORTH = auto()  # 0001 = 1
-    SOUTH = auto()  # 0010 = 2
-    WEST = auto()  # 0100 = 4
-    EAST = auto()  # 1000 = 8
-
-    @property
-    def corner(self) -> bool:
-        """Return a corn if it's a cell with 2 walls"""
-        return self in (
-            self.NORTH | self.WEST,
-            self.NORTH | self.EAST,
-            self.SOUTH | self.WEST,
-            self.SOUTH | self.EAST,
-        )
-
-    @property
-    def deadend(self) -> bool:
-        """Return a deadend if it's a cell with 3 walls"""
-        return self.bit_count == 3
-
-    @property
-    def intersection(self) -> bool:
-        """Return an intersection if it's a cell with at least 2 entries"""
-        return self.bit_count < 2
+    NORTH = 0b0001  # 0001 = 1
+    SOUTH = 0b0010  # 0010 = 2
+    WEST = 0b0100  # 0100 = 4
+    EAST = 0b1000  # 1000 = 8
 
 
 def str_to_decimal(maze: str) -> list[list[int]]:
-    """Parse string to list[list[char]] then transform each value into decimal"""
+    """
+    Parse string to list[list[char]] then transform each value into decimal
+    """
     maze_lst = [list(line) for line in maze.splitlines()]
     return hex_to_decimal(maze_lst)
 
@@ -50,7 +32,7 @@ def hex_to_decimal(maze: list[list[str]]) -> list[list[int]]:
 
 def parse_maze_str(maze_str: str) -> list[list[int]]:
     """Convert hex string maze to integer grid"""
-    lines = maze_str.strip().split('\n')
+    lines = maze_str.strip().split("\n")
     try:
         res = [[int(char, 16) for char in line] for line in lines]
         return res
@@ -93,21 +75,33 @@ def h(cell1: tuple[int, int], cell2: tuple[int, int]):
     return abs(x1 - x2) + abs(y1 - y2)
 
 
+def reconstruct_path(
+    node: tuple, came_from: dict[tuple, tuple]
+) -> list[tuple]:
+    """
+    Return the list of nodes of the correct path from the start
+    """
+    path = [node]
+    while node in came_from:
+        node = came_from[node]
+        path.append(node)
+    # reverse result to get from beginning to end
+    path.reverse()
+    return path
+
+
 def a_star_algorithm(
-    maze: list[list[int]],
-    start: tuple,
-    end: tuple
+    maze: list[list[int]], start: tuple, end: tuple
 ) -> list | None:
     """
-    A heap queue (also called a priority queue) is a special data structure
-    that allows quick access to the smallest (min-heap) or largest (max-heap) element
-    the A* algorithm assign a cost to each cell and calculate the shortest path from this
-    the cost of a cell is defined by
+    The A* algorithm assign a cost to each cell and calculate the shortest
+    path from this
+    The cost of a cell is defined by
     ```math
     f(n) = g(n) + h(n)
     ```
     with
-    - f(n): total cost to reach cell n -> The priority of the cell, the lower the better!
+    - f(n): total cost to reach cell n -> Priority, the lower the better!
     - g(n): actual cost to reach cell n from start
     - h(n): heuristic (or estimated) cost to reach the goal from cell n
     """
@@ -116,27 +110,17 @@ def a_star_algorithm(
     open_paths: list[(int, tuple)] = [(h(start, end), start)]
 
     # register the precedent node of each newly accessed node
-    came_from = {}
+    came_from: dict[tuple, tuple] = {}
 
     # regiter the "cost" (g(n)) to each cell visited
-    path_cost = {start: 0}
-
-    def reconstruct_path(node: tuple) -> list[tuple]:
-        """return the list of nodes of the correct path to reach the end from the start"""
-        path = [node]
-        while node in came_from:
-            node = came_from[node]
-            path.append(node)
-        # reverse result to get from beginning to end
-        path.reverse()
-        return path
+    path_cost: dict[tuple, int] = {start: 0}
 
     while len(open_paths) > 0:
         # get the best next cell to visit (the one with the lowest priority)
         open_paths.sort()
         _, curr_node = open_paths.pop()
         if curr_node == end:
-            goal_path = reconstruct_path(end)
+            goal_path = reconstruct_path(end, came_from)
             return goal_path
         neighbors = get_neighbors(maze, curr_node)
 
@@ -149,6 +133,8 @@ def a_star_algorithm(
                 priority = new_cost + h(neighbor, end)
                 open_paths.append((priority, neighbor))
                 came_from[neighbor] = curr_node
+
+    return None
 
 
 def cardinal_direction(path: list[tuple]) -> str:
@@ -208,6 +194,12 @@ def main():
     print(parse_maze_str("ABC2-3044A\n8"))
     print(parse_maze_str("ABC23044A\n844"))
     print(parse_maze_str("ABC230"))
+
+    print(Border(1))
+    print(Border(2))
+    print(Border(4))
+    print(Border(8))
+    print(Border(15))
 
 
 if __name__ == "__main__":
