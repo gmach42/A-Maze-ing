@@ -1,4 +1,5 @@
 import sys
+from src.maze_generator import MazeGenerator
 from mlx import Mlx  # Import Mlx class
 # from .solver import Border
 
@@ -124,7 +125,9 @@ def main():
 
     # for i in range(xvar.img_1.sl * 100):
     #     xvar.img_1.data[i] = 0xFF
-    test_maze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
+    generator: MazeGenerator = MazeGenerator(5, 8)
+    test_maze = generator.get_maze()
+    print(test_maze)
     # draw_line(xvar.mlx, xvar.mlx_ptr, xvar.win_1, (0, 0), (500, 500), 0xFFFFFFFF)
     draw_maze_walls(xvar.mlx, xvar.mlx_ptr, xvar.win_1, test_maze)
 
