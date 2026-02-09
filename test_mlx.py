@@ -1,7 +1,7 @@
 import sys
 from src.maze_generator import MazeGenerator
 from mlx import Mlx  # Import Mlx class
-# from .solver import Border
+from src import Border
 
 
 class ImgData:
@@ -28,7 +28,7 @@ class XVar:
         self.win_1 = None
 
 
-def draw_line(mlx, mlx_ptr, win, x0, y0, x1, y1, color):
+def draw_line(mlx, mlx_ptr, win, x0, y0, x1, y1, color, line_width: int = 5):
     """
     Draw a line from (x0, y0) to (x1, y1) using Bresenham's algorithm
     color format: 0xAARRGGBB (e.g., 0xFFFFFFFF for white, 0xFFFF0000 for red)
@@ -41,8 +41,13 @@ def draw_line(mlx, mlx_ptr, win, x0, y0, x1, y1, color):
     sy = 1 if y0 < y1 else -1
     err = dx - dy
 
+    if line_width == 0:
+        raise ValueError("Line_width cannot be null")
+
     while True:
-        mlx.mlx_pixel_put(mlx_ptr, win, x0, y0, color)
+        for i in range(line_width):
+            mlx.mlx_pixel_put(mlx_ptr, win, x0 - i, y0 + i, color)
+            mlx.mlx_pixel_put(mlx_ptr, win, x0 + i, y0 - i, color)
 
         if x0 == x1 and y0 == y1:
             break
@@ -67,19 +72,19 @@ def draw_maze_walls(mlx, mlx_ptr, win, maze, cell_size=50):
             y = row * cell_size
 
             # Check each wall using bit flags (from Border class)
-            if cell_value & 1:  # NORTH wall
+            if cell_value & Border.NORTH:
                 draw_line(mlx, mlx_ptr, win, x, y, x + cell_size, y,
                           0xFFFFFFFF)
 
-            if cell_value & 4:  # SOUTH wall
+            if cell_value & Border.SOUTH:
                 draw_line(mlx, mlx_ptr, win, x, y + cell_size,
                           x + cell_size, y + cell_size, 0xFFFFFFFF)
 
-            if cell_value & 8:  # WEST wall
+            if cell_value & Border.WEST:
                 draw_line(mlx, mlx_ptr, win, x, y, x, y + cell_size,
                           0xFFFFFFFF)
 
-            if cell_value & 2:  # EAST wall
+            if cell_value & Border.EAST:
                 draw_line(mlx, mlx_ptr, win, x + cell_size, y,
                           x + cell_size, y + cell_size, 0xFFFFFFFF)
 
