@@ -112,28 +112,10 @@ def main():
     except Exception as e:
         print(f"Error Win create: {e}", file=sys.stderr)
         sys.exit(1)
-
-    # xvar.img_1.img = xvar.mlx.mlx_new_image(xvar.mlx_ptr, 100, 100)
-    # if not xvar.img_1.img:
-    #     raise Exception("Can't create image 1")
-
-    # xvar.img_1.width = 100
-    # xvar.img_1.height = 100
-    # xvar.img_1.data, xvar.img_1.bpp, xvar.img_1.sl, xvar.img_1.iformat = (
-    #     xvar.mlx.mlx_get_data_addr(xvar.img_1.img)
-    # )
-
-    # for i in range(xvar.img_1.sl * 100):
-    #     xvar.img_1.data[i] = 0xFF
-    generator: MazeGenerator = MazeGenerator(5, 8)
+    generator: MazeGenerator = MazeGenerator(20, 15)
     test_maze = generator.get_maze()
     print(test_maze)
-    # draw_line(xvar.mlx, xvar.mlx_ptr, xvar.win_1, (0, 0), (500, 500), 0xFFFFFFFF)
     draw_maze_walls(xvar.mlx, xvar.mlx_ptr, xvar.win_1, test_maze)
-
-    # event hooks
-    # xvar.mlx.mlx_key_hook(xvar.win_1, manage_key, xvar)
-    # xvar.mlx.mlx_expose_hook(xvar.win_1, manage_expose, xvar)
     xvar.mlx.mlx_mouse_hook(xvar.win_1, 0, xvar)
     xvar.mlx.mlx_hook(xvar.win_1, 33, 0, manage_close_1, xvar)
 
