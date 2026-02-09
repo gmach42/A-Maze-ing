@@ -1,4 +1,5 @@
 from enum import IntFlag
+from .maze_generator import MazeGenerator
 
 
 class Border(IntFlag):
@@ -105,6 +106,9 @@ def a_star_algorithm(
     - g(n): actual cost to reach cell n from start
     - h(n): heuristic (or estimated) cost to reach the goal from cell n
     """
+
+    # TODO check if start and end are in maze
+
     # open_paths: list[(f_score, node)] is a heap to rappidly find the
     # node with the lowest score. Faster than using a classic list
     open_paths: list[(int, tuple)] = [(h(start, end), start)]
@@ -174,17 +178,24 @@ def main():
     print("\nTesting a decimal converter for a maze input in hexadecimal")
     print(hex_to_decimal(test_hexa))
     print("\nTesting solver for the maze: ")
-    maze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
-    start = (0, 0)
-    end = (3, 3)
-    print("Maze:")
+    tmaze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
+    display_list(tmaze)
+
+    generator = MazeGenerator(5, 5)
+    array = generator.get_maze()
+    maze = array.tolist()
     display_list(maze)
+    print(type(maze))
+    start = (0, 0)
+    end = (4, 4)
+    print("Maze:")
     print(f"\nstart: {start}")
     print(f"end: {end}\n")
     print("Solution:")
     solution = a_star_algorithm(maze, start, end)
     print(solution)
-    print(cardinal_direction(solution))
+    if solution:
+        print(cardinal_direction(solution))
 
     print("Test splitlines :")
     print(str_to_decimal("ABCDEF\n132\n"))

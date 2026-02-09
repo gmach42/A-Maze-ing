@@ -98,8 +98,8 @@ class MazeGenerator:
 
         # Call for second side
         nx, ny = [x, wy + 1] if horizontal else [wx + 1, y]
-        nw, nh = [width, height - wy - 1] if horizontal else\
-            [width - wx - 1, height]
+        nw, nh = [width, height - (wy - y) - 1] if horizontal else\
+            [width - (wx - x) - 1, height]
         self.divide(self.grid, nx, ny, nw, nh, self.chose_orientation(nw, nh))
 
     def get_maze(self) -> list:
