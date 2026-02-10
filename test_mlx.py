@@ -5,6 +5,7 @@ from src import Border
 from src.solver import a_star_algorithm
 import src.solver as solver
 from typing import Any
+from src.color_manager import ColorManager
 
 
 class ImgData:
@@ -255,13 +256,13 @@ def main() -> None:
 
     # Get user input for maze dimensions and cell size
     try:
-        cell_size: int = int(input("Enter the cell size: "))
+        cell_size = int(input("Enter the cell size: "))
         if cell_size <= 0:
             raise ValueError
-        maze_width: int = int(input("Enter the desired width of your maze: "))
+        maze_width = int(input("Enter the desired width of your maze: "))
         if maze_width <= 0:
             raise ValueError
-        maze_height: int = int(input("Enter the desired height of your maze: "))
+        maze_height = int(input("Enter the desired height of your maze: "))
         if maze_height <= 0:
             raise ValueError
         win_width = (maze_width + 1) * cell_size
@@ -287,22 +288,25 @@ def main() -> None:
     if not img_data:
         raise Exception("no image created")
 
-    # generate and draw maze
+    # Generate and draw maze
     generator: MazeGenerator = MazeGenerator(maze_height, maze_width)
     test_maze = generator.get_maze().tolist()
     print(test_maze)
     draw_maze_walls(img_data, test_maze, cell_size)
 
+    # TODO Get user input for start and end points, or generate them randomly
     start = (0, 0)
     print(f'{start=}')
     end = (14, 14)
     print(f'{end=}')
+
+    # Get the solution path with A* algorithm and draw it on the maze
     solution = a_star_algorithm(test_maze, start, end)
-    print(solver.cardinal_direction(solution))
+    print(f'Solution:\n{solver.cardinal_direction(solution)}')
     colors: dict = {
-        'start': 0xFFFF0000,    # Red
-        'end': 0xFFFF00FF,      # Magenta
-        'path': 0xFF7B68EE      # Medium slate blue
+        'start': ColorManager.RED,
+        'end': ColorManager.MAGENTA,
+        'path': ColorManager.PATH
     }
     draw_solution(img_data, solution, colors, cell_size)
 
@@ -320,7 +324,7 @@ def main() -> None:
     xvar.mlx.mlx_loop(xvar.mlx_ptr)
 
     # Cleaning resources
-    print("destroy image (to prevent leaks kek)")
+    print("destroy image")
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, img_data.img)
     print("destroy win(s)")
     xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
