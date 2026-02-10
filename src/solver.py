@@ -10,27 +10,6 @@ class Border(IntFlag):
     WEST = 0b1000  # WEST = 8
 
 
-def str_to_decimal(maze: str) -> list[list[int]]:
-    """
-    Parse string to list[list[char]] then transform each value into decimal
-    """
-    maze_lst = [list(line) for line in maze.splitlines()]
-    return hex_to_decimal(maze_lst)
-
-
-def hex_to_decimal(maze: list[list[str]]) -> list[list[int]]:
-    """Parse hexadecimal maze into a decimal one readable by the algorithm"""
-    for cells in maze:
-        for i, hex_value in enumerate(cells):
-            try:
-                cells[i] = int(hex_value, 16)
-                if cells[i] < 0 or cells[i] > 15:
-                    raise ValueError(f"Impossible Value for cell {cells[i]}")
-            except TypeError as e:
-                print(f"can't convert {cells[i]}: {e}")
-    return maze
-
-
 def parse_maze_str(maze_str: str) -> list[list[int]]:
     """Convert hex string maze to integer grid"""
     lines = maze_str.strip().split("\n")
@@ -61,7 +40,6 @@ def get_neighbors(maze: list[list[int]], cell: tuple) -> list[tuple]:
     # If no EAST wall -> there's a EAST neighbor (checking diff 1000)
     if not (cell_walls & Border.EAST):
         neighbors.append((row, col + 1))
-
     return neighbors
 
 
@@ -169,14 +147,6 @@ def display_list(lst: list[list]) -> None:
 
 
 def main():
-    test_hexa = [
-        ["A", "C", "4", "6"],
-        ["4", "3", "7", "0"],
-        ["F", "E", "9", "2"],
-    ]
-    # testing if the hexa transformation works well
-    print("\nTesting a decimal converter for a maze input in hexadecimal")
-    print(hex_to_decimal(test_hexa))
     print("\nTesting solver for the maze: ")
     tmaze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
     display_list(tmaze)
@@ -196,9 +166,6 @@ def main():
     print(solution)
     if solution:
         print(cardinal_direction(solution))
-
-    print("Test splitlines :")
-    print(str_to_decimal("ABCDEF\n132\n"))
 
     print("Test parse_maze_str:")
     print(parse_maze_str("ABC2344Ai\ndwkodw"))

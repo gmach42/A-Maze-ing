@@ -3,6 +3,7 @@ from src.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
 from src.solver import a_star_algorithm
+import src.solver as solver
 from typing import Any
 
 
@@ -128,7 +129,7 @@ def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
 def draw_maze_walls(
     img_data: ImgData,
     maze: list[list[int]],
-    cell_size: int = 50,
+    cell_size: int,
 ) -> None:
     """
     Draw walls around each cell using `draw_line()` and `Border`
@@ -290,13 +291,14 @@ def main() -> None:
     generator: MazeGenerator = MazeGenerator(maze_height, maze_width)
     test_maze = generator.get_maze().tolist()
     print(test_maze)
-    draw_maze_walls(img_data, test_maze)
+    draw_maze_walls(img_data, test_maze, cell_size)
 
     start = (0, 0)
     print(f'{start=}')
     end = (14, 14)
     print(f'{end=}')
     solution = a_star_algorithm(test_maze, start, end)
+    print(solver.cardinal_direction(solution))
     colors: dict = {
         'start': 0xFFFF0000,    # Red
         'end': 0xFFFF00FF,      # Magenta
