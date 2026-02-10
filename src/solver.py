@@ -1,4 +1,5 @@
 from enum import IntFlag
+from .maze_generator import MazeGenerator
 
 
 class Border(IntFlag):
@@ -7,27 +8,6 @@ class Border(IntFlag):
     EAST = 0b0010  # EAST = 2
     SOUTH = 0b0100  # SOUTH = 4
     WEST = 0b1000  # WEST = 8
-
-
-def str_to_decimal(maze: str) -> list[list[int]]:
-    """
-    Parse string to list[list[char]] then transform each value into decimal
-    """
-    maze_lst = [list(line) for line in maze.splitlines()]
-    return hex_to_decimal(maze_lst)
-
-
-def hex_to_decimal(maze: list[list[str]]) -> list[list[int]]:
-    """Parse hexadecimal maze into a decimal one readable by the algorithm"""
-    for cells in maze:
-        for i, hex_value in enumerate(cells):
-            try:
-                cells[i] = int(hex_value, 16)
-                if cells[i] < 0 or cells[i] > 15:
-                    raise ValueError(f"Impossible Value for cell {cells[i]}")
-            except TypeError as e:
-                print(f"can't convert {cells[i]}: {e}")
-    return maze
 
 
 def parse_maze_str(maze_str: str) -> list[list[int]]:
@@ -60,7 +40,6 @@ def get_neighbors(maze: list[list[int]], cell: tuple) -> list[tuple]:
     # If no EAST wall -> there's a EAST neighbor (checking diff 1000)
     if not (cell_walls & Border.EAST):
         neighbors.append((row, col + 1))
-
     return neighbors
 
 
@@ -105,6 +84,9 @@ def a_star_algorithm(
     - g(n): actual cost to reach cell n from start
     - h(n): heuristic (or estimated) cost to reach the goal from cell n
     """
+
+    # TODO check if start and end are in maze
+
     # open_paths: list[(f_score, node)] is a heap to rappidly find the
     # node with the lowest score. Faster than using a classic list
     open_paths: list[(int, tuple)] = [(h(start, end), start)]
@@ -165,29 +147,25 @@ def display_list(lst: list[list]) -> None:
 
 
 def main():
-    test_hexa = [
-        ["A", "C", "4", "6"],
-        ["4", "3", "7", "0"],
-        ["F", "E", "9", "2"],
-    ]
-    # testing if the hexa transformation works well
-    print("\nTesting a decimal converter for a maze input in hexadecimal")
-    print(hex_to_decimal(test_hexa))
     print("\nTesting solver for the maze: ")
-    maze = [[9, 7, 11, 9, 1, 5, 3, 11, 13, 3, 11, 9, 3, 13, 3, 11, 11, 9, 5, 3], [12, 5, 0, 6, 14, 13, 4, 2, 13, 2, 10, 10, 12, 3, 10, 8, 6, 14, 11, 10], [11, 9, 6, 13, 3, 9, 3, 12, 1, 0, 6, 10, 13, 2, 8, 0, 5, 7, 10, 10], [12, 4, 1, 7, 8, 2, 12, 7, 10, 12, 5, 2, 13, 2, 14, 12, 1, 3, 8, 6], [9, 7, 10, 9, 2, 8, 7, 13, 4, 1, 3, 12, 7, 12, 5, 5, 2, 14, 8, 7], [10, 13, 4, 6, 10, 14, 11, 15, 13, 6, 10, 15, 15, 15, 11, 9, 0, 7, 8, 3], [8, 1, 3, 11, 12, 3, 10, 15, 13, 5, 0, 5, 7, 15, 8, 2, 8, 5, 6, 10], [10, 10, 8, 4, 5, 0, 2, 15, 15, 15, 10, 15, 15, 15, 10, 10, 12, 7, 9, 6], [14, 14, 10, 9, 5, 6, 12, 1, 7, 15, 10, 15, 13, 5, 2, 8, 7, 11, 8, 3], [13, 5, 6, 8, 3, 11, 13, 0, 7, 15, 14, 15, 15, 15, 10, 10, 11, 10, 10, 14], [11, 9, 5, 6, 14, 10, 13, 2, 11, 9, 3, 13, 3, 11, 10, 12, 2, 12, 2, 11], [10, 8, 1, 1, 3, 10, 11, 12, 4, 2, 14, 13, 0, 0, 4, 7, 14, 13, 4, 2], [8, 2, 14, 14, 10, 8, 4, 7, 13, 2, 9, 1, 6, 10, 11, 13, 5, 1, 7, 10], [14, 14, 9, 5, 4, 0, 3, 9, 7, 10, 14, 8, 7, 8, 4, 1, 1, 2, 11, 10], [13, 5, 6, 13, 5, 6, 14, 12, 5, 4, 7, 14, 13, 6, 13, 6, 14, 12, 6, 14]]
-    start = (0, 0)
-    end = (3, 3)
-    print("Maze:")
+    tmaze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
+    display_list(tmaze)
+
+    generator = MazeGenerator(5, 5)
+    array = generator.get_maze()
+    maze = array.tolist()
     display_list(maze)
+    print(type(maze))
+    start = (0, 0)
+    end = (4, 4)
+    print("Maze:")
     print(f"\nstart: {start}")
     print(f"end: {end}\n")
     print("Solution:")
     solution = a_star_algorithm(maze, start, end)
     print(solution)
-    print(cardinal_direction(solution))
-
-    print("Test splitlines :")
-    print(str_to_decimal("ABCDEF\n132\n"))
+    if solution:
+        print(cardinal_direction(solution))
 
     print("Test parse_maze_str:")
     print(parse_maze_str("ABC2344Ai\ndwkodw"))
