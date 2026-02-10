@@ -78,29 +78,6 @@ def draw_line(
             y0 += sy
 
 
-# void	put_pixel_image(t_pixel pixel, char *str, int color)
-# {
-# 	unsigned char r;
-# 	unsigned char g;
-# 	unsigned char b;
-# 	int len;
-
-# 	len = WIN_LEN; /* En réalité, il s'agit de la longueur de votre image. Ici, mon image et ma fenêtre font la même taille */
-
-# 	/* in this part you'll see how i decompose a decimal color in a third part decimal color rgb(255, 255, 255) */
-# 	/* Dans cette partie, voici comment je decompose une couleur decimal en une couleur décimale en trois partie rgb(255, 255, 255) */
-# 	r = (color >> 16) & 0xff;
-# 	g = (color >> 8) & 0xff;
-# 	b = color & 0xff;
-
-# 	/* (pixel.x * 4) + (len * 4 * pixel.y) : cible le premier bit d'un pixel */
-# 	str[(pixel.x * 4) + (len * 4 * pixel.y)] = b;
-# 	str[(pixel.x * 4) + (len * 4 * pixel.y) + 1] = g;
-# 	str[(pixel.x * 4) + (len * 4 * pixel.y) + 2] = r;
-# 	str[(pixel.x * 4) + (len * 4 * pixel.y) + 3] = 0;
-# }
-
-
 def setup_image_buffer(
     xvar: XVar,
     width: int,
@@ -183,25 +160,37 @@ def draw_maze_walls(
                           y + cell_size, 0xFFFFFFFF)
 
 
-def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int) -> None:
+def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
+                ) -> None:
     """Draw a filled square of size `size` centered on (`x`, `y`)"""
     for dy in range(-size, size + 1):
         for dx in range(-size, size + 1):
             put_pixel_to_image(img_data, x + dx, y + dy, color)
 
 
-def draw_solution(xvar: XVar, solution: list[tuple], colors: dict, cell_size: int) -> None:
+def draw_solution(
+        img_data: ImgData, solution: list[tuple], colors: dict, cell_size: int
+        ) -> None:
     """Draw the solution path on the maze using `draw_square()`"""
     x0, y0 = solution[0]
     x1, y1 = solution[len(solution) - 1]
     size_path = round(cell_size / 3)
     offset = round(cell_size / 2)
 
-    draw_square(xvar, (x0 * cell_size + offset), (y0 * cell_size + offset), size_path, colors['start'])
-    draw_square(xvar, x1 * cell_size + offset, y1 * cell_size + offset, size_path, colors['end'])
+    draw_square(
+        img_data, (x0 * cell_size + offset), (y0 * cell_size + offset),
+        size_path, colors['start']
+        )
+    draw_square(
+        img_data, x1 * cell_size + offset, y1 * cell_size + offset,
+        size_path, colors['end']
+        )
     for s in solution[1:len(solution) - 1]:
         y, x = s
-        draw_square(xvar, x * cell_size + offset, y * cell_size + offset, size_path, colors['path'])
+        draw_square(
+            img_data, x * cell_size + offset, y * cell_size + offset,
+            size_path, colors['path']
+            )
     # TODO Finish draw solution (beginning + end + path)
 
 
@@ -229,6 +218,18 @@ def manage_key(key, xvar) -> None:
     if key == 99:  # 'c'
         print("'c' key pressed, changing color of the maze...")
         # TODO change color of the maze
+
+    if key == 52:  # '4'
+        print("'4' key pressed, changing 42 symbol color...")
+        # TODO change color of 42 symbol
+
+    if key == 115:  # 's'
+        print("'s' key pressed, changing color of the solution path...")
+        # TODO change color of the solution path
+
+    if key == 114:  # 'r'
+        print("'r' key pressed, regenerating maze...")
+        # TODO regenerate maze
 
     return 0
 
@@ -301,13 +302,13 @@ def main() -> None:
         'end': 0xFFFF00FF,      # Magenta
         'path': 0xFF7B68EE      # Medium slate blue
     }
-    # TODO draw_solution
+    draw_solution(img_data, solution, colors, cell_size)
 
     # Print the image once it is fully implemented ->
     # Only 1 call instead of thousands with mlx_pixel_pit()
     render_frame(xvar, img_data, cell_size)
 
-    # event hooks
+    # Event hooks
     xvar.mlx.mlx_key_hook(xvar.win, manage_key, xvar)
     xvar.mlx.mlx_hook(xvar.win, 2, 1, get_key_press, xvar)
     xvar.mlx.mlx_mouse_hook(xvar.win, 0, xvar)
