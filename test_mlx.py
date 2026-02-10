@@ -3,30 +3,31 @@ from src.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
 from src.solver import a_star_algorithm
+from typing import Any,
 
 
 class ImgData:
     """Structure for image data"""
 
     def __init__(self):
-        self.img = None
-        self.width = 0
-        self.height = 0
-        self.data = None
-        self.sl = 0  # size line
-        self.bpp = 0  # bits per pixel
-        self.iformat = 0
+        self.img: Any = None  # mlx_new_image
+        self.width: int = 0
+        self.height: int = 0
+        self.data: Any = None  # memoryview(int)
+        self.sl: int = 0  # size line
+        self.bpp: int = 0  # bits per pixel
+        self.endian: int = 0
 
 
 class XVar:
     """Structure for main vars"""
 
     def __init__(self):
-        self.mlx = None
-        self.mlx_ptr = None
-        self.screen_w = 0
-        self.screen_h = 0
-        self.win = None
+        self.mlx: Mlx | None = None
+        self.mlx_ptr: Any = None
+        self.screen_w: int = 0
+        self.screen_h: int = 0
+        self.win: Any = None
 
 
 def draw_line(
@@ -80,6 +81,61 @@ def draw_line(
             y0 += sy
 
 
+# void	put_pixel_image(t_pixel pixel, char *str, int color)
+# {
+# 	unsigned char r;
+# 	unsigned char g;
+# 	unsigned char b;
+# 	int len;
+
+# 	len = WIN_LEN; /* En réalité, il s'agit de la longueur de votre image. Ici, mon image et ma fenêtre font la même taille */
+
+# 	/* in this part you'll see how i decompose a decimal color in a third part decimal color rgb(255, 255, 255) */
+# 	/* Dans cette partie, voici comment je decompose une couleur decimal en une couleur décimale en trois partie rgb(255, 255, 255) */
+# 	r = (color >> 16) & 0xff;
+# 	g = (color >> 8) & 0xff;
+# 	b = color & 0xff;
+
+# 	/* (pixel.x * 4) + (len * 4 * pixel.y) : cible le premier bit d'un pixel */
+# 	str[(pixel.x * 4) + (len * 4 * pixel.y)] = b;
+# 	str[(pixel.x * 4) + (len * 4 * pixel.y) + 1] = g;
+# 	str[(pixel.x * 4) + (len * 4 * pixel.y) + 2] = r;
+# 	str[(pixel.x * 4) + (len * 4 * pixel.y) + 3] = 0;
+# }
+
+
+def setup_image_buffer(xvar: XVar, width: int, height: int) -> ImgData:
+    """Implement ImgData with a new image of dimension {width} x {height}"""
+    image = ImgData()
+    image.width = width
+    image.height = height
+    image.img = xvar.mlx.mlx_new_image(xvar.mlx_ptr, width, height)
+
+    res = xvar.mlx.mlx_get_data_addr()
+    image.data = res[0]
+    image.sl = res[1]
+    image.bpp = res[2]
+    image.endian = res[3]
+
+
+def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
+    """Register pixel into img_data thanks to https://github.com/vgauther/mlx_img"""
+
+    # Separate a decimal color into 3 part rgb (255, 255, 255) + alpha
+    alpha = (color >> 24) & 0xff
+    red = (color >> 16) & 0xff
+    green = (color >> 8) & 0xff
+    blue = color & 0xff
+
+    if 0 <= x < img_data.width and 0 <= y < img_data.height:
+        offset = y * img_data.sl + x * (img_data.bpp // 8)
+
+        img_data.data[offset] = blue
+        img_data.data[offset + 1] = green
+        img_data.data[offset + 2] = red
+        img_data.data[offset + 3] = alpha
+
+
 def draw_maze_walls(
     xvar: XVar,
     maze: list[list[int]],
@@ -122,13 +178,17 @@ def draw_square(xvar: XVar, x: int, y: int, size: int, color: int):
                                    dy, color)
 
 
-def draw_solution(xvar: XVar, solution: list[tuple], color: int, cell_size: int = 50):
+def draw_solution(xvar: XVar, solution: list[tuple], colors: Colors, cell_size: int = 50):
     x0, y0 = solution[0]
     x1, y1 = solution[len(solution) - 1]
+    size_path = round(cell_size / 3)
+    offset = round(cell_size / 2)
 
-    draw_square(xvar, (x0 * cell_size + 25), (y0 * cell_size + 25), 15, color)
-    draw_square(xvar, x1 * cell_size + 25, y1 * cell_size + 25, 15, color)
-
+    draw_square(xvar, (x0 * cell_size + offset), (y0 * cell_size + offset), size_path, colors.start)
+    draw_square(xvar, x1 * cell_size + offset, y1 * cell_size + offset, size_path, colors.end)
+    for s in solution[1:len(solution) - 1]:
+        y, x = s
+        draw_square(xvar, x * cell_size + offset, y * cell_size + offset, size_path, colors.path)
     # TODO Finish draw solution (beginning + end + path)
 
 
@@ -140,9 +200,10 @@ def manage_key(key, xvar):
     print(f"Got key {key}: ", end="")
 
     if key == 65307:  # 'ESC'
-        xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
-        xvar.mlx.mlx_release(xvar.mlx_ptr)
-        sys.exit(0)
+        print("'ESC' key pressed, exciting...")
+        xvar.mlx.mlx_loop_exit(xvar.mlx_ptr)
+        return 0
+    return 0
 
 
 def main():
@@ -157,7 +218,6 @@ def main():
     ret, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
         xvar.mlx_ptr
     )
-    print(f"Screen size: {xvar.screen_w} x {xvar.screen_h}")
 
     # Windows creation
     try:
@@ -170,14 +230,65 @@ def main():
         print(f"Error Win create: {e}", file=sys.stderr)
         sys.exit(1)
 
-    generator: MazeGenerator = MazeGenerator(5, 5)
+    # Image #1
+    xvar.img_1.img = xvar.mlx.mlx_new_image(xvar.mlx_ptr, 200, 200)
+    if not xvar.img_1.img:
+        raise Exception("Can't create image 1")
+
+    xvar.img_1.width = 200
+    xvar.img_1.height = 200
+    xvar.img_1.data, xvar.img_1.bpp, xvar.img_1.sl, xvar.img_1.iformat = \
+        xvar.mlx.mlx_get_data_addr(xvar.img_1.img)
+
+    # Fill image #1
+    for i in range(xvar.img_1.sl * 200):
+        xvar.img_1.data[i] = 0x80
+
+    for i in range(xvar.img_1.sl * 100):
+        xvar.img_1.data[i] = 0xFF
+
+    try:
+        # Add some red pixels
+        pixel_positions = [
+            0 * 200 * 4,                   # top left
+            (1 * 200 + 1) * 4,             # top left + 1
+            (199 * 200 + 199) * 4,         # bottom right
+            (198 * 200 + 198) * 4          # bottom right - 1
+        ]
+
+        for pos in pixel_positions:
+            if pos < len(xvar.img_1.data) - 3:
+                xvar.img_1.data[pos:pos+4] = (0xFFFF0000).to_bytes(4, 'little')
+    except Exception as e:
+        print(f"Error img1: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+    generator: MazeGenerator = MazeGenerator(15, 15)
     test_maze = generator.get_maze().tolist()
     print(test_maze)
     draw_maze_walls(xvar, test_maze)
     start = (0, 0)
-    end = (4, 4)
+    end = (14, 14)
     solution = a_star_algorithm(test_maze, start, end)
-    draw_solution(xvar, solution, 0xFFFF0000)
+
+    # colors = Colors(
+    #     start=hex(mc.to_hex(mc.CSS4_COLORS['red'], True)),
+    #     end=hex(mc.to_hex(mc.CSS4_COLORS['magenta'], True)),
+    #     path=hex(mc.to_hex(mc.CSS4_COLORS['mediumslateblue'], True))
+    #     )
+    # draw_solution(xvar, solution, colors)
 
     # event hooks
     xvar.mlx.mlx_key_hook(xvar.win, manage_key, xvar)
