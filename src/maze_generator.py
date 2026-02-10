@@ -4,7 +4,8 @@ from src.cell import Cell
 from src.definitions import Orientation
 from src.errors import MazeGenerationErrors
 
-
+# TODO Parsing
+# TODO Parsing
 class MazeGenerator:
 
     def __init__(self, height: int, width: int):
@@ -62,7 +63,7 @@ class MazeGenerator:
         set: int = self.sets[index]
         if set == index:
             return index
-        self.sets[index] = self.find(self.sets[index])
+        self.sets[index] = self.find(set)
         return self.sets[index]
 
     def union(self, index_1: int, index_2: int) -> bool:
