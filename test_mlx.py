@@ -112,7 +112,7 @@ def main():
     except Exception as e:
         print(f"Error Win create: {e}", file=sys.stderr)
         sys.exit(1)
-    generator: MazeGenerator = MazeGenerator(20, 15)
+    generator: MazeGenerator = MazeGenerator(15, 20)
     test_maze = generator.get_maze()
     print(test_maze)
     draw_maze_walls(xvar.mlx, xvar.mlx_ptr, xvar.win_1, test_maze)
