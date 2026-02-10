@@ -290,7 +290,7 @@ def main() -> None:
 
     # Generate and draw maze
     generator: MazeGenerator = MazeGenerator(maze_height, maze_width)
-    test_maze = generator.get_maze().tolist()
+    test_maze = generator.get_maze()
     print(test_maze)
     draw_maze_walls(img_data, test_maze, cell_size)
 
