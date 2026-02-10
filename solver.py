@@ -3,10 +3,10 @@ from enum import IntFlag
 
 class Border(IntFlag):
     EMPTY = 0
-    NORTH = 0b0001  # 0001 = 1
-    SOUTH = 0b0010  # 0010 = 2
-    WEST = 0b0100  # 0100 = 4
-    EAST = 0b1000  # 1000 = 8
+    NORTH = 0b0001  # NORTH = 1
+    EAST = 0b0010  # EAST = 2
+    SOUTH = 0b0100  # SOUTH = 4
+    WEST = 0b1000  # WEST = 8
 
 
 def str_to_decimal(maze: str) -> list[list[int]]:
