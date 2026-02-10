@@ -3,7 +3,7 @@ from src.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
 from src.solver import a_star_algorithm
-from typing import Any,
+from typing import Any
 
 
 class ImgData:
@@ -14,9 +14,6 @@ class ImgData:
         self.width: int = 0
         self.height: int = 0
         self.data: Any = None  # memoryview(int)
-        self.sl: int = 0  # size line
-        self.bpp: int = 0  # bits per pixel
-        self.endian: int = 0
 
 
 class XVar:
@@ -31,14 +28,14 @@ class XVar:
 
 
 def draw_line(
-    xvar: XVar,
+    img_data: ImgData,
     x0: int,
     y0: int,
     x1: int,
     y1: int,
     color: int,
     line_width: int = 5,
-):
+) -> None:
     """
     Draw a line from (x0, y0) to (x1, y1) using [Bresenham's line algorithm](\
         https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
@@ -65,7 +62,7 @@ def draw_line(
 
     while True:
         # Draw a filled square around each point
-        draw_square(xvar, x0, y0, line_width, color)
+        draw_square(img_data, x0, y0, line_width, color)
 
         # If the destination is reached, stop the loop
         if x0 == x1 and y0 == y1:
@@ -104,22 +101,35 @@ def draw_line(
 # }
 
 
-def setup_image_buffer(xvar: XVar, width: int, height: int) -> ImgData:
-    """Implement ImgData with a new image of dimension {width} x {height}"""
-    image = ImgData()
-    image.width = width
-    image.height = height
-    image.img = xvar.mlx.mlx_new_image(xvar.mlx_ptr, width, height)
+def setup_image_buffer(
+    xvar: XVar,
+    width: int,
+    height: int,
+    cell_size: int
+) -> ImgData:
+    """
+    Create an image buffer ImgData of dimension
+    (`width` x `cell_size`) x (`height` x `cell_size`)
+    plus 5 pixels for the line width (to avoid cutting the walls)
+    """
 
-    res = xvar.mlx.mlx_get_data_addr()
-    image.data = res[0]
-    image.sl = res[1]
-    image.bpp = res[2]
-    image.endian = res[3]
+    img_data = ImgData()
+    # line_width = 5, so we need to add 2.5 to each side
+    img_data.width = width * cell_size + 5
+    img_data.height = height * cell_size + 5
+    img_data.img = xvar.mlx.mlx_new_image(
+        xvar.mlx_ptr, img_data.width, img_data.height)
+
+    res = xvar.mlx.mlx_get_data_addr(img_data.img)
+    img_data.data = res[0]
+
+    return img_data
 
 
 def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
-    """Register pixel into img_data thanks to https://github.com/vgauther/mlx_img"""
+    """
+    Register pixel into img_data thanks to https://github.com/vgauther/mlx_img
+    """
 
     # Separate a decimal color into 3 part rgb (255, 255, 255) + alpha
     alpha = (color >> 24) & 0xff
@@ -127,9 +137,11 @@ def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
     green = (color >> 8) & 0xff
     blue = color & 0xff
 
+    # Check if the pixel is in the allowed boundaries
     if 0 <= x < img_data.width and 0 <= y < img_data.height:
-        offset = y * img_data.sl + x * (img_data.bpp // 8)
 
+        # Cible le premier bit d'un pixel
+        offset = y * 4 * img_data.width + x * 4
         img_data.data[offset] = blue
         img_data.data[offset + 1] = green
         img_data.data[offset + 2] = red
@@ -137,12 +149,12 @@ def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
 
 
 def draw_maze_walls(
-    xvar: XVar,
+    img_data: ImgData,
     maze: list[list[int]],
     cell_size: int = 50,
 ) -> None:
     """
-    Draw walls around each cell using draw_line() and Border()
+    Draw walls around each cell using `draw_line()` and `Border`
     """
     rows = len(maze)
     cols = len(maze[0])
@@ -155,144 +167,149 @@ def draw_maze_walls(
 
             # Check each wall using bit flags (from Border class)
             if cell_value & Border.NORTH:
-                draw_line(xvar, x, y, x + cell_size, y,
+                draw_line(img_data, x, y, x + cell_size, y,
                           0xFFFFFFFF)
 
             if cell_value & Border.SOUTH:
-                draw_line(xvar, x, y + cell_size, x + cell_size,
+                draw_line(img_data, x, y + cell_size, x + cell_size,
                           y + cell_size, 0xFFFFFFFF)
 
             if cell_value & Border.WEST:
-                draw_line(xvar, x, y, x, y + cell_size,
+                draw_line(img_data, x, y, x, y + cell_size,
                           0xFFFFFFFF)
 
             if cell_value & Border.EAST:
-                draw_line(xvar, x + cell_size, y, x + cell_size,
+                draw_line(img_data, x + cell_size, y, x + cell_size,
                           y + cell_size, 0xFFFFFFFF)
 
 
-def draw_square(xvar: XVar, x: int, y: int, size: int, color: int):
+def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int) -> None:
+    """Draw a filled square of size `size` centered on (`x`, `y`)"""
     for dy in range(-size, size + 1):
         for dx in range(-size, size + 1):
-            xvar.mlx.mlx_pixel_put(xvar.mlx_ptr, xvar.win, x + dx, y +
-                                   dy, color)
+            put_pixel_to_image(img_data, x + dx, y + dy, color)
 
 
-def draw_solution(xvar: XVar, solution: list[tuple], colors: Colors, cell_size: int = 50):
+def draw_solution(xvar: XVar, solution: list[tuple], colors: dict, cell_size: int) -> None:
+    """Draw the solution path on the maze using `draw_square()`"""
     x0, y0 = solution[0]
     x1, y1 = solution[len(solution) - 1]
     size_path = round(cell_size / 3)
     offset = round(cell_size / 2)
 
-    draw_square(xvar, (x0 * cell_size + offset), (y0 * cell_size + offset), size_path, colors.start)
-    draw_square(xvar, x1 * cell_size + offset, y1 * cell_size + offset, size_path, colors.end)
+    draw_square(xvar, (x0 * cell_size + offset), (y0 * cell_size + offset), size_path, colors['start'])
+    draw_square(xvar, x1 * cell_size + offset, y1 * cell_size + offset, size_path, colors['end'])
     for s in solution[1:len(solution) - 1]:
         y, x = s
-        draw_square(xvar, x * cell_size + offset, y * cell_size + offset, size_path, colors.path)
+        draw_square(xvar, x * cell_size + offset, y * cell_size + offset, size_path, colors['path'])
     # TODO Finish draw solution (beginning + end + path)
 
 
-def manage_close_1(xvar: XVar):
+def render_frame(xvar: XVar, img_data: ImgData, cell_size: int) -> None:
+    """Render the image to the window with an offset to center the maze"""
+    offset: int = round(cell_size / 2)
+    xvar.mlx.mlx_put_image_to_window(
+        xvar.mlx_ptr, xvar.win, img_data.img, offset, offset)
+
+
+def manage_close_1(xvar: XVar) -> None:
+    """Handle the close event by exiting the MLX loop"""
     xvar.mlx.mlx_loop_exit(xvar.mlx_ptr)
 
 
-def manage_key(key, xvar):
+def manage_key(key, xvar) -> None:
+    """Handle key press events"""
     print(f"Got key {key}: ", end="")
 
     if key == 65307:  # 'ESC'
         print("'ESC' key pressed, exciting...")
         xvar.mlx.mlx_loop_exit(xvar.mlx_ptr)
         return 0
+
+    if key == 99:  # 'c'
+        print("'c' key pressed, changing color of the maze...")
+        # TODO change color of the maze
+
     return 0
 
 
-def main():
+def get_key_press(key, xvar):
+    """little helper function to print the key pressed"""
+    print(f"Pressed key {key}")
 
+
+def main() -> None:
+
+    # Mlx Initialisation
     xvar = XVar()
     try:
         xvar.mlx = Mlx()
+        xvar.mlx_ptr = xvar.mlx.mlx_init()
+        _, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
+            xvar.mlx_ptr)
     except Exception as e:
         print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
         sys.exit(1)
-    xvar.mlx_ptr = xvar.mlx.mlx_init()
-    ret, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
-        xvar.mlx_ptr
-    )
+
+    # Get user input for maze dimensions and cell size
+    try:
+        cell_size: int = int(input("Enter the cell size: "))
+        if cell_size <= 0:
+            raise ValueError
+        maze_width: int = int(input("Enter the desired width of your maze: "))
+        if maze_width <= 0:
+            raise ValueError
+        maze_height: int = int(input("Enter the desired height of your maze: "))
+        if maze_height <= 0:
+            raise ValueError
+        win_width = (maze_width + 1) * cell_size
+        win_height = (maze_height + 1) * cell_size
+    except ValueError:
+        print(
+            "Please enter a valid value for the initialisation of the maze",
+            file=sys.stderr)
+        sys.exit(1)
 
     # Windows creation
     try:
         xvar.win = xvar.mlx.mlx_new_window(
-            xvar.mlx_ptr, 1600, 1600, "MLX main win"
-        )
+            xvar.mlx_ptr, win_width, win_height, "A-Maze-ing")
         if not xvar.win:
             raise Exception("Can't create main window")
     except Exception as e:
         print(f"Error Win create: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Image #1
-    xvar.img_1.img = xvar.mlx.mlx_new_image(xvar.mlx_ptr, 200, 200)
-    if not xvar.img_1.img:
-        raise Exception("Can't create image 1")
+    # Create new image buffer
+    img_data = setup_image_buffer(xvar, maze_width, maze_height, cell_size)
+    if not img_data:
+        raise Exception("no image created")
 
-    xvar.img_1.width = 200
-    xvar.img_1.height = 200
-    xvar.img_1.data, xvar.img_1.bpp, xvar.img_1.sl, xvar.img_1.iformat = \
-        xvar.mlx.mlx_get_data_addr(xvar.img_1.img)
-
-    # Fill image #1
-    for i in range(xvar.img_1.sl * 200):
-        xvar.img_1.data[i] = 0x80
-
-    for i in range(xvar.img_1.sl * 100):
-        xvar.img_1.data[i] = 0xFF
-
-    try:
-        # Add some red pixels
-        pixel_positions = [
-            0 * 200 * 4,                   # top left
-            (1 * 200 + 1) * 4,             # top left + 1
-            (199 * 200 + 199) * 4,         # bottom right
-            (198 * 200 + 198) * 4          # bottom right - 1
-        ]
-
-        for pos in pixel_positions:
-            if pos < len(xvar.img_1.data) - 3:
-                xvar.img_1.data[pos:pos+4] = (0xFFFF0000).to_bytes(4, 'little')
-    except Exception as e:
-        print(f"Error img1: {e}", file=sys.stderr)
-        sys.exit(1)
-
-
-
-
-
-
-
-
-
-
-
-
-
-    generator: MazeGenerator = MazeGenerator(15, 15)
+    # generate and draw maze
+    generator: MazeGenerator = MazeGenerator(maze_height, maze_width)
     test_maze = generator.get_maze().tolist()
     print(test_maze)
-    draw_maze_walls(xvar, test_maze)
-    start = (0, 0)
-    end = (14, 14)
-    solution = a_star_algorithm(test_maze, start, end)
+    draw_maze_walls(img_data, test_maze)
 
-    # colors = Colors(
-    #     start=hex(mc.to_hex(mc.CSS4_COLORS['red'], True)),
-    #     end=hex(mc.to_hex(mc.CSS4_COLORS['magenta'], True)),
-    #     path=hex(mc.to_hex(mc.CSS4_COLORS['mediumslateblue'], True))
-    #     )
-    # draw_solution(xvar, solution, colors)
+    start = (0, 0)
+    print(f'{start=}')
+    end = (14, 14)
+    print(f'{end=}')
+    solution = a_star_algorithm(test_maze, start, end)
+    colors: dict = {
+        'start': 0xFFFF0000,    # Red
+        'end': 0xFFFF00FF,      # Magenta
+        'path': 0xFF7B68EE      # Medium slate blue
+    }
+    # TODO draw_solution
+
+    # Print the image once it is fully implemented ->
+    # Only 1 call instead of thousands with mlx_pixel_pit()
+    render_frame(xvar, img_data, cell_size)
 
     # event hooks
     xvar.mlx.mlx_key_hook(xvar.win, manage_key, xvar)
-    # xvar.mlx.mlx_hook(xvar.win, 2, 1, manage_key_press, xvar)
+    xvar.mlx.mlx_hook(xvar.win, 2, 1, get_key_press, xvar)
     xvar.mlx.mlx_mouse_hook(xvar.win, 0, xvar)
     xvar.mlx.mlx_hook(xvar.win, 33, 0, manage_close_1, xvar)
 
@@ -300,6 +317,8 @@ def main():
     xvar.mlx.mlx_loop(xvar.mlx_ptr)
 
     # Cleaning resources
+    print("destroy image (to prevent leaks kek)")
+    xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, img_data.img)
     print("destroy win(s)")
     xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
     print("destroy mlx")
