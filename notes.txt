@@ -1,5 +1,0 @@
-parse maze input
-
-solver
-
-parse solver input

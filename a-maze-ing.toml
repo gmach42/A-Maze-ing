@@ -1,7 +1,17 @@
-[build-system]
-requires = ["setuptools>=64.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
-
 [project]
-name = "mazegen-*"
-version = "1.0.0"
+name = "a-maze-ing"
+version = "0.1.0"
+description = "A maze generator"
+authors = [
+    {name = "Gildas, Bruno"}
+]
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy (<2.4)"
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
