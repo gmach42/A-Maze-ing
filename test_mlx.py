@@ -1,4 +1,5 @@
 import sys
+import array
 from src.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
@@ -29,7 +30,7 @@ class XVar:
         self.win: Any = None
 
 
-def draw_line(
+def draw_vertical_line(
     img_data: ImgData,
     x0: int,
     y0: int,
@@ -100,9 +101,27 @@ def setup_image_buffer(
         xvar.mlx_ptr, img_data.width, img_data.height)
 
     res = xvar.mlx.mlx_get_data_addr(img_data.img)
-    img_data.data = res[0]
+    img_data.data = res[0].cast('I')
 
     return img_data
+
+
+def put_line_to_image(img_data: ImgData, x: int, y: int, size: int,
+                      color: int) -> None:
+    """
+    Register pixel into img_data thanks to https://github.com/vgauther/mlx_img
+    """
+    for dy in range(-5, 5 + 1):
+        target_y: int = y + dy
+
+        # Check if the pixel is in the allowed boundaries
+        if 0 <= x < img_data.width and 0 <= target_y < img_data.height:
+
+            # Cible le premier bit d'un pixel
+            start = (target_y * img_data.width) + x
+            end = (target_y * img_data.width) + (x + size)
+            img_data.data[start:end] = array.array('I',
+                                                   [color] * (end - start))
 
 
 def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
@@ -111,20 +130,20 @@ def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
     """
 
     # Separate a decimal color into 3 part rgb (255, 255, 255) + alpha
-    alpha = (color >> 24) & 0xff
-    red = (color >> 16) & 0xff
-    green = (color >> 8) & 0xff
-    blue = color & 0xff
+    # alpha = (color >> 24) & 0xff
+    # red = (color >> 16) & 0xff
+    # green = (color >> 8) & 0xff
+    # blue = color & 0xff
 
     # Check if the pixel is in the allowed boundaries
     if 0 <= x < img_data.width and 0 <= y < img_data.height:
 
         # Cible le premier bit d'un pixel
-        offset = y * 4 * img_data.width + x * 4
-        img_data.data[offset] = blue
-        img_data.data[offset + 1] = green
-        img_data.data[offset + 2] = red
-        img_data.data[offset + 3] = alpha
+        offset = y * img_data.width + x
+        img_data.data[offset] = color
+        # img_data.data[offset + 1] = green
+        # img_data.data[offset + 2] = red
+        # img_data.data[offset + 3] = alpha
 
 
 def draw_maze_walls(
@@ -146,20 +165,19 @@ def draw_maze_walls(
 
             # Check each wall using bit flags (from Border class)
             if cell_value & Border.NORTH:
-                draw_line(img_data, x, y, x + cell_size, y,
-                          0xFFFFFFFF)
+                put_line_to_image(img_data, x, y, cell_size, 0xFFFFFFFF)
 
             if cell_value & Border.SOUTH:
-                draw_line(img_data, x, y + cell_size, x + cell_size,
-                          y + cell_size, 0xFFFFFFFF)
+                put_line_to_image(img_data, x, y + cell_size, cell_size,
+                                  0xFFFFFFFF)
 
             if cell_value & Border.WEST:
-                draw_line(img_data, x, y, x, y + cell_size,
-                          0xFFFFFFFF)
+                draw_vertical_line(img_data, x, y, x, y + cell_size,
+                                   0xFFFFFFFF)
 
             if cell_value & Border.EAST:
-                draw_line(img_data, x + cell_size, y, x + cell_size,
-                          y + cell_size, 0xFFFFFFFF)
+                draw_vertical_line(img_data, x + cell_size, y, x + cell_size,
+                                   y + cell_size, 0xFFFFFFFF)
 
 
 def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
