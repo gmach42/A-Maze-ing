@@ -1,5 +1,4 @@
 import sys
-import array
 from src.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
@@ -8,7 +7,10 @@ from src.solver import a_star_algorithm
 import src.solver as solver
 from typing import Any
 from src.color_manager import ColorManager
-from src import MazeManager
+
+# TODO gestion erreur parsing et autre
+# TODO merge correctement avec version gildas
+# TODO animation chemin
 
 
 class ImgData:
@@ -37,60 +39,14 @@ class XVar:
         self.row: int = 0
         self.maze_width: int = 0
         self.maze_height: int = 0
+        self.wall_width: int = 0
+        self.line_color: ColorManager = ColorManager.WHITE
+        self.animation: bool = False
+        self.speed: str = 'medium'
+        self.solution: list = []
 
     def set_img(self, img: ImgData):
         self.img = img
-
-
-def draw_vertical_line(
-    img_data: ImgData,
-    x0: int,
-    y0: int,
-    x1: int,
-    y1: int,
-    color: int,
-    line_width: int = 5,
-) -> None:
-    """
-    Draw a line from (x0, y0) to (x1, y1) using [Bresenham's line algorithm](\
-        https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
-
-    Color format: 0xAARRGGBB (e.g., 0xFFFFFFFF for white, 0xFFFF0000 for red)
-
-    More information in README.md
-    """
-
-    if line_width == 0:
-        raise ValueError("Line_width cannot be null")
-
-    dx = abs(x1 - x0)
-    dy = abs(y1 - y0)
-
-    # Get direction of the line with the sign sx, sy
-    sx = 1 if x0 < x1 else -1
-    sy = 1 if y0 < y1 else -1
-
-    # Get the slope of the line:
-    # - If dy > dx, the line will be more vertical
-    # - If dx > dy, the line will be more horizontal
-    err = dx - dy
-
-    while True:
-        # Draw a filled square around each point
-        draw_square(img_data, x0, y0, line_width, color)
-
-        # If the destination is reached, stop the loop
-        if x0 == x1 and y0 == y1:
-            break
-
-        # Check README.md / Bresenham's algorithm
-        e2 = 2 * err
-        if e2 > -dy:
-            err -= dy
-            x0 += sx
-        if e2 < dx:
-            err += dx
-            y0 += sy
 
 
 def setup_image_buffer(
@@ -103,9 +59,9 @@ def setup_image_buffer(
     """
 
     img_data = ImgData()
-    # line_width = 5, so we need to add 2.5 to each side
-    img_data.width = xvar.maze_width * xvar.cell_size + 5
-    img_data.height = xvar.maze_height * xvar.cell_size + 5
+
+    img_data.width = xvar.maze_width * xvar.cell_size + xvar.wall_width + 1
+    img_data.height = xvar.maze_height * xvar.cell_size + xvar.wall_width + 1
     img_data.img = xvar.mlx.mlx_new_image(
         xvar.mlx_ptr, img_data.width, img_data.height)
 
@@ -115,117 +71,134 @@ def setup_image_buffer(
     return img_data
 
 
-def put_line_to_image(img_data: ImgData, x: int, y: int, size: int,
-                      color: int) -> None:
-    """
-    Register pixel into img_data thanks to https://github.com/vgauther/mlx_img
-    """
-    for dy in range(-5, 5 + 1):
-        target_y: int = y + dy
-
-        # Check if the pixel is in the allowed boundaries
-        if 0 <= x < img_data.width and 0 <= target_y < img_data.height:
-
-            # Cible le premier bit d'un pixel
-            start = (target_y * img_data.width) + x
-            end = (target_y * img_data.width) + (x + size)
-            img_data.data[start:end] = array.array('I',
-                                                   [color] * (end - start))
-
-
-def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
-    """
-    Register pixel into img_data thanks to https://github.com/vgauther/mlx_img
-    """
-
-    # Separate a decimal color into 3 part rgb (255, 255, 255) + alpha
-    # alpha = (color >> 24) & 0xff
-    # red = (color >> 16) & 0xff
-    # green = (color >> 8) & 0xff
-    # blue = color & 0xff
-
-    # Check if the pixel is in the allowed boundaries
-    if 0 <= x < img_data.width and 0 <= y < img_data.height:
-
-        # Cible le premier bit d'un pixel
-        offset = y * img_data.width + x
-        img_data.data[offset] = color
-        # img_data.data[offset + 1] = green
-        # img_data.data[offset + 2] = red
-        # img_data.data[offset + 3] = alpha
-
-
 def draw_maze_walls(
     xvar: XVar
 ) -> None:
     """
-    Draw walls around each cell using `draw_line()` and `Border`
+    Draw walls around each cell using `draw_rectangle` and `Border`
     """
+    rows = len(xvar.maze)
+    cols = len(xvar.maze[0])
 
-    if (0 <= xvar.row < xvar.maze_height) and\
-       (0 <= xvar.col < xvar.maze_width):
-        try:
-            cell_value = xvar.maze[xvar.row][xvar.col]
-            x = xvar.col * xvar.cell_size
-            y = xvar.row * xvar.cell_size
+    for row in range(rows):
+        for col in range(cols):
+            cell_value = xvar.maze[row][col]
+            x = col * xvar.cell_size
+            y = row * xvar.cell_size
 
             # Check each wall using bit flags (from Border class)
             if cell_value & Border.NORTH:
-                put_line_to_image(xvar.img, x, y, xvar.cell_size, 0xFFFFFFFF)
+                draw_rectangle(xvar.img, x, y, xvar.cell_size +
+                               xvar.wall_width, xvar.wall_width,
+                               xvar.line_color)
+
             if cell_value & Border.SOUTH:
-                put_line_to_image(xvar.img, x, y + xvar.cell_size,
-                                  xvar.cell_size, 0xFFFFFFFF)
+                draw_rectangle(xvar.img, x, y + xvar.cell_size,
+                               xvar.cell_size + xvar.wall_width,
+                               xvar.wall_width, xvar.line_color)
+
             if cell_value & Border.WEST:
-                draw_vertical_line(xvar.img, x, y, x, y + xvar.cell_size,
-                                   0xFFFFFFFF)
+                draw_rectangle(xvar.img, x, y, xvar.wall_width,
+                               xvar.cell_size + xvar.wall_width,
+                               xvar.line_color)
+
             if cell_value & Border.EAST:
-                draw_vertical_line(xvar.img, x + xvar.cell_size, y, x +
-                                   xvar.cell_size, y + xvar.cell_size,
-                                   0xFFFFFFFF)
-            render_frame(xvar)
-            xvar.col += 1
-            if xvar.col >= xvar.maze_width:
-                xvar.col = 0
-                xvar.row += 1
-        except IndexError:
-            print(f"{xvar.col=} et {xvar.row=}")
+                draw_rectangle(xvar.img, x + xvar.cell_size, y,
+                               xvar.wall_width, xvar.cell_size +
+                               xvar.wall_width, xvar.line_color)
 
 
-def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
-                ) -> None:
+def draw_maze_walls_anim(
+    xvar: XVar
+) -> None:
+    """
+    Draw walls around each cell using `draw_rectangle` and `Border`
+    """
+    match xvar.speed:
+        case 'slow':
+            limit: int = 1
+        case 'medium':
+            limit: int = 5
+        case 'fast':
+            limit: int = 10
+
+    for _ in range(limit):
+        if (0 <= xvar.row < xvar.maze_height) and\
+           (0 <= xvar.col < xvar.maze_width):
+            try:
+                cell_value = xvar.maze[xvar.row][xvar.col]
+                x = xvar.col * xvar.cell_size
+                y = xvar.row * xvar.cell_size
+
+                # Check each wall using bit flags (from Border class)
+                if cell_value & Border.NORTH:
+                    draw_rectangle(xvar.img, x, y, xvar.cell_size +
+                                   xvar.wall_width, xvar.wall_width,
+                                   xvar.line_color)
+
+                if cell_value & Border.SOUTH:
+                    draw_rectangle(xvar.img, x, y + xvar.cell_size,
+                                   xvar.cell_size + xvar.wall_width,
+                                   xvar.wall_width, xvar.line_color)
+
+                if cell_value & Border.WEST:
+                    draw_rectangle(xvar.img, x, y, xvar.wall_width,
+                                   xvar.cell_size + xvar.wall_width,
+                                   xvar.line_color)
+
+                if cell_value & Border.EAST:
+                    draw_rectangle(xvar.img, x + xvar.cell_size, y,
+                                   xvar.wall_width, xvar.cell_size +
+                                   xvar.wall_width, xvar.line_color)
+                render_frame(xvar)
+                xvar.col += 1
+                if xvar.col >= xvar.maze_width:
+                    xvar.col = 0
+                    xvar.row += 1
+            except IndexError:
+                print(f"{xvar.col=} et {xvar.row=}")
+
+
+def draw_rectangle(img_data: ImgData, x: int, y: int, width: int, height: int,
+                   color: int
+                   ) -> None:
     """Draw a filled square of size `size` centered on (`x`, `y`)"""
-    for dy in range(-size, size + 1):
-        for dx in range(-size, size + 1):
-            put_pixel_to_image(img_data, x + dx, y + dy, color)
+    for dy in range(y, y + height):
+        for dx in range(x, x + width):
+            offset = dy * img_data.width + dx
+            img_data.data[offset] = color
 
 
 def draw_solution(
-        xvar: XVar, solution: list[tuple], colors: dict) -> None:
-    """Draw the solution path on the maze using `draw_square()`"""
-    x0, y0 = solution[0]
-    x1, y1 = solution[:-1]
-    size_path = round(xvar.cell_size / 3)
-    offset = round(xvar.cell_size / 2)
+        xvar: XVar, solution: list[tuple[int, int]], colors: dict[str, int]
+        ) -> None:
+    """Draw the solution path on the maze using `draw_rectangle()`"""
+    y_start, x_start = solution[0]
+    y_end, x_end = solution[-1]
+    size_path = xvar.cell_size - xvar.wall_width
+    offset = xvar.wall_width
 
-    draw_square(
-        xvar.img, (x0 * xvar.cell_size + offset),
-        (y0 * xvar.cell_size + offset), size_path, colors['start']
-        )
-    draw_square(
-        xvar.img, x1 * xvar.cell_size + offset, y1 * xvar.cell_size + offset,
-        size_path, colors['end']
-        )
+    # Draw start
+    draw_rectangle(xvar.img, x_start * xvar.cell_size + offset, y_start *
+                   xvar.cell_size + offset, size_path, size_path,
+                   colors['start'])
+
+    # Draw end
+    draw_rectangle(xvar.img, x_end * xvar.cell_size + offset, y_end *
+                   xvar.cell_size + offset, size_path, size_path,
+                   colors['end'])
+
+    # Draw path
     for s in solution[1:len(solution) - 1]:
         y, x = s
-        draw_square(
-            xvar.img, x * xvar.cell_size + offset, y * xvar.cell_size + offset,
-            size_path, colors['path']
-            )
-    # TODO Finish draw solution (beginning + end + path)
+        draw_rectangle(xvar.img, x * xvar.cell_size + offset, y *
+                       xvar.cell_size + offset, size_path, size_path,
+                       colors['path'])
+
 
 def render_frame(xvar: XVar) -> None:
     """Render the image to the window with an offset to center the maze"""
-    offset: int = round(xvar.cell_size / 2)
+    offset: int = xvar.cell_size // 2
     xvar.mlx.mlx_put_image_to_window(
         xvar.mlx_ptr, xvar.win, xvar.img.img, offset, offset)
 
@@ -268,6 +241,15 @@ def get_key_press(key, xvar):
     print(f"Pressed key {key}")
 
 
+def config_xvar(xvar: XVar, env_variable: EnvVariables):
+    xvar.maze_width = env_variable.width
+    xvar.maze_height = env_variable.height
+    xvar.cell_size = env_variable.cell_size
+    xvar.wall_width = env_variable.wall_width
+    xvar.animation = env_variable.animation
+    xvar.speed = env_variable.speed_animation
+
+
 def main() -> None:
 
     # Mlx Initialisation
@@ -284,8 +266,7 @@ def main() -> None:
     # Get user input for maze dimensions and cell size
     try:
         env_variable: EnvVariables = parsing('config.txt')
-        xvar.maze_width = env_variable.width
-        xvar.maze_height = env_variable.height
+        config_xvar(xvar, env_variable)
         win_width = (xvar.maze_width + 1) * xvar.cell_size
         win_height = (xvar.maze_height + 1) * xvar.cell_size
     except ValueError:
@@ -312,9 +293,10 @@ def main() -> None:
     # Generate and draw maze
     generator: MazeGenerator = MazeGenerator(xvar.maze_height, xvar.maze_width)
     xvar.maze = generator.get_maze()
-    xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls, xvar)
-
-    # TODO Get user input for start and end points, or generate them randomly
+    if xvar.animation:
+        xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
+    else:
+        draw_maze_walls(xvar)
 
     # Get the solution path with A* algorithm and draw it on the maze
     start: tuple = env_variable.entry
@@ -339,6 +321,7 @@ def main() -> None:
     xvar.mlx.mlx_hook(xvar.win, 33, 0, manage_close_1, xvar)
 
     # Main loop
+    # xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, render_function, )
     xvar.mlx.mlx_loop(xvar.mlx_ptr)
 
     # Cleaning resources

@@ -1,13 +1,17 @@
 # Maze width (number of cells)
-WIDTH=50
+WIDTH=30
 # Maze height
-HEIGHT=50
+HEIGHT=20
 # Entry coordinates (x, y)
 ENTRY=25,4
 # Exit coordinates (x, y)
-EXIT=35,12
+EXIT=12,12
 # Output filename
 OUTPUT_FILE=maze.txt
 # Is the maze perfect?
 PERFECT=True
 # Optional: seed, algorithm, display_mode
+ANIMATION=True
+CELL_WIDTH=50
+WALL_WIDTH=10
+SPEED_ANIMATION=fast

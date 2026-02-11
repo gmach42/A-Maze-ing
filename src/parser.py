@@ -20,6 +20,9 @@ class EnvVariables(BaseModel):
     output_file: str
     perfect: StrictBool
     animation: bool = False
+    cell_size: int = 50
+    wall_width: int = 10
+    speed_animation: str = 'medium'
 
     @field_validator('entry', 'exit', mode='before')
     @classmethod
@@ -54,7 +57,7 @@ def parsing(file_name: str) -> EnvVariables:
                     string_split: list = line.split('=')
                     if len(string_split) == 2:
                         string_split[1] = string_split[1].strip('\n')
-                        if string_split[0].lower() == 'perfect':
+                        if string_split[0].lower() in ['perfect', 'animation']:
                             if string_split[1].lower() == 'true':
                                 string_split[1] = True
                             elif string_split[1].lower() == 'false':
@@ -65,7 +68,7 @@ def parsing(file_name: str) -> EnvVariables:
                         raise FormatError("You need to use <key>=<value>"
                                           " format")
                 line = file.readline()
-        if len(results) > 7:
+        if len(results) > 10:
             raise TooManyVar("Too much variables in configuration file!")
         for key, value in results.items():
             if not value and key in ["width", "height", "entry", "exit",
