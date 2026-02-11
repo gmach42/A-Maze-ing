@@ -44,8 +44,9 @@ def setup_image_buffer(
 
     img_data = ImgData()
 
-    img_data.width = width * cell_size + line_width
-    img_data.height = height * cell_size + line_width
+    img_data.width = width * cell_size + line_width + 1
+    img_data.height = height * cell_size + line_width + 1
+    print(img_data.height, img_data.width)
     img_data.img = xvar.mlx.mlx_new_image(
         xvar.mlx_ptr, img_data.width, img_data.height)
 
@@ -53,37 +54,6 @@ def setup_image_buffer(
     img_data.data = res[0].cast('I')
 
     return img_data
-
-
-def draw_line(
-    img_data: ImgData,
-    x0: int,
-    y0: int,
-    x1: int,
-    y1: int,
-    color: int,
-    line_width: int,
-) -> None:
-    """
-    Draw a thick line by drawing a filled rectangle
-    """
-
-    if line_width == 0:
-        raise ValueError("Line_width cannot be null")
-
-    half_width = line_width // 2
-
-    # For horizontal line
-    if y0 == y1:
-        x_start = min(x0, x1)
-        width = abs(x1 - x0) + 1 + half_width
-        draw_rectangle(img_data, x_start, y0 - half_width, width, line_width, color, half_width)
-
-    # For vertical line
-    elif x0 == x1:
-        y_start = min(y0, y1)
-        height = abs(y1 - y0) + 1 + half_width
-        draw_rectangle(img_data, x0 - half_width, y_start, line_width, height, color, half_width)
 
 
 def draw_maze_walls(
@@ -94,7 +64,7 @@ def draw_maze_walls(
     line_color: int,
 ) -> None:
     """
-    Draw walls around each cell using `draw_line()` and `Border`
+    Draw walls around each cell using `draw_rectangle` and `Border`
     """
     rows = len(maze)
     cols = len(maze[0])
@@ -102,66 +72,51 @@ def draw_maze_walls(
     for row in range(rows):
         for col in range(cols):
             cell_value = maze[row][col]
-            x = col * cell_size + line_width // 2
-            y = row * cell_size + line_width // 2
+            x = col * cell_size
+            y = row * cell_size
 
             # Check each wall using bit flags (from Border class)
             if cell_value & Border.NORTH:
-                draw_line(img_data, x, y, x + cell_size, y,
-                          line_color, line_width)
+                draw_rectangle(img_data, x, y, cell_size + line_width, line_width, line_color)
 
             if cell_value & Border.SOUTH:
-                draw_line(img_data, x, y + cell_size, x + cell_size,
-                          y + cell_size, line_color, line_width)
+                draw_rectangle(img_data, x, y + cell_size, cell_size + line_width, line_width, line_color)
 
             if cell_value & Border.WEST:
-                draw_line(img_data, x, y, x, y + cell_size,
-                          line_color, line_width)
+                draw_rectangle(img_data, x, y, line_width, cell_size + line_width, line_color)
 
             if cell_value & Border.EAST:
-                draw_line(img_data, x + cell_size, y, x + cell_size,
-                          y + cell_size, line_color, line_width)
+                draw_rectangle(img_data, x + cell_size, y, line_width, cell_size + line_width, line_color)
 
 
-def draw_rectangle(img_data: ImgData, x: int, y: int, width: int, height: int, color: int, offset: int
+def draw_rectangle(img_data: ImgData, x: int, y: int, width: int, height: int, color: int
                    ) -> None:
     """Draw a filled square of size `size` centered on (`x`, `y`)"""
-
-    x_start = max(0, x - width + offset)
-    x_end = min(img_data.width, x + width + 1)
-    y_start = max(0, y - height + offset)
-    y_end = min(img_data.height, y + height + 1 + offset)
-
-    if 0 <= x < img_data.width and 0 <= y < img_data.height:
-        for dy in range(y_start, y_end):
-            for dx in range(x_start, x_end):
-                offset = dy * img_data.width + dx
-                img_data.data[offset] = color
+    for dy in range(y, y + height):
+        for dx in range(x, x + width):
+            offset = dy * img_data.width + dx
+            img_data.data[offset] = color
 
 
 def draw_solution(
-        img_data: ImgData, solution: list[tuple], colors: dict, cell_size: int, line_width: int
+        img_data: ImgData, solution: list[tuple[int, int]], colors: dict[str, int], cell_size: int, line_width: int
         ) -> None:
     """Draw the solution path on the maze using `draw_rectangle()`"""
-    x0, y0 = solution[0]
-    x1, y1 = solution[len(solution) - 1]
-    size_path = cell_size // 2 - line_width
-    offset = cell_size // 2
+    y_start, x_start = solution[0]
+    y_end, x_end = solution[-1]
+    size_path = cell_size - line_width
+    offset = line_width
 
-    draw_rectangle(
-        img_data, (x0 * cell_size + offset), (y0 * cell_size + offset),
-        size_path, size_path, colors['start'], line_width // 2
-        )
-    draw_rectangle(
-        img_data, x1 * cell_size + offset, y1 * cell_size + offset,
-        size_path, size_path, colors['end'], line_width // 2
-        )
+    # Draw start
+    draw_rectangle(img_data, x_start * cell_size + offset, y_start * cell_size + offset, size_path, size_path, colors['start'])
+
+    # Draw end
+    draw_rectangle(img_data, x_end * cell_size + offset, y_end * cell_size + offset, size_path, size_path, colors['end'])
+
+    # Draw path
     for s in solution[1:len(solution) - 1]:
         y, x = s
-        draw_rectangle(
-            img_data, x * cell_size + offset, y * cell_size + offset,
-            size_path, size_path, colors['path'], line_width // 2
-            )
+        draw_rectangle(img_data, x * cell_size + offset, y * cell_size + offset, size_path, size_path, colors['path'])
 
 
 def render_frame(xvar: XVar, img_data: ImgData, cell_size: int) -> None:
@@ -222,6 +177,11 @@ def main() -> None:
         print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
         sys.exit(1)
 
+    # if line_width not pair: line_width++
+    line_width = 10
+    if line_width % 2:
+        line_width += 1
+
     # Get user input for maze dimensions and cell size
     try:
         cell_size = int(input("Enter the cell size: "))
@@ -236,8 +196,8 @@ def main() -> None:
         maze_height = int(input("Enter the desired height of your maze: "))
         if maze_height <= 0:
             raise ValueError
-        win_width = (maze_width + 1) * cell_size
-        win_height = (maze_height + 1) * cell_size
+        win_width = (maze_width + 1) * cell_size + line_width
+        win_height = (maze_height + 1) * cell_size + line_width
     except ValueError:
         print(
             "Please enter a valid value for the initialisation of the maze",
@@ -254,11 +214,6 @@ def main() -> None:
         print(f"Error Win create: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # if line_width not pair: line_width++
-    line_width = 5
-    if line_width % 2:
-        line_width += 1
-
     # Create new image buffer
     img_data = setup_image_buffer(xvar, maze_width, maze_height, cell_size, line_width)
     if not img_data:
@@ -270,7 +225,7 @@ def main() -> None:
     print(test_maze)
     draw_maze_walls(img_data, test_maze, cell_size, line_width, ColorManager.WHITE)
 
-    # TODO Get user input for start and end points, or generate them randomly
+    # Define start and end
     start = (0, 0)
     print(f'{start=}')
     end = (14, 14)
