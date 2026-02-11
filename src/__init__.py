@@ -1,25 +1,24 @@
 __authors__ = "Gildas", "Bruno"
 __version__ = "0.1.0"
 
-from .ui.border import Border
-from .maze import Maze
+from .solver.border import Border
+from .maze.maze import Maze
 from .maze.maze_generator import MazeGenerator
+from .maze.maze_manager import MazeManager
 from .rendering.image import Image
-from .solver.path import Path
-from .solver import Solver
+from solver import SolutionPath
+from .solver.solver import Solver
 from .rendering.color_manager import ColorManager
-from .core.xvar import XVar, setup_image_buffer, change_maze_color, change_path_color
+from .core.xvar import XVar
 
 __all__ = [
     "Border",
     "Maze",
     "MazeGenerator",
+    "MazeManager",
     "Image",
-    "Path",
+    "SolutionPath",
     "Solver",
     "ColorManager",
     "XVar",
-    "setup_image_buffer",
-    "change_maze_color",
-    "change_path_color",
 ]

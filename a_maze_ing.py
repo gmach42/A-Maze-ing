@@ -1,16 +1,11 @@
 import sys
 from mlx import Mlx
 
-from src.core.xvar import XVar
-from src.core.img_data import ImgData
-from src.maze.maze import Maze
-from src.maze.generator import MazeGenerator
-from src.solver.solver import Solver
-from src.solver.path import Path
-from src.rendering.renderer import setup_image_buffer, render_frame
-from src.rendering.color_manager import ColorManager
-from src.events.keyboard import manage_key, get_key_press
-from src.events.window import manage_close
+from src.core import XVar
+from src.maze import Maze, MazeGenerator
+from src.solver import Solver, SolutionPath
+from src.rendering import setup_image_buffer, render_frame, ColorManager
+from src.events import manage_key, get_key_press, manage_close
 
 
 def main() -> None:
@@ -19,7 +14,9 @@ def main() -> None:
     try:
         xvar.mlx = Mlx()
         xvar.mlx_ptr = xvar.mlx.mlx_init()
-        _, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(xvar.mlx_ptr)
+        _, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
+            xvar.mlx_ptr
+        )
     except Exception as e:
         print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
         sys.exit(1)
@@ -46,8 +43,9 @@ def main() -> None:
         sys.exit(1)
 
     try:
-        xvar.win = xvar.mlx.mlx_new_window(xvar.mlx_ptr, win_width,
-                                           win_height, "A-Maze-ing")
+        xvar.win = xvar.mlx.mlx_new_window(
+            xvar.mlx_ptr, win_width, win_height, "A-Maze-ing"
+        )
         if not xvar.win:
             raise Exception("Can't create main window")
     except Exception as e:
@@ -55,25 +53,52 @@ def main() -> None:
         sys.exit(1)
 
     img_maze = setup_image_buffer(xvar, cols, rows, cell_size, wall_width)
-    img_path = setup_image_buffer(xvar, cols, rows, cell_size, wall_width)
+    img_path = setup_image_buffer(
+        xvar, cols, rows, cell_size, wall_width
+    )
 
     generator = MazeGenerator(rows, cols)
-    maze_matrix = generator.get_maze().tolist()
+    maze_matrix = generator.get_maze()
 
-    xvar.maze = Maze(img_maze, rows, cols, maze_matrix, cell_size,
-                     wall_width, ColorManager.WHITE)
+    xvar.maze = Maze(
+        img_maze,
+        rows,
+        cols,
+        maze_matrix,
+        cell_size,
+        wall_width,
+        ColorManager.WHITE,
+    )
     xvar.maze.regen_maze()
 
-    start = (0, 0)
-    end = (rows - 1, cols - 1)
-    solution = Solver.a_star_algorithm(maze_matrix, start, end)
+    xvar.solution = SolutionPath(
+        img_path,
+        [],
+        cell_size,
+        wall_width,
+        {
+            "start": ColorManager.RED,
+            "end": ColorManager.MAGENTA,
+            "path": ColorManager.PATH,
+        },
+        (0, 0),
+        (rows - 1, cols - 1),
+    )
 
-    colors = {
-        "start": ColorManager.RED,
-        "end": ColorManager.MAGENTA,
-        "path": ColorManager.PATH,
-    }
-    Path.draw_solution(img_path, solution, colors, cell_size, wall_width)
+    xvar.solution = Solver.a_star_algorithm(
+        maze_matrix, (0, 0), (rows - 1, cols - 1)
+    )
+
+    # start = (0, 0)
+    # end = (rows - 1, cols - 1)
+    # solution = Solver.a_star_algorithm(maze_matrix, start, end)
+
+    # colors = {
+    #     "start": ColorManager.RED,
+    #     "end": ColorManager.MAGENTA,
+    #     "path": ColorManager.PATH,
+    # }
+    # SolutionPath.draw_solution(solution)
 
     render_frame(xvar, img_maze, cell_size)
     render_frame(xvar, img_path, cell_size)
