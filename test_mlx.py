@@ -7,6 +7,7 @@ from src.solver import a_star_algorithm
 import src.solver as solver
 from typing import Any
 from src.color_manager import ColorManager
+from src import MazeManager
 
 
 class ImgData:
@@ -28,6 +29,16 @@ class XVar:
         self.screen_w: int = 0
         self.screen_h: int = 0
         self.win: Any = None
+        self.img: ImgData = None
+        self.cell_size: int = 0
+        self.maze: list = []
+        self.col: int = 0
+        self.row: int = 0
+        self.maze_width: int = 0
+        self.maze_height: int = 0
+
+    def set_img(self, img: ImgData):
+        self.img = img
 
 
 def draw_vertical_line(
@@ -82,10 +93,7 @@ def draw_vertical_line(
 
 
 def setup_image_buffer(
-    xvar: XVar,
-    width: int,
-    height: int,
-    cell_size: int
+    xvar: XVar
 ) -> ImgData:
     """
     Create an image buffer ImgData of dimension
@@ -95,8 +103,8 @@ def setup_image_buffer(
 
     img_data = ImgData()
     # line_width = 5, so we need to add 2.5 to each side
-    img_data.width = width * cell_size + 5
-    img_data.height = height * cell_size + 5
+    img_data.width = xvar.maze_width * xvar.cell_size + 5
+    img_data.height = xvar.maze_height * xvar.cell_size + 5
     img_data.img = xvar.mlx.mlx_new_image(
         xvar.mlx_ptr, img_data.width, img_data.height)
 
@@ -147,37 +155,39 @@ def put_pixel_to_image(img_data: ImgData, x: int, y: int, color: int) -> None:
 
 
 def draw_maze_walls(
-    img_data: ImgData,
-    maze: list[list[int]],
-    cell_size: int,
+    xvar: XVar
 ) -> None:
     """
     Draw walls around each cell using `draw_line()` and `Border`
     """
-    rows = len(maze)
-    cols = len(maze[0])
 
-    for row in range(rows):
-        for col in range(cols):
-            cell_value = maze[row][col]
-            x = col * cell_size
-            y = row * cell_size
+    if (0 <= xvar.row < xvar.maze_height) and\
+       (0 <= xvar.col < xvar.maze_width):
+        try:
+            cell_value = xvar.maze[xvar.row][xvar.col]
+            x = xvar.col * xvar.cell_size
+            y = xvar.row * xvar.cell_size
 
             # Check each wall using bit flags (from Border class)
             if cell_value & Border.NORTH:
-                put_line_to_image(img_data, x, y, cell_size, 0xFFFFFFFF)
-
+                put_line_to_image(xvar.img, x, y, xvar.cell_size, 0xFFFFFFFF)
             if cell_value & Border.SOUTH:
-                put_line_to_image(img_data, x, y + cell_size, cell_size,
-                                  0xFFFFFFFF)
-
+                put_line_to_image(xvar.img, x, y + xvar.cell_size,
+                                  xvar.cell_size, 0xFFFFFFFF)
             if cell_value & Border.WEST:
-                draw_vertical_line(img_data, x, y, x, y + cell_size,
+                draw_vertical_line(xvar.img, x, y, x, y + xvar.cell_size,
                                    0xFFFFFFFF)
-
             if cell_value & Border.EAST:
-                draw_vertical_line(img_data, x + cell_size, y, x + cell_size,
-                                   y + cell_size, 0xFFFFFFFF)
+                draw_vertical_line(xvar.img, x + xvar.cell_size, y, x +
+                                   xvar.cell_size, y + xvar.cell_size,
+                                   0xFFFFFFFF)
+            render_frame(xvar)
+            xvar.col += 1
+            if xvar.col >= xvar.maze_width:
+                xvar.col = 0
+                xvar.row += 1
+        except IndexError:
+            print(f"{xvar.col=} et {xvar.row=}")
 
 
 def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
@@ -189,36 +199,35 @@ def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
 
 
 def draw_solution(
-        img_data: ImgData, solution: list[tuple], colors: dict, cell_size: int
-        ) -> None:
+        xvar: XVar, solution: list[tuple], colors: dict) -> None:
     """Draw the solution path on the maze using `draw_square()`"""
     x0, y0 = solution[0]
     x1, y1 = solution[len(solution) - 1]
-    size_path = round(cell_size / 3)
-    offset = round(cell_size / 2)
+    size_path = round(xvar.cell_size / 3)
+    offset = round(xvar.cell_size / 2)
 
     draw_square(
-        img_data, (x0 * cell_size + offset), (y0 * cell_size + offset),
-        size_path, colors['start']
+        xvar.img, (x0 * xvar.cell_size + offset),
+        (y0 * xvar.cell_size + offset), size_path, colors['start']
         )
     draw_square(
-        img_data, x1 * cell_size + offset, y1 * cell_size + offset,
+        xvar.img, x1 * xvar.cell_size + offset, y1 * xvar.cell_size + offset,
         size_path, colors['end']
         )
     for s in solution[1:len(solution) - 1]:
         y, x = s
         draw_square(
-            img_data, x * cell_size + offset, y * cell_size + offset,
+            xvar.img, x * xvar.cell_size + offset, y * xvar.cell_size + offset,
             size_path, colors['path']
             )
     # TODO Finish draw solution (beginning + end + path)
 
 
-def render_frame(xvar: XVar, img_data: ImgData, cell_size: int) -> None:
+def render_frame(xvar: XVar) -> None:
     """Render the image to the window with an offset to center the maze"""
-    offset: int = round(cell_size / 2)
+    offset: int = round(xvar.cell_size / 2)
     xvar.mlx.mlx_put_image_to_window(
-        xvar.mlx_ptr, xvar.win, img_data.img, offset, offset)
+        xvar.mlx_ptr, xvar.win, xvar.img.img, offset, offset)
 
 
 def manage_close_1(xvar: XVar) -> None:
@@ -274,17 +283,17 @@ def main() -> None:
 
     # Get user input for maze dimensions and cell size
     try:
-        cell_size = int(input("Enter the cell size: "))
-        if cell_size <= 0:
+        xvar.cell_size = int(input("Enter the cell size: "))
+        if xvar.cell_size <= 0:
             raise ValueError
-        maze_width = int(input("Enter the desired width of your maze: "))
-        if maze_width <= 0:
+        xvar.maze_width = int(input("Enter the desired width of your maze: "))
+        if xvar.maze_width <= 0:
             raise ValueError
-        maze_height = int(input("Enter the desired height of your maze: "))
-        if maze_height <= 0:
+        xvar.maze_height = int(input("Enter the desired height of your maze: "))
+        if xvar.maze_height <= 0:
             raise ValueError
-        win_width = (maze_width + 1) * cell_size
-        win_height = (maze_height + 1) * cell_size
+        win_width = (xvar.maze_width + 1) * xvar.cell_size
+        win_height = (xvar.maze_height + 1) * xvar.cell_size
     except ValueError:
         print(
             "Please enter a valid value for the initialisation of the maze",
@@ -302,35 +311,34 @@ def main() -> None:
         sys.exit(1)
 
     # Create new image buffer
-    img_data = setup_image_buffer(xvar, maze_width, maze_height, cell_size)
-    if not img_data:
+    xvar.set_img(setup_image_buffer(xvar))
+    if not xvar.img:
         raise Exception("no image created")
 
     # Generate and draw maze
-    generator: MazeGenerator = MazeGenerator(maze_height, maze_width)
-    test_maze = generator.get_maze()
-    print(test_maze)
-    draw_maze_walls(img_data, test_maze, cell_size)
+    generator: MazeGenerator = MazeGenerator(xvar.maze_height, xvar.maze_width)
+    xvar.maze = generator.get_maze()
+    xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls, xvar)
 
     # TODO Get user input for start and end points, or generate them randomly
-    start = (0, 0)
-    print(f'{start=}')
-    end = (14, 14)
-    print(f'{end=}')
+    # start = (0, 0)
+    # print(f'{start=}')
+    # end = (14, 14)
+    # print(f'{end=}')
 
-    # Get the solution path with A* algorithm and draw it on the maze
-    solution = a_star_algorithm(test_maze, start, end)
-    print(f'Solution:\n{solver.cardinal_direction(solution)}')
-    colors: dict = {
-        'start': ColorManager.RED,
-        'end': ColorManager.MAGENTA,
-        'path': ColorManager.PATH
-    }
-    draw_solution(img_data, solution, colors, cell_size)
+    # # Get the solution path with A* algorithm and draw it on the maze
+    # solution = a_star_algorithm(xvar.maze, start, end)
+    # print(f'Solution:\n{solver.cardinal_direction(solution)}')
+    # colors: dict = {
+    #     'start': ColorManager.RED,
+    #     'end': ColorManager.MAGENTA,
+    #     'path': ColorManager.PATH
+    # }
+    # draw_solution(xvar, solution, colors)
 
-    # Print the image once it is fully implemented ->
-    # Only 1 call instead of thousands with mlx_pixel_pit()
-    render_frame(xvar, img_data, cell_size)
+    # # Print the image once it is fully implemented ->
+    # # Only 1 call instead of thousands with mlx_pixel_pit()
+    # render_frame(xvar)
 
     # Event hooks
     xvar.mlx.mlx_key_hook(xvar.win, manage_key, xvar)
@@ -343,7 +351,7 @@ def main() -> None:
 
     # Cleaning resources
     print("destroy image")
-    xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, img_data.img)
+    xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.img.img)
     print("destroy win(s)")
     xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
     print("destroy mlx")

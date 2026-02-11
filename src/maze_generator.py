@@ -4,8 +4,7 @@ from src.cell import Cell
 from src.definitions import Orientation
 from src.errors import MazeGenerationErrors
 
-# TODO Parsing
-# TODO Parsing
+
 class MazeGenerator:
 
     def __init__(self, height: int, width: int):
