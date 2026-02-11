@@ -53,9 +53,7 @@ def main() -> None:
         sys.exit(1)
 
     img_maze = setup_image_buffer(xvar, cols, rows, cell_size, wall_width)
-    img_path = setup_image_buffer(
-        xvar, cols, rows, cell_size, wall_width
-    )
+    img_path = setup_image_buffer(xvar, cols, rows, cell_size, wall_width)
 
     generator = MazeGenerator(rows, cols)
     maze_matrix = generator.get_maze()

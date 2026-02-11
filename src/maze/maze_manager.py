@@ -1,6 +1,6 @@
-# from .maze_generator import MazeGenerator
 from mlx import Mlx
-from .window import ImgData
+
+from src.core import ImgData
 
 
 class MazeManager():

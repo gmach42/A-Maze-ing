@@ -1,6 +1,5 @@
-from src.core.xvar import XVar
-from src.rendering.renderer import render_frame
-from src.rendering.color_manager import ColorManager
+from src.core import XVar
+from src.rendering import render_frame, ColorManager
 
 
 def manage_key(key, xvar: XVar) -> int:
@@ -18,7 +17,7 @@ def manage_key(key, xvar: XVar) -> int:
 
     if key == 115:  # 's'
         print("'s' key pressed, changing solution color...")
-        # TODO: change_path_color(xvar)
+        # TODO: change_SolutionPath_color(xvar)
 
     if key == 114:  # 'r'
         print("'r' key pressed, regenerating maze...")
@@ -28,20 +27,6 @@ def manage_key(key, xvar: XVar) -> int:
 
 
 def change_maze_color(xvar: XVar):
-    color_index = ColorManager.COLOR_LIST.index(xvar.maze.color)
-    if color_index == len(ColorManager.COLOR_LIST) - 1:
-        new_color = ColorManager.WHITE
-    else:
-        new_color = ColorManager.COLOR_LIST[color_index + 1]
-    print(f"Changing maze color to: {ColorManager.get_color_name(new_color)}")
-
-    # Update maze with new color
-    xvar.maze.change_color(new_color)
-    render_frame(xvar, xvar.maze.img_maze, xvar.maze.cell_size)
-
-
-def change_maze_color(xvar: XVar):
-    """Cycle through maze colors"""
     color_index = ColorManager.COLOR_LIST.index(xvar.maze.color)
     if color_index == len(ColorManager.COLOR_LIST) - 1:
         new_color = ColorManager.COLOR_LIST[0]

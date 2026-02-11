@@ -1,5 +1,5 @@
-from src.core.img_data import ImgData
-from src.rendering.renderer import draw_maze_walls
+from src.core import ImgData
+from src.rendering import draw_maze_walls
 
 
 class Maze:

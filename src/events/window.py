@@ -1,4 +1,4 @@
-from src.core.xvar import XVar
+from src.core import XVar
 
 
 def manage_close(xvar: XVar) -> int:

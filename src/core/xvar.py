@@ -1,16 +1,29 @@
+from typing import Any
 from mlx import Mlx
-from src.core.img_data import ImgData
-from src.maze.maze import Maze
+from src.maze import Maze
+from src.solver import SolutionPath
+from .img_data import ImgData
 
 
 class XVar:
     """Structure for main vars"""
+
     def __init__(self):
         self.mlx: Mlx | None = None
-        self.mlx_ptr: int | None = None
+        self.mlx_ptr: Any = None
         self.screen_w: int = 0
         self.screen_h: int = 0
-        self.win: int | None = None
+        self.win: Any = None
+        self.img: ImgData = None
+        self.cell_size: int = 50
         self.maze: Maze = None
-        self.img_path: ImgData = None
-        self.img_background: ImgData = None
+        self.col: int = 0
+        self.row: int = 0
+        self.maze_width: int = 0
+        self.maze_height: int = 0
+        self.animation: bool = False
+        self.speed: str = "medium"
+        self.solution: SolutionPath = None
+
+    def set_img(self, img: ImgData):
+        self.img = img

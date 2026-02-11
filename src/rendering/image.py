@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from src.core.xvar import ImgData
+
+from src.core import ImgData
 
 
 class Image(ABC):

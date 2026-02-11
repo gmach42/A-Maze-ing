@@ -1,6 +1,5 @@
-from src.core.img_data import ImgData
-from src.core.xvar import XVar
-from src.maze.border import Border
+from src.core import ImgData, XVar
+from src.solver import Border
 
 
 def setup_image_buffer(xvar: XVar, width: int, height: int,

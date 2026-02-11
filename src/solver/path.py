@@ -1,9 +1,8 @@
-from src.rendering.color_manager import ColorManager
-from src.img_data import ImgData, Image
-from ..core.xvar import XVar, draw_rectangle, render_frame
+from src.core import ImgData, XVar
+from src.rendering import ColorManager, draw_rectangle, render_frame
 
 
-class Path(Image):
+class SolutionPath:
     def __init__(
         self,
         img_path: ImgData,

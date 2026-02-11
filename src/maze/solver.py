@@ -1,4 +1,4 @@
-from .border import Border
+from src.solver import Border
 
 
 class Solver:
@@ -47,19 +47,19 @@ class Solver:
         return abs(x1 - x2) + abs(y1 - y2)
 
     @staticmethod
-    def reconstruct_path(
+    def reconstruct_SolutionPath(
         node: tuple, came_from: dict[tuple, tuple]
     ) -> list[tuple]:
         """
-        Return the list of nodes of the correct path from the start
+        Return the list of nodes of the correct SolutionPath from the start
         """
-        path = [node]
+        SolutionPath = [node]
         while node in came_from:
             node = came_from[node]
-            path.append(node)
+            SolutionPath.append(node)
         # reverse result to get from beginning to end
-        path.reverse()
-        return path
+        SolutionPath.reverse()
+        return SolutionPath
 
     @staticmethod
     def a_star_algorithm(
@@ -80,9 +80,9 @@ class Solver:
 
         # TODO check if start and end are in maze
 
-        # open_paths: list[(f_score, node)] is a heap to rappidly find the
+        # open_SolutionPaths: list[(f_score, node)] is a heap to rappidly find the
         # node with the lowest score. Faster than using a classic list
-        open_paths: list[(int, tuple)] = [
+        open_SolutionPaths: list[(int, tuple)] = [
             (Solver.h(start, end), start)
         ]
 
@@ -90,42 +90,42 @@ class Solver:
         came_from: dict[tuple, tuple] = {}
 
         # regiter the "cost" (g(n)) to each cell visited
-        path_cost: dict[tuple, int] = {start: 0}
+        SolutionPath_cost: dict[tuple, int] = {start: 0}
 
-        while len(open_paths) > 0:
+        while len(open_SolutionPaths) > 0:
             # get the best next cell to visit (the one with the lowest priority)
-            open_paths.sort()
-            _, curr_node = open_paths.pop()
+            open_SolutionPaths.sort()
+            _, curr_node = open_SolutionPaths.pop()
             if curr_node == end:
-                goal_path = Solver.reconstruct_path(
+                goal_SolutionPath = Solver.reconstruct_SolutionPath(
                     end, came_from
                 )
-                return goal_path
+                return goal_SolutionPath
             neighbors = Solver.get_neighbors(maze, curr_node)
 
             # check all possible neighbor of the current cell and register new ones
             for neighbor in neighbors:
-                new_cost = path_cost.get(curr_node) + 1
+                new_cost = SolutionPath_cost.get(curr_node) + 1
                 if (
-                    neighbor not in path_cost
-                    or new_cost < path_cost[neighbor]
+                    neighbor not in SolutionPath_cost
+                    or new_cost < SolutionPath_cost[neighbor]
                 ):
-                    path_cost[neighbor] = new_cost
+                    SolutionPath_cost[neighbor] = new_cost
                     # f(n) = g(n) + h(n)
                     priority = new_cost + Solver.h(neighbor, end)
-                    open_paths.append((priority, neighbor))
+                    open_SolutionPaths.append((priority, neighbor))
                     came_from[neighbor] = curr_node
 
         return None
 
     @staticmethod
-    def cardinal_direction(path: list[tuple]) -> str:
-        """transform the path into a string of direction"""
-        # iterate on the whole path except last node
+    def cardinal_direction(SolutionPath: list[tuple]) -> str:
+        """transform the SolutionPath into a string of direction"""
+        # iterate on the whole SolutionPath except last node
         directions: str = ""
-        for i in range(len(path) - 1):
-            curr_row, curr_col = path[i]
-            next_row, next_col = path[i + 1]
+        for i in range(len(SolutionPath) - 1):
+            curr_row, curr_col = SolutionPath[i]
+            next_row, next_col = SolutionPath[i + 1]
 
             # Compare row change
             if next_row < curr_row:
