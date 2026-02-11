@@ -202,8 +202,8 @@ def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
 def draw_solution(
         xvar: XVar, solution: list[tuple], colors: dict) -> None:
     """Draw the solution path on the maze using `draw_square()`"""
-    y0, x0 = solution[0]
-    y1, x1 = solution[-1]
+    x0, y0 = solution[0]
+    x1, y1 = solution[:-1]
     size_path = round(xvar.cell_size / 3)
     offset = round(xvar.cell_size / 2)
 
@@ -222,7 +222,6 @@ def draw_solution(
             size_path, colors['path']
             )
     # TODO Finish draw solution (beginning + end + path)
-
 
 def render_frame(xvar: XVar) -> None:
     """Render the image to the window with an offset to center the maze"""

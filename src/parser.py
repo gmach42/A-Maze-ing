@@ -28,10 +28,10 @@ class EnvVariables(BaseModel):
         values: list = clean_value.split(',')
         if len(values) != 2:
             raise ValueError("Wrong format tuple. Must be"
-                                  " '(number,number)")
+                             " '(number,number)")
         try:
             val_1: int = int(values[0])
-            val_2: int = int(values[1render_frame(xvar)])
+            val_2: int = int(values[1])
             return (val_2, val_1)
         except ValueError:
             raise ValueError("Entry an exit must be integers!")
