@@ -3,6 +3,7 @@ import array
 from src.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
+from src import parsing, EnvVariables
 from src.solver import a_star_algorithm
 import src.solver as solver
 from typing import Any
@@ -30,7 +31,7 @@ class XVar:
         self.screen_h: int = 0
         self.win: Any = None
         self.img: ImgData = None
-        self.cell_size: int = 0
+        self.cell_size: int = 50
         self.maze: list = []
         self.col: int = 0
         self.row: int = 0
@@ -201,8 +202,8 @@ def draw_square(img_data: ImgData, x: int, y: int, size: int, color: int
 def draw_solution(
         xvar: XVar, solution: list[tuple], colors: dict) -> None:
     """Draw the solution path on the maze using `draw_square()`"""
-    x0, y0 = solution[0]
-    x1, y1 = solution[len(solution) - 1]
+    y0, x0 = solution[0]
+    y1, x1 = solution[-1]
     size_path = round(xvar.cell_size / 3)
     offset = round(xvar.cell_size / 2)
 
@@ -283,15 +284,9 @@ def main() -> None:
 
     # Get user input for maze dimensions and cell size
     try:
-        xvar.cell_size = int(input("Enter the cell size: "))
-        if xvar.cell_size <= 0:
-            raise ValueError
-        xvar.maze_width = int(input("Enter the desired width of your maze: "))
-        if xvar.maze_width <= 0:
-            raise ValueError
-        xvar.maze_height = int(input("Enter the desired height of your maze: "))
-        if xvar.maze_height <= 0:
-            raise ValueError
+        env_variable: EnvVariables = parsing('config.txt')
+        xvar.maze_width = env_variable.width
+        xvar.maze_height = env_variable.height
         win_width = (xvar.maze_width + 1) * xvar.cell_size
         win_height = (xvar.maze_height + 1) * xvar.cell_size
     except ValueError:
@@ -321,24 +316,22 @@ def main() -> None:
     xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls, xvar)
 
     # TODO Get user input for start and end points, or generate them randomly
-    # start = (0, 0)
-    # print(f'{start=}')
-    # end = (14, 14)
-    # print(f'{end=}')
 
-    # # Get the solution path with A* algorithm and draw it on the maze
-    # solution = a_star_algorithm(xvar.maze, start, end)
+    # Get the solution path with A* algorithm and draw it on the maze
+    start: tuple = env_variable.entry
+    end: tuple = env_variable.exit
+    solution = a_star_algorithm(xvar.maze, start, end)
     # print(f'Solution:\n{solver.cardinal_direction(solution)}')
-    # colors: dict = {
-    #     'start': ColorManager.RED,
-    #     'end': ColorManager.MAGENTA,
-    #     'path': ColorManager.PATH
-    # }
-    # draw_solution(xvar, solution, colors)
+    colors: dict = {
+        'start': ColorManager.RED,
+        'end': ColorManager.MAGENTA,
+        'path': ColorManager.PATH
+    }
+    draw_solution(xvar, solution, colors)
 
-    # # Print the image once it is fully implemented ->
-    # # Only 1 call instead of thousands with mlx_pixel_pit()
-    # render_frame(xvar)
+    # Print the image once it is fully implemented ->
+    # Only 1 call instead of thousands with mlx_pixel_pit()
+    render_frame(xvar)
 
     # Event hooks
     xvar.mlx.mlx_key_hook(xvar.win, manage_key, xvar)
