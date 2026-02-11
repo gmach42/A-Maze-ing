@@ -7,6 +7,3 @@ class Image(ABC):
     @abstractmethod
     def draw(self, img_data: ImgData) -> None:
         pass
-
-
-

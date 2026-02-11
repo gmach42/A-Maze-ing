@@ -4,7 +4,6 @@ from .cell import Cell
 
 
 class MazeGenerator:
-
     def __init__(self, height: int, width: int):
         self.grid: list[list[Cell]] = []
         self.width: int = width
@@ -14,8 +13,8 @@ class MazeGenerator:
             "North": 1,
             "East": 2,
             "South": 4,
-            "West": 8
-            }
+            "West": 8,
+        }
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
@@ -37,7 +36,7 @@ class MazeGenerator:
             (mid_height + 3, mid_width + 4),
             (mid_height + 4, mid_width + 4),
             (mid_height + 4, mid_width + 5),
-            (mid_height + 4, mid_width + 6)
+            (mid_height + 4, mid_width + 6),
         ]
 
         for y in range(height):

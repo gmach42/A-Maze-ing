@@ -82,9 +82,7 @@ class Solver:
 
         # open_paths: list[(f_score, node)] is a heap to rappidly find the
         # node with the lowest score. Faster than using a classic list
-        open_paths: list[(int, tuple)] = [
-            (Solver.h(start, end), start)
-        ]
+        open_paths: list[(int, tuple)] = [(Solver.h(start, end), start)]
 
         # register the precedent node of each newly accessed node
         came_from: dict[tuple, tuple] = {}
@@ -97,19 +95,14 @@ class Solver:
             open_paths.sort()
             _, curr_node = open_paths.pop()
             if curr_node == end:
-                goal_path = Solver.reconstruct_path(
-                    end, came_from
-                )
+                goal_path = Solver.reconstruct_path(end, came_from)
                 return goal_path
             neighbors = Solver.get_neighbors(maze, curr_node)
 
             # check all possible neighbor of the current cell and register new ones
             for neighbor in neighbors:
                 new_cost = path_cost.get(curr_node) + 1
-                if (
-                    neighbor not in path_cost
-                    or new_cost < path_cost[neighbor]
-                ):
+                if neighbor not in path_cost or new_cost < path_cost[neighbor]:
                     path_cost[neighbor] = new_cost
                     # f(n) = g(n) + h(n)
                     priority = new_cost + Solver.h(neighbor, end)

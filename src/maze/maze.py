@@ -33,5 +33,10 @@ class Maze:
 
     def regen_maze(self) -> None:
         self.img_maze.clear_buffer()
-        draw_maze_walls(self.img_maze, self.maze_matrix, self.cell_size,
-                        self.wall_width, self.color)
+        draw_maze_walls(
+            self.img_maze,
+            self.maze_matrix,
+            self.cell_size,
+            self.wall_width,
+            self.color,
+        )

@@ -27,8 +27,9 @@ class SolutionPath:
         self.img_path.clear_buffer()
         self.regen_path()
 
-    def set_start_end(self, start: tuple[int, int], end: tuple[int, int]
-                      ) -> None:
+    def set_start_end(
+        self, start: tuple[int, int], end: tuple[int, int]
+    ) -> None:
         self.start = start
         self.end = end
 
@@ -62,18 +63,33 @@ class SolutionPath:
         offset = self.wall_width
 
         # Draw start
-        draw_rectangle(self.img_path, x_start * self.cell_size + offset,
-                       y_start * self.cell_size + offset, size_path,
-                       size_path, self.colors["start"])
+        draw_rectangle(
+            self.img_path,
+            x_start * self.cell_size + offset,
+            y_start * self.cell_size + offset,
+            size_path,
+            size_path,
+            self.colors["start"],
+        )
 
         # Draw end
-        draw_rectangle(self.img_path, x_end * self.cell_size + offset, y_end *
-                       self.cell_size + offset, size_path, size_path,
-                       self.colors["end"])
+        draw_rectangle(
+            self.img_path,
+            x_end * self.cell_size + offset,
+            y_end * self.cell_size + offset,
+            size_path,
+            size_path,
+            self.colors["end"],
+        )
 
         # Draw path
-        for s in self.path_matrix[1: len(self.path_matrix) - 1]:
+        for s in self.path_matrix[1 : len(self.path_matrix) - 1]:
             y, x = s
-            draw_rectangle(self.img_path, x * self.cell_size + offset, y *
-                           self.cell_size + offset, size_path, size_path,
-                           self.colors["path"])
+            draw_rectangle(
+                self.img_path,
+                x * self.cell_size + offset,
+                y * self.cell_size + offset,
+                size_path,
+                size_path,
+                self.colors["path"],
+            )
