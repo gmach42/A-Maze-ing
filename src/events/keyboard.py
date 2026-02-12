@@ -16,7 +16,7 @@ def manage_key(key, xvar: XVar) -> int:
 
     if key == 115:  # 's'
         print("'s' key pressed, changing solution color...")
-        # TODO: change_SolutionPath_color(xvar)
+        change_solution_color(xvar)
 
     if key == 114:  # 'r'
         print("'r' key pressed, regenerating maze...")
@@ -36,6 +36,26 @@ def change_maze_color(xvar: XVar) -> None:
     print(f"Changing to: {ColorManager.get_color_name(new_color)}")
     xvar.maze.change_color(new_color)
     render_frame(xvar, xvar.maze)
+
+
+def change_solution_color(xvar: XVar) -> None:
+    from ..rendering import ColorManager, render_frame
+    colors_index = ColorManager.PATH_COLOR_LIST.index(
+        (xvar.solution.colors["start"], xvar.solution.colors["end"],
+         xvar.solution.colors["path"]))
+    if colors_index == len(ColorManager.PATH_COLOR_LIST) - 1:
+        new_colors = ColorManager.PATH_COLOR_LIST[0]
+    else:
+        new_colors = ColorManager.PATH_COLOR_LIST[colors_index + 1]
+    print(
+        f"Changing path color to: {ColorManager.get_color_name(new_colors[0])}"
+    )
+    xvar.solution.change_color({
+        "start": new_colors[0],
+        "end": new_colors[1],
+        "path": new_colors[2],
+    })
+    render_frame(xvar, xvar.solution)
 
 
 def get_key_press(key, xvar: XVar) -> int:

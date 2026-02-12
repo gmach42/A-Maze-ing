@@ -52,4 +52,5 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
                     xvar.col = 0
                     xvar.row += 1
             except IndexError:
-                print(f"{xvar.col=} et {xvar.row=}")
+                # print(f"{xvar.col=} et {xvar.row=}")
+                pass

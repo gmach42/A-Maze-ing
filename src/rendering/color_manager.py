@@ -65,6 +65,17 @@ class ColorManager:
         PINK,
     ]
 
+    PATH_COLOR_LIST = [
+        (START, END, PATH),
+        (RED, GREEN, BLUE),
+        (PASTEL_RED, PASTEL_GREEN, PASTEL_BLUE),
+        (LIGHTCORAL, LIGHTGRASS, SKY),
+        (ORANGE, DARKGRASS, EARTH),
+        (SANDYBROWN, BEIGE, CYAN),
+        (YELLOW, GRAY, SLATEBLUE),
+        (EARTH, LIGHTGRASS, SANDYBROWN),
+    ]
+
     COLOR_NAMES = {
         WHITE: "White",
         GRAY: "Gray",
