@@ -1,12 +1,6 @@
 from typing import Callable
 
 
-class Background:
-    def __init__(self):
-        self.buttons
-        self.title
-
-
 class Button:
     def __init__(
         self,
@@ -37,23 +31,3 @@ class Button:
     def handle_click(self):
         if self.callback:
             self.callback()
-
-
-class MazeUIManager:
-    def __init__(self, mlx, win):
-        self.win = win
-        self.mlx = mlx
-        self.buttons = []
-        self.labels = []
-
-    def add_button(self, button: Button):
-        pass
-
-    def draw_all(self):
-        pass
-
-    def add_label(self):
-        pass
-
-    def handle_mouse_click(self):
-        pass

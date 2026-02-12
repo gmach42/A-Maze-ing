@@ -1,4 +1,4 @@
 from .xvar import XVar
-from .img_data import ImgData
+from .mlx_image import MLXImage
 
-__all__ = ["XVar", "ImgData"]
+__all__ = ["XVar", "MLXImage"]

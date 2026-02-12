@@ -41,7 +41,6 @@ echo "Pip install minilibx.."
 cd $_ROOT_PROJECT_DIR
 mv $TEMP_DIR/mlx_CLXV/mlx-2.2-py3-none-any.whl .
 python3 -m pip install mlx-2.2-py3-none-any.whl
-rm mlx-2.2-py3-none-any.whl
 
 echo "Cleaning ($TEMP_DIR/).."
 cd $_ROOT_PROJECT_DIR

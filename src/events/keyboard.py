@@ -1,5 +1,4 @@
-from src.core import XVar
-from src.rendering import render_frame, ColorManager
+from ..core import XVar
 
 
 def manage_key(key, xvar: XVar) -> int:
@@ -26,7 +25,8 @@ def manage_key(key, xvar: XVar) -> int:
     return 0
 
 
-def change_maze_color(xvar: XVar):
+def change_maze_color(xvar: XVar) -> None:
+    from ..rendering import ColorManager, render_frame
     color_index = ColorManager.COLOR_LIST.index(xvar.maze.color)
     if color_index == len(ColorManager.COLOR_LIST) - 1:
         new_color = ColorManager.COLOR_LIST[0]
@@ -35,9 +35,9 @@ def change_maze_color(xvar: XVar):
 
     print(f"Changing to: {ColorManager.get_color_name(new_color)}")
     xvar.maze.change_color(new_color)
-    render_frame(xvar, xvar.maze.img_maze, xvar.maze.cell_size)
+    render_frame(xvar, xvar.maze)
 
 
-def get_key_press(key, xvar):
+def get_key_press(key, xvar: XVar) -> int:
     """Helper to print key pressed"""
     print(f"Pressed key {key}")

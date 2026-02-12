@@ -1,6 +1,8 @@
-from src.core import XVar
-from src.solver import Border
-from .renderer import draw_rectangle, render_frame
+from .maze import Maze
+from ..core import XVar
+from ..maze_algorithm import Border
+from .render_functions import draw_rectangle, render_frame
+from src.rendering import maze
 
 
 def draw_maze_walls_anim(xvar: XVar) -> None:
@@ -16,57 +18,57 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
             limit: int = 10
 
     for _ in range(limit):
-        if (0 <= xvar.row < xvar.maze_height) and (
-            0 <= xvar.col < xvar.maze_width
+        if (0 <= xvar.row < xvar.maze.img_height) and (
+            0 <= xvar.col < xvar.maze.img_width
         ):
             try:
-                cell_value = xvar.maze[xvar.row][xvar.col]
-                x = xvar.col * xvar.cell_size
-                y = xvar.row * xvar.cell_size
+                cell_value = xvar.maze.maze_matrix[xvar.row][xvar.col]
+                x = xvar.col * xvar.maze.cell_size
+                y = xvar.row * xvar.maze.cell_size
 
                 # Check each wall using bit flags (from Border class)
                 if cell_value & Border.NORTH:
                     draw_rectangle(
-                        xvar.img,
+                        xvar.maze,
                         x,
                         y,
-                        xvar.cell_size + xvar.wall_width,
-                        xvar.wall_width,
-                        xvar.line_color,
+                        xvar.maze.cell_size + xvar.maze.wall_width,
+                        xvar.maze.wall_width,
+                        xvar.maze.color,
                     )
 
                 if cell_value & Border.SOUTH:
                     draw_rectangle(
-                        xvar.img,
+                        xvar.maze,
                         x,
-                        y + xvar.cell_size,
-                        xvar.cell_size + xvar.wall_width,
-                        xvar.wall_width,
-                        xvar.line_color,
+                        y + xvar.maze.cell_size,
+                        xvar.maze.cell_size + xvar.maze.wall_width,
+                        xvar.maze.wall_width,
+                        xvar.maze.color,
                     )
 
                 if cell_value & Border.WEST:
                     draw_rectangle(
-                        xvar.img,
+                        xvar.maze,
                         x,
                         y,
-                        xvar.wall_width,
-                        xvar.cell_size + xvar.wall_width,
-                        xvar.line_color,
+                        xvar.maze.wall_width,
+                        xvar.maze.cell_size + xvar.maze.wall_width,
+                        xvar.maze.color,
                     )
 
                 if cell_value & Border.EAST:
                     draw_rectangle(
-                        xvar.img,
-                        x + xvar.cell_size,
+                        xvar.maze,
+                        x + xvar.maze.cell_size,
                         y,
-                        xvar.wall_width,
-                        xvar.cell_size + xvar.wall_width,
-                        xvar.line_color,
+                        xvar.maze.wall_width,
+                        xvar.maze.cell_size + xvar.maze.wall_width,
+                        xvar.maze.color,
                     )
-                render_frame(xvar)
+                render_frame(xvar, xvar.maze)
                 xvar.col += 1
-                if xvar.col >= xvar.maze_width:
+                if xvar.col >= xvar.maze.cols:
                     xvar.col = 0
                     xvar.row += 1
             except IndexError:

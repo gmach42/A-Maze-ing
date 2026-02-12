@@ -1,7 +1,17 @@
-from .border import Border
+from .utils_algorithm import Border
 
 
 class Solver:
+    def __init__(
+        self,
+        maze: list[list[int]],
+        start: tuple[int, int],
+        end: tuple[int, int],
+    ):
+        self.maze = maze
+        self.start = start
+        self.end = end
+
     @staticmethod
     def parse_maze_str(maze_str: str) -> list[list[int]]:
         """Convert hex string maze to integer grid"""
@@ -12,10 +22,9 @@ class Solver:
         except ValueError as e:
             return f"Error while parsing maze_str: {e}"
 
-    @staticmethod
-    def get_neighbors(maze: list[list[int]], cell: tuple) -> list[tuple]:
+    def get_neighbors(self, cell: tuple) -> list[tuple]:
         row, col = cell
-        cell_walls: int = Border(maze[row][col])
+        cell_walls: int = Border(self.maze[row][col])
         neighbors: list[tuple] = []
 
         # If no NORTH wall -> there's a NORTH neighbor (checking diff 0001)
@@ -46,9 +55,8 @@ class Solver:
         x2, y2 = cell2
         return abs(x1 - x2) + abs(y1 - y2)
 
-    @staticmethod
     def reconstruct_path(
-        node: tuple, came_from: dict[tuple, tuple]
+        self, node: tuple, came_from: dict[tuple, tuple]
     ) -> list[tuple]:
         """
         Return the list of nodes of the correct path from the start
@@ -61,10 +69,7 @@ class Solver:
         path.reverse()
         return path
 
-    @staticmethod
-    def a_star_algorithm(
-        maze: list[list[int]], start: tuple, end: tuple
-    ) -> list | None:
+    def a_star_algorithm(self) -> list[tuple[int, int]]:
         """
         The A* algorithm assign a cost to each cell and calculate the shortest
         SolutionPath from this
@@ -78,43 +83,67 @@ class Solver:
         - h(n): heuristic (or estimated) cost to reach the goal from cell n
         """
 
-        # TODO check if start and end are in maze
+        if not self.is_valid_maze(self.maze, self.start, self.end):
+            raise ValueError(
+                "Invalid maze: start or end position is out of bounds"
+            )
 
-        # open_paths: list[(f_score, node)] is a heap to rappidly find the
-        # node with the lowest score. Faster than using a classic list
-        open_paths: list[(int, tuple)] = [(Solver.h(start, end), start)]
+        # open_paths: list[(f_score, node)] is the list of cells path opened to
+        # explore, sorted by priority (f_score)
+        open_paths: list[(int, tuple)] = [
+            (self.h(self.start, self.end), self.start)]
 
-        # register the precedent node of each newly accessed node
+        # Register the precedent node of each newly accessed node
         came_from: dict[tuple, tuple] = {}
 
-        # regiter the "cost" (g(n)) to each cell visited
-        path_cost: dict[tuple, int] = {start: 0}
+        # Register the "cost" or progress already made g(n)
+        # for each cell visited
+        path_cost: dict[tuple, int] = {self.start: 0}
 
         while len(open_paths) > 0:
-            # get the best next cell to visit (the one with the lowest priority)
+            # get the best next cell to visit: the one with the lowest priority
             open_paths.sort()
             _, curr_node = open_paths.pop()
-            if curr_node == end:
-                goal_path = Solver.reconstruct_path(end, came_from)
+            if curr_node == self.end:
+                goal_path = self.reconstruct_path(self.end, came_from)
                 return goal_path
-            neighbors = Solver.get_neighbors(maze, curr_node)
+            neighbors = self.get_neighbors(curr_node)
 
-            # check all possible neighbor of the current cell and register new ones
+            # Check all possible neighbors of the current cell
+            # and register new ones
             for neighbor in neighbors:
                 new_cost = path_cost.get(curr_node) + 1
                 if neighbor not in path_cost or new_cost < path_cost[neighbor]:
                     path_cost[neighbor] = new_cost
                     # f(n) = g(n) + h(n)
-                    priority = new_cost + Solver.h(neighbor, end)
+                    priority = new_cost + self.h(neighbor, self.end)
                     open_paths.append((priority, neighbor))
                     came_from[neighbor] = curr_node
 
         return None
 
     @staticmethod
-    def cardinal_direction(path: list[tuple]) -> str:
+    def is_valid_maze(
+        maze: list[list[int]], start: tuple[int, int], end: tuple[int, int]
+    ) -> bool:
+        """Check if the maze is valid (start and end are within bounds)"""
+        rows = len(maze)
+        cols = len(maze[0]) if rows > 0 else 0
+        start_row, start_col = start
+        end_row, end_col = end
+
+        return (
+            0 <= start_row < rows
+            and 0 <= start_col < cols
+            and 0 <= end_row < rows
+            and 0 <= end_col < cols
+        )
+
+    def cardinal_direction(self, path: list[tuple]) -> str:
         """transform the path into a string of direction"""
         # iterate on the whole path except last node
+        if not path:
+            raise ValueError("No SolutionPath found")
         directions: str = ""
         for i in range(len(path) - 1):
             curr_row, curr_col = path[i]
@@ -137,41 +166,3 @@ class Solver:
     def display_list(lst: list[list]) -> None:
         for line in lst:
             print(line)
-
-
-# def main():
-#     print("\nTesting solver for the maze: ")
-#     tmaze = [[7, 1, 11, 13], [5, 8, 5, 10], [14, 6, 8, 13], [7, 3, 2, 10]]
-#     display_list(tmaze)
-
-#     generator = MazeGenerator(5, 5)
-#     array = generator.get_maze()
-#     maze = array.tolist()
-#     display_list(maze)
-#     print(type(maze))
-#     start = (0, 0)
-#     end = (4, 4)
-#     print("Maze:")
-#     print(f"\nstart: {start}")
-#     print(f"end: {end}\n")
-#     print("Solution:")
-#     solution = a_star_algorithm(maze, start, end)
-#     print(solution)
-#     if solution:
-#         print(cardinal_direction(solution))
-
-#     print("Test parse_maze_str:")
-#     print(parse_maze_str("ABC2344Ai\ndwkodw"))
-#     print(parse_maze_str("ABC2-3044A\n8"))
-#     print(parse_maze_str("ABC23044A\n844"))
-#     print(parse_maze_str("ABC230"))
-
-#     print(Border(1))
-#     print(Border(2))
-#     print(Border(4))
-#     print(Border(8))
-#     print(Border(15))
-
-
-# if __name__ == "__main__":
-#     main()

@@ -1,19 +1,22 @@
-from .renderer import (
+from .background import Background, MazeUIManager
+from .maze import Maze
+from .render_functions import (
     draw_rectangle,
     draw_maze_walls,
     render_frame,
-    setup_image_buffer
 )
+from .solution_path import SolutionPath
 from .color_manager import ColorManager
-from .image import Image
 from .animation import draw_maze_walls_anim
 
 __all__ = [
+    "Background",
+    "MazeUIManager",
+    "Maze",
     "draw_rectangle",
     "draw_maze_walls",
     "render_frame",
-    "setup_image_buffer",
+    "SolutionPath",
     "ColorManager",
-    "Image",
-    "draw_maze_walls_anim"
+    "draw_maze_walls_anim",
 ]

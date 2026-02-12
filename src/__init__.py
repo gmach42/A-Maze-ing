@@ -1,37 +1,41 @@
 __authors__ = "Gildas", "Bruno"
 __version__ = "0.1.0"
 
-from .core import XVar, ImgData
-from .maze import Maze, MazeGenerator, MazeManager
-from .solver import Border, Solver, SolutionPath
+from .core import XVar, MLXImage
+from .maze_algorithm import Border, MazeManager, MazeGenerator, Solver
 from .rendering import (
+    Background,
     ColorManager,
-    Image,
-    draw_rectangle,
+    Maze,
+    MazeUIManager,
+    SolutionPath,
+    draw_maze_walls_anim,
     draw_maze_walls,
     render_frame,
-    setup_image_buffer,
-    draw_maze_walls_anim,
 )
-from .events import manage_key, get_key_press, manage_close
+from .events import manage_close, manage_key, get_key_press
+from .parsing import EnvVariables, parsing, errors
+
 
 __all__ = [
     "XVar",
-    "ImgData",
+    "MLXImage",
     "Border",
-    "Maze",
-    "MazeGenerator",
     "MazeManager",
+    "MazeGenerator",
     "Solver",
-    "SolutionPath",
+    "Background",
     "ColorManager",
-    "Image",
-    "draw_rectangle",
+    "Maze",
+    "MazeUIManager",
+    "SolutionPath",
+    "draw_maze_walls_anim",
     "draw_maze_walls",
     "render_frame",
-    "setup_image_buffer",
-    "draw_maze_walls_anim",
+    "manage_close",
     "manage_key",
     "get_key_press",
-    "manage_close",
+    "EnvVariables",
+    "parsing",
+    "errors",
 ]

@@ -37,7 +37,7 @@ class ColorManager:
     BACKGROUND = BLACK
     START = RED
     END = MAGENTA
-    SolutionPath = SLATEBLUE
+    PATH = SLATEBLUE
     OBSTACLE = GRAY
 
     COLOR_LIST = [

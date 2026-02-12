@@ -1,7 +1,7 @@
 [project]
-name = "a-mase-ing"
+name = "A-Maze-ing"
 version = "0.1.0"
-description = "A mase generator"
+description = "A maze generator"
 authors = [
     {name = "Gildas, Bruno"}
 ]

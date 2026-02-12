@@ -1,6 +1,5 @@
 import random as rand
-
-from .cell import Cell
+from .utils_algorithm import Cell
 
 
 class MazeGenerator:

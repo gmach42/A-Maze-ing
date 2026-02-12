@@ -1,9 +1,9 @@
 import sys
-from src.maze.maze_generator import MazeGenerator
+from src.maze_algorithm.maze_generator import MazeGenerator
 from mlx import Mlx
 from src import Border
 from src import parsing, EnvVariables
-from src.solver.solver import a_star_algorithm
+from src.maze_algorithm.solver_algorithm import a_star_algorithm
 from typing import Any
 from src.rendering.color_manager import ColorManager
 
@@ -207,10 +207,10 @@ def draw_rectangle(
 def draw_solution(
     xvar: XVar, solution: list[tuple[int, int]], colors: dict[str, int]
 ) -> None:
-    """Draw the solution SolutionPath on the maze using `draw_rectangle()`"""
+    """Draw the solution path on the maze using `draw_rectangle()`"""
     y_start, x_start = solution[0]
     y_end, x_end = solution[-1]
-    size_SolutionPath = xvar.cell_size - xvar.wall_width
+    size_path = xvar.cell_size - xvar.wall_width
     offset = xvar.wall_width
 
     # Draw start
@@ -218,8 +218,8 @@ def draw_solution(
         xvar.img,
         x_start * xvar.cell_size + offset,
         y_start * xvar.cell_size + offset,
-        size_SolutionPath,
-        size_SolutionPath,
+        size_path,
+        size_path,
         colors["start"],
     )
 
@@ -228,21 +228,21 @@ def draw_solution(
         xvar.img,
         x_end * xvar.cell_size + offset,
         y_end * xvar.cell_size + offset,
-        size_SolutionPath,
-        size_SolutionPath,
+        size_path,
+        size_path,
         colors["end"],
     )
 
-    # Draw SolutionPath
-    for s in solution[1 : len(solution) - 1]:
+    # Draw path
+    for s in solution[1: len(solution) - 1]:
         y, x = s
         draw_rectangle(
             xvar.img,
             x * xvar.cell_size + offset,
             y * xvar.cell_size + offset,
-            size_SolutionPath,
-            size_SolutionPath,
-            colors["SolutionPath"],
+            size_path,
+            size_path,
+            colors["path"],
         )
 
 
@@ -354,7 +354,7 @@ def main() -> None:
     else:
         draw_maze_walls(xvar)
 
-    # Get the solution SolutionPath with A* algorithm and draw it on the maze
+    # Get the solution path with A* algorithm and draw it on the maze
     start: tuple = env_variable.entry
     end: tuple = env_variable.exit
     solution = a_star_algorithm(xvar.maze, start, end)
@@ -362,7 +362,7 @@ def main() -> None:
     colors: dict = {
         "start": ColorManager.RED,
         "end": ColorManager.MAGENTA,
-        "SolutionPath": ColorManager.SolutionPath,
+        "path": ColorManager.PATH,
     }
     draw_solution(xvar, solution, colors)
 
