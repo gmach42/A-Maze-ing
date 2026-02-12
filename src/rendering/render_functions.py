@@ -96,3 +96,10 @@ def render_frame(xvar: XVar, img_data: MLXImage) -> None:
     offset = img_data.cell_size // 2
     xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win, img_data.img_ptr,
                                      offset, offset)
+
+
+def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
+    """Render the image to the window"""
+    x: int = xvar.maze.img_width + 25
+    xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win, img_data.img_ptr,
+                                     x, xvar.maze.cell_size // 2)

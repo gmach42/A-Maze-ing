@@ -11,7 +11,8 @@ from src import (
     XVar,
     EnvVariables,
     parsing,
-    ExecutionError
+    ExecutionError,
+    MazeUIManager
 )
 from src import events
 from mlx import Mlx
@@ -50,7 +51,7 @@ def main() -> None:
             config_file = sys.argv[1]
         env_variable: EnvVariables = parsing(config_file)
         config_xvar(xvar, env_variable)
-        win_width = (env_variable.width + 1) * env_variable.cell_size + 50
+        win_width = (env_variable.width + 1) * env_variable.cell_size + 300
         win_height = (env_variable.height + 1) * env_variable.cell_size
     except ValueError:
         print(
@@ -103,6 +104,10 @@ def main() -> None:
         end=xvar.maze.exit,
         cell_size=xvar.maze.cell_size,
     )
+
+    # Generate MazeUIManager
+    manager: MazeUIManager = MazeUIManager(xvar)
+    manager.draw_panel(xvar)
     if xvar.animation:
         xvar.mlx.mlx_loop_hook(
             xvar.mlx_ptr, draw_maze_walls_anim, xvar)

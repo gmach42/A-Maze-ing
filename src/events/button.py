@@ -1,11 +1,12 @@
 from typing import Callable
+from ..core import XVar, MLXImage
+from ..rendering.render_functions import draw_maze_walls
 
 
-class Button:
+class Button(MLXImage):
     def __init__(
         self,
-        mlx: object,
-        win: int,
+        xvar: XVar,
         x: int,
         y: int,
         width: int,
@@ -14,8 +15,6 @@ class Button:
         color: int,
         callback: Callable = None,
     ):
-        self.mlx = mlx
-        self.win = win
         self.x = x
         self.y = y
         self.width = width
@@ -23,6 +22,7 @@ class Button:
         self.text = text
         self.color = color
         self.callback = callback
+        super().__init__(xvar, width, height)
 
     def is_clicked(self, mouse_x, mouse_y):
         return (self.x <= mouse_x <= self.x + self.width and
@@ -31,3 +31,7 @@ class Button:
     def handle_click(self):
         if self.callback:
             self.callback()
+
+    def regen(self, xvar: XVar) -> None:
+        self.clear_buffer()
+        draw_maze_walls(xvar)
