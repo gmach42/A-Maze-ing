@@ -1,3 +1,4 @@
+import sys
 from pydantic import (
         BaseModel,
         Field,
@@ -56,7 +57,7 @@ def parsing(file_name: str) -> EnvVariables:
                 if line[0] != "#":
                     string_split: list = line.split('=')
                     if len(string_split) == 2:
-                        string_split[1] = string_split[1].strip('\n')
+                        string_split[1] = string_split[1].strip('\n').strip()
                         if string_split[0].lower() in ['perfect', 'animation']:
                             if string_split[1].lower() == 'true':
                                 string_split[1] = True
@@ -74,11 +75,13 @@ def parsing(file_name: str) -> EnvVariables:
             if not value and key in ["width", "height", "entry", "exit",
                                      "output_file", "perfect", ]:
                 raise MissingKey(f"Missing a value for {key} variable!")
-    except ConfigError as e:
+    except (ConfigError, OSError) as e:
         print(e)
+        sys.exit(1)
     try:
         return EnvVariables(**results)
     except ValidationError as e:
         for error in e.errors():
             loc: str = f"{error['loc'][0]}: "
             print(f"{loc}{error['msg']}")
+            sys.exit(1)

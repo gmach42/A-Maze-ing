@@ -1,5 +1,10 @@
 from .parser import EnvVariables, parsing
-from .errors import ConfigError, FormatError, MissingKey, TooManyVar
+from .errors import (
+    ConfigError,
+    FormatError,
+    MissingKey,
+    TooManyVar,
+    ExecutionError)
 
 __all__ = [
     'EnvVariables',
@@ -7,5 +12,6 @@ __all__ = [
     'ConfigError',
     'FormatError',
     'MissingKey',
-    'TooManyVar'
+    'TooManyVar',
+    'ExecutionError'
 ]
