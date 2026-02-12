@@ -82,8 +82,8 @@ def main() -> None:
     xvar.maze.regen()
     print(xvar.animation)
 
-    start = (0, 0)
-    end = (xvar.maze_height - 1, xvar.maze_width - 1)
+    start: tuple = env_variable.entry
+    end: tuple = env_variable.exit
     solver = Solver(xvar.maze.maze_matrix, start, end)
     colors = {
         "start": ColorManager.START,
