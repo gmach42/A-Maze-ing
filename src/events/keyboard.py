@@ -34,7 +34,7 @@ def change_maze_color(xvar: XVar) -> None:
         new_color = ColorManager.COLOR_LIST[color_index + 1]
 
     print(f"Changing to: {ColorManager.get_color_name(new_color)}")
-    xvar.maze.change_color(new_color)
+    xvar.maze.change_color(new_color, xvar)
     render_frame(xvar, xvar.maze)
 
 

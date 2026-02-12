@@ -1,8 +1,6 @@
-from .maze import Maze
 from ..core import XVar
 from ..maze_algorithm import Border
 from .render_functions import draw_rectangle, render_frame
-from src.rendering import maze
 
 
 def draw_maze_walls_anim(xvar: XVar) -> None:
@@ -18,8 +16,8 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
             limit: int = 10
 
     for _ in range(limit):
-        if (0 <= xvar.row < xvar.maze.img_height) and (0 <= xvar.col <
-                                                       xvar.maze.img_width):
+        if (0 <= xvar.row < xvar.maze.rows) and (0 <= xvar.col <
+                                                 xvar.maze.cols):
             try:
                 cell_value = xvar.maze.maze_matrix[xvar.row][xvar.col]
                 x = xvar.col * xvar.maze.cell_size
@@ -48,9 +46,11 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
                                    xvar.maze.color)
                 render_frame(xvar, xvar.maze)
                 xvar.col += 1
-                if xvar.col >= maze.cols:
+                if xvar.col >= xvar.maze.cols:
                     xvar.col = 0
                     xvar.row += 1
             except IndexError:
-                # print(f"{xvar.col=} et {xvar.row=}")
-                pass
+                print(f"{xvar.col=} et {xvar.row=}")
+        else:
+            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
+                                   xvar.solution.draw_solution_anim, xvar)

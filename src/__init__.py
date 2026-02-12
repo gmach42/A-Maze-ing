@@ -14,7 +14,7 @@ from .rendering import (
     render_frame,
 )
 from .events import manage_close, manage_key, get_key_press
-from .parsing import EnvVariables, parsing, errors
+from .parsing import EnvVariables, parsing, errors, ExecutionError
 
 
 __all__ = [
@@ -38,4 +38,5 @@ __all__ = [
     "EnvVariables",
     "parsing",
     "errors",
+    "ExecutionError"
 ]
