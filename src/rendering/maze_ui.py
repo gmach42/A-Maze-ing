@@ -3,11 +3,10 @@ from ..events import Button
 # from mlx import Mlx
 from ..core import XVar, MLXImage
 from .color_manager import ColorManager
-from .solution_path import SolutionPath
 from .animation import draw_maze_walls_anim
 from .render_functions import (draw_maze_walls, render_frame_panel,
                                render_frame, display_path)
-from ..events.keyboard import change_maze_color
+from ..events.keyboard import change_maze_color, change_42_color
 
 
 class MazeUIManager(MLXImage):
@@ -25,7 +24,7 @@ class MazeUIManager(MLXImage):
                    "Change wall's color", ColorManager.BLUE,
                    change_maze_color),
             Button(xvar, round(width * 0.8), xvar.maze.img_height // 4,
-                   "Change 42's color", ColorManager.BLUE, display_path)
+                   "Change 42's color", ColorManager.BLUE, change_42_color)
         ]
         self.labels = []
         self.color: int = color
@@ -67,8 +66,13 @@ class MazeUIManager(MLXImage):
 
     @staticmethod
     def regenerate(xvar: XVar):
+
+        xvar.col = 0
+        xvar.row = 0
+        xvar.solution.step = 0
         xvar.maze.reset_draw(xvar)
         xvar.solution.reset_draw()
+        render_frame(xvar, xvar.solution)
         xvar.maze.maze_matrix = xvar.generator.get_maze()
         xvar.solver.maze = xvar.maze.maze_matrix
         xvar.solution.path_matrix = xvar.solver.a_star_algorithm()

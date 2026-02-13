@@ -10,7 +10,7 @@ EXIT=12,12
 OUTPUT_FILE=maze.txt
 PERFECT=True
 # Optional: seed, algorithm, display_mode
-ANIMATION=false
+ANIMATION=true
 CELL_WIDTH=50
 WALL_WIDTH=10
-SPEED_ANIMATION=medium
+SPEED_ANIMATION=fast

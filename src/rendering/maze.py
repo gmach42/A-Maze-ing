@@ -32,12 +32,6 @@ class Maze(MLXImage):
 
     def change_color(self, new_color: int, xvar: XVar) -> None:
         self.color = new_color
-        # self.reset_draw()
-        self.regen(xvar)
-
-    def change_42_color(self, new_color: int, xvar: XVar) -> None:
-        self.color = new_color
-        # self.reset_draw()
         self.regen(xvar)
 
     def reset_draw(self, xvar: XVar):
@@ -47,5 +41,4 @@ class Maze(MLXImage):
         self.color = temp_color
 
     def regen(self, xvar: XVar) -> None:
-        # self.reset_draw()
         draw_maze_walls(xvar)

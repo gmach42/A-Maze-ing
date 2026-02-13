@@ -32,7 +32,6 @@ class SolutionPath(MLXImage):
 
     def change_color(self, colors: dict[str, int]) -> None:
         self.colors = colors
-        # self.reset_draw()
         self.regen()
 
     def set_start_end(
@@ -44,7 +43,6 @@ class SolutionPath(MLXImage):
         self.end = end
 
     def regen(self) -> None:
-        # self.reset_draw()
         self.draw_solution()
 
     def change_path_color(xvar: XVar):
@@ -104,8 +102,9 @@ class SolutionPath(MLXImage):
             self.step += 1
             render_frame(xvar, self)
         else:
-            self.step = 0
-            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
+            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+            # xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
+            draw_42(xvar)
 
     def reset_draw(self):
         self.colors = {

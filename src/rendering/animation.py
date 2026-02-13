@@ -1,6 +1,6 @@
 from ..core import XVar
 from ..maze_algorithm import Border
-from .render_functions import draw_rectangle, render_frame, draw_42
+from .render_functions import draw_rectangle, render_frame
 
 
 def draw_maze_walls_anim(xvar: XVar) -> None:
@@ -52,7 +52,5 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
             except IndexError:
                 print(f"{xvar.col=} et {xvar.row=}")
         else:
-            xvar.col = 0
-            xvar.row = 0
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
                                    xvar.solution.draw_solution_anim, xvar)

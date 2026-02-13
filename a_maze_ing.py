@@ -7,10 +7,6 @@ from mlx import Mlx
 
 
 def config_xvar(xvar: XVar, env_variable: EnvVariables):
-    # xvar.maze_width = env_variable.width
-    # xvar.maze_height = env_variable.height
-    # xvar.cell_size = env_variable.cell_size
-    # xvar.wall_width = env_variable.wall_width
     xvar.animation = env_variable.animation
     xvar.speed = env_variable.speed_animation
 
