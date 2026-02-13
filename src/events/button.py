@@ -14,6 +14,8 @@ class Button(MLXImage):
         color: int,
         callback: Callable = None,
     ):
+        self.x: int = 0
+        self.y: int = 0
         self.width = width
         self.height = height
         self.text = text
@@ -26,9 +28,9 @@ class Button(MLXImage):
         return (self.x <= mouse_x <= self.x + self.width
                 and self.y <= mouse_y <= self.y + self.height)
 
-    def handle_click(self):
+    def handle_callable(self, xvar: XVar):
         if self.callback:
-            self.callback()
+            self.callback(xvar)
 
     def regen(self, xvar: XVar) -> None:
         self.clear_buffer()

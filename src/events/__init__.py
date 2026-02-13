@@ -1,6 +1,8 @@
 from .keyboard import manage_key, get_key_press
 from .window import manage_close
 from .button import Button
+from .mouse import handle_click
 
-
-__all__ = ["manage_key", "get_key_press", "manage_close", "Button"]
+__all__ = [
+    "manage_key", "get_key_press", "handle_click", "manage_close", "Button"
+]

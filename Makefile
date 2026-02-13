@@ -1,6 +1,3 @@
-.PHONY: help install run test clean debug lint lint-strict
-
-SHELL := /bin/bash
 VENV := .venv
 PYTHON := $(VENV)/bin/python3
 POETRY := $(VENV)/bin/poetry
@@ -59,3 +56,5 @@ lint:
 lint-strict:
 	$(PYTHON) -m flake8 .
 	$(PYTHON) -m mypy . --strict
+
+.PHONY: help install run test clean debug lint lint-strict

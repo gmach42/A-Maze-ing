@@ -1,7 +1,7 @@
 import sys
 from src import (ColorManager, Maze, SolutionPath, draw_maze_walls_anim,
                  draw_maze_walls, render_frame, MazeGenerator, Solver, XVar,
-                 EnvVariables, parsing, ExecutionError, MazeUIManager)
+                 EnvVariables, parsing, handle_click, ExecutionError, MazeUIManager)
 from src import events
 from mlx import Mlx
 
@@ -93,20 +93,20 @@ def main() -> None:
     )
 
     # Generate MazeUIManager
-    manager: MazeUIManager = MazeUIManager(xvar, panel_width - 10)
-    manager.draw_panel(xvar)
+    xvar.manager = MazeUIManager(xvar, panel_width - 10)
+    xvar.manager.draw_panel(xvar)
     if xvar.animation:
         xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
     else:
         draw_maze_walls(xvar)
         render_frame(xvar, xvar.maze)
         xvar.solution.draw_solution()
-        render_frame(xvar, xvar.solution)
+        # render_frame(xvar, xvar.solution)
 
     # Event hooks
     xvar.mlx.mlx_key_hook(xvar.win, events.manage_key, xvar)
     xvar.mlx.mlx_hook(xvar.win, 2, 1, events.get_key_press, xvar)
-    xvar.mlx.mlx_mouse_hook(xvar.win, 0, xvar)
+    xvar.mlx.mlx_mouse_hook(xvar.win, handle_click, xvar)
     xvar.mlx.mlx_hook(xvar.win, 33, 0, events.manage_close, xvar)
 
     # Main loop

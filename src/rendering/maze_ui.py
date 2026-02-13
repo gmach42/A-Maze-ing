@@ -15,7 +15,7 @@ class MazeUIManager(MLXImage):
                  xvar: XVar,
                  width: int,
                  color: ColorManager = ColorManager.SKY):
-        self.buttons = [
+        self.buttons: list[Button] = [
             Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
                    "REGENERATE", ColorManager.BLUE, self.regenerate),
             Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
@@ -38,13 +38,16 @@ class MazeUIManager(MLXImage):
             offset_y: int = xvar.maze.cell_size + (
                 xvar.maze.cell_size // 2) // 4 + (i * (button.width // 2))
 
+            button.x = offset_x
+            button.y = offset_y
             xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win,
                                              button.img_ptr, offset_x,
                                              offset_y)
-            xvar.mlx.mlx_string_put(xvar.mlx_ptr, xvar.win,
-                                    offset_x + round(button.width * 0.2),
-                                    offset_y + round(button.height * 0.5),
-                                    ColorManager.GREEN, button.text)
+            xvar.mlx.mlx_string_put(
+                xvar.mlx_ptr, xvar.win, offset_x +
+                round(button.width // 2 - (len(button.text) // 2) * 11),
+                offset_y + round(button.height // 2) - 9, ColorManager.GREEN,
+                button.text)
 
     def handle_mouse_click(self):
         pass
@@ -76,7 +79,6 @@ class MazeUIManager(MLXImage):
 
         xvar.col = 0
         xvar.row = 0
-        xvar.solution.step = 0
         xvar.maze.reset_draw(xvar)
         xvar.solution.reset_draw()
         render_frame(xvar, xvar.solution)
