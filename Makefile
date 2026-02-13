@@ -33,7 +33,7 @@ install:
 	$(PIP) install -r requirement.txt
 
 run:
-	$(PYTHON) a_maze_ing.py
+	@$(PYTHON) a_maze_ing.py
 
 debug:
 	$(PYTHON) -m pdb a_maze_ing.py

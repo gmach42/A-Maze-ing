@@ -28,7 +28,6 @@ class MazeUIManager(MLXImage):
         ]
         self.color: int = color
         super().__init__(xvar, width, xvar.maze.img_height)
-        print(width)
 
     def add_button(self, xvar: XVar):
         for i, button in enumerate(self.buttons):
