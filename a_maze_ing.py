@@ -62,11 +62,6 @@ def main() -> None:
 
     # Generate and draw maze
     xvar.generator = MazeGenerator(env_variable.height, env_variable.width)
-    xvar.colors_paths = {
-            "start": ColorManager.START,
-            "end": ColorManager.END,
-            "path": ColorManager.PATH,
-        }
     xvar.maze = Maze(
         xvar,
         env_variable.entry,
@@ -86,7 +81,11 @@ def main() -> None:
         cols=xvar.maze.cols,
         path_matrix=xvar.solver.a_star_algorithm(),
         wall_width=xvar.maze.wall_width,
-        colors=xvar.colors_paths,
+        colors={
+            "start": ColorManager.START,
+            "end": ColorManager.END,
+            "path": ColorManager.PATH,
+        },
         start=xvar.maze.entry,
         end=xvar.maze.exit,
         cell_size=xvar.maze.cell_size,

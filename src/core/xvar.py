@@ -23,5 +23,4 @@ class XVar:
         self.speed: str = "medium"
         self.row: int = 0
         self.col: int = 0
-        self.colors_paths: dict
         self.manager: "MazeUIManager"
