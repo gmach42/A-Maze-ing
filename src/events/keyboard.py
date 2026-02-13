@@ -2,6 +2,20 @@ from ..core import XVar
 from ..rendering.render_functions import draw_42
 
 
+HELP_MESSAGE = """
+╔══════════════════════════════════════════════════════╗
+║           A-MAZE-ING - KEYBINDS HELP                 ║
+╠══════════════════════════════════════════════════════╣
+║  ESC   │ Exit application                            ║
+║  c     │ Cycle maze wall colors                      ║
+║  s     │ Cycle solution path colors                  ║
+║  g     │ Toggle 42 animation                         ║
+║  r     │ Regenerate new maze                         ║
+║  h     │ Show this help message                      ║
+╚══════════════════════════════════════════════════════╝
+"""
+
+
 def manage_key(key, xvar: XVar) -> int:
     from ..rendering import MazeUIManager
     """Handle key press events"""
@@ -27,6 +41,11 @@ def manage_key(key, xvar: XVar) -> int:
     if key == 114:  # 'r'
         print("'r' key pressed, regenerating maze...")
         MazeUIManager.regenerate(xvar)
+
+    if key == 104:  # 'h'
+        print("'h' key pressed, showing help message...")
+        print(HELP_MESSAGE)
+
     return 0
 
 
