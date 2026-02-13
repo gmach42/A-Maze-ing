@@ -38,8 +38,8 @@ class MazeUIManager(MLXImage):
     def draw_all(self):
         pass
 
-    def add_label(self):
-        pass
+    def add_label(self, xvar: XVar, x: int, y: int, color: int, txt: str):
+        xvar.mlx.mlx_string_put(xvar.mlx_ptr, xvar.mlx.win, x, y, color, txt)
 
     def handle_mouse_click(self):
         pass
