@@ -1,6 +1,8 @@
 import array
+import random
 from ..core import MLXImage, XVar
 from ..maze_algorithm import Border
+from .color_manager import ColorManager
 
 
 def draw_rectangle(img_data: MLXImage, x: int, y: int, width: int, height: int,
@@ -25,19 +27,45 @@ def draw_rectangle(img_data: MLXImage, x: int, y: int, width: int, height: int,
         data[start_offset:start_offset + draw_width] = line_buffer
 
 
-def draw_maze_walls(xvar: XVar) -> None:
-    """Draw walls around each cell"""
-
-    list_ft: list = []
+def draw_42(xvar: XVar):
+    color: int = random.choice(
+        [col for col in ColorManager.COLOR_LIST if col != xvar.maze.color])
     for row in range(xvar.maze.rows):
         for col in range(xvar.maze.cols):
             cell_value = xvar.maze.maze_matrix[row][col]
             y = row * xvar.maze.cell_size
             x = col * xvar.maze.cell_size
-            if cell_value == (Border.NORTH | Border.SOUTH | Border.EAST |
-                              Border.WEST):
-                list_ft.append((x, y))
-            else:
+            if cell_value == (Border.NORTH | Border.SOUTH | Border.EAST
+                              | Border.WEST):
+                size: int = xvar.maze.cell_size - xvar.maze.wall_width
+                draw_rectangle(xvar.maze, x, y,
+                               xvar.maze.cell_size + xvar.maze.wall_width,
+                               xvar.maze.wall_width, color)
+                draw_rectangle(xvar.maze, x, y + xvar.maze.cell_size,
+                               xvar.maze.cell_size + xvar.maze.wall_width,
+                               xvar.maze.wall_width, color)
+                draw_rectangle(xvar.maze, x, y, xvar.maze.wall_width,
+                               xvar.maze.cell_size + xvar.maze.wall_width,
+                               color)
+                draw_rectangle(xvar.maze, x + xvar.maze.cell_size, y,
+                               xvar.maze.wall_width,
+                               xvar.maze.cell_size + xvar.maze.wall_width,
+                               color)
+                draw_rectangle(xvar.maze, x + (xvar.maze.wall_width // 2),
+                               y + (xvar.maze.wall_width // 2), size, size,
+                               color)
+
+
+def draw_maze_walls(xvar: XVar) -> None:
+    """Draw walls around each cell"""
+
+    for row in range(xvar.maze.rows):
+        for col in range(xvar.maze.cols):
+            cell_value = xvar.maze.maze_matrix[row][col]
+            y = row * xvar.maze.cell_size
+            x = col * xvar.maze.cell_size
+            if cell_value != (Border.NORTH | Border.SOUTH | Border.EAST
+                              | Border.WEST):
                 if cell_value & Border.NORTH:
                     draw_rectangle(xvar.maze, x, y,
                                    xvar.maze.cell_size + xvar.maze.wall_width,
@@ -55,40 +83,7 @@ def draw_maze_walls(xvar: XVar) -> None:
                                    xvar.maze.wall_width,
                                    xvar.maze.cell_size + xvar.maze.wall_width,
                                    xvar.maze.color)
-    for ft in list_ft:
-        x, y = ft
-        a: int = (xvar.maze.color >> 24) & 0xFF
-        r: int = (xvar.maze.color >> 16) & 0xFF
-        g: int = (xvar.maze.color >> 8) & 0xFF
-        b: int = (xvar.maze.color) & 0xFF
-
-        # We are increasing the intensity
-        if (r + g + b) > 400:
-            factor: float = 0.5
-        else:
-            factor = 1.8
-        r_h = min(int(r * factor), 255)
-        g_h = min(int(g * factor), 255)
-        b_h = min(int(b * factor), 255)
-
-        # If it's pure White/Green/Red or Blue we have to force a constrast
-        if r_h == r and g_h == g and b_h == b:
-            r_h, g_h, b_h = [int(c * 0.5) for c in (r, g, b)]
-
-        color: int = (a << 24 | r_h << 16 | g_h << 8 | b_h)
-        draw_rectangle(xvar.maze, x, y,
-                       xvar.maze.cell_size + xvar.maze.wall_width,
-                       xvar.maze.wall_width, color)
-        draw_rectangle(xvar.maze, x, y + xvar.maze.cell_size,
-                       xvar.maze.cell_size + xvar.maze.wall_width,
-                       xvar.maze.wall_width, color)
-        draw_rectangle(xvar.maze, x, y, xvar.maze.wall_width,
-                       xvar.maze.cell_size + xvar.maze.wall_width,
-                       color)
-        draw_rectangle(xvar.maze, x + xvar.maze.cell_size, y,
-                       xvar.maze.wall_width,
-                       xvar.maze.cell_size + xvar.maze.wall_width,
-                       color)
+    draw_42(xvar)
 
 
 def render_frame(xvar: XVar, img_data: MLXImage) -> None:
@@ -100,6 +95,13 @@ def render_frame(xvar: XVar, img_data: MLXImage) -> None:
 
 def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
     """Render the image to the window"""
-    x: int = xvar.maze.img_width + 25
+    offset: int = xvar.maze.cell_size // 2
+    x: int = (offset // 2) + xvar.maze.img_width + (xvar.maze.wall_width *
+                                                    2) + 5
     xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win, img_data.img_ptr,
-                                     x, xvar.maze.cell_size // 2)
+                                     x, offset)
+
+
+def display_path(xvar: XVar):
+    xvar.solution.draw_solution()
+    render_frame(xvar, xvar.solution)

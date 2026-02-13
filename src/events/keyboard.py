@@ -2,6 +2,7 @@ from ..core import XVar
 
 
 def manage_key(key, xvar: XVar) -> int:
+    from ..rendering import MazeUIManager
     """Handle key press events"""
     print(f"Got key {key}: ", end="")
 
@@ -20,8 +21,7 @@ def manage_key(key, xvar: XVar) -> int:
 
     if key == 114:  # 'r'
         print("'r' key pressed, regenerating maze...")
-        # TODO: regenerate_maze(xvar)
-
+        MazeUIManager.regenerate(xvar)
     return 0
 
 

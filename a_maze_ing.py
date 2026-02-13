@@ -1,19 +1,7 @@
 import sys
-from src import (
-    ColorManager,
-    Maze,
-    SolutionPath,
-    draw_maze_walls_anim,
-    draw_maze_walls,
-    render_frame,
-    MazeGenerator,
-    Solver,
-    XVar,
-    EnvVariables,
-    parsing,
-    ExecutionError,
-    MazeUIManager
-)
+from src import (ColorManager, Maze, SolutionPath, draw_maze_walls_anim,
+                 draw_maze_walls, render_frame, MazeGenerator, Solver, XVar,
+                 EnvVariables, parsing, ExecutionError, MazeUIManager)
 from src import events
 from mlx import Mlx
 
@@ -35,8 +23,7 @@ def main() -> None:
         xvar.mlx = Mlx()
         xvar.mlx_ptr = xvar.mlx.mlx_init()
         _, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
-            xvar.mlx_ptr
-        )
+            xvar.mlx_ptr)
     except Exception as e:
         print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
         sys.exit(1)
@@ -51,7 +38,11 @@ def main() -> None:
             config_file = sys.argv[1]
         env_variable: EnvVariables = parsing(config_file)
         config_xvar(xvar, env_variable)
-        win_width = (env_variable.width + 1) * env_variable.cell_size + 300
+        win_width = (env_variable.width + 1) * env_variable.cell_size
+
+        # Add panel's width
+        panel_width: int = round(win_width * 0.3)
+        win_width += panel_width
         win_height = (env_variable.height + 1) * env_variable.cell_size
     except ValueError:
         print(
@@ -65,9 +56,8 @@ def main() -> None:
 
     # Window creation
     try:
-        xvar.win = xvar.mlx.mlx_new_window(
-            xvar.mlx_ptr, win_width, win_height, "A-Maze-ing"
-        )
+        xvar.win = xvar.mlx.mlx_new_window(xvar.mlx_ptr, win_width, win_height,
+                                           "A-Maze-ing")
         if not xvar.win:
             raise Exception("Can't create main window")
     except Exception as e:
@@ -75,42 +65,42 @@ def main() -> None:
         sys.exit(1)
 
     # Generate and draw maze
-    generator = MazeGenerator(env_variable.height, env_variable.width)
+    xvar.generator = MazeGenerator(env_variable.height, env_variable.width)
+    xvar.colors_paths = {
+            "start": ColorManager.START,
+            "end": ColorManager.END,
+            "path": ColorManager.PATH,
+        }
     xvar.maze = Maze(
         xvar,
         env_variable.entry,
         env_variable.exit,
         env_variable.height,
         env_variable.width,
-        generator.get_maze(),
+        xvar.generator.get_maze(),
         env_variable.cell_size,
         env_variable.wall_width,
         ColorManager.WALL,
     )
-    solver = Solver(xvar.maze.maze_matrix, xvar.maze.entry, xvar.maze.exit)
-    colors = {
-        "start": ColorManager.START,
-        "end": ColorManager.END,
-        "path": ColorManager.PATH,
-    }
+    xvar.solver = Solver(xvar.maze.maze_matrix, xvar.maze.entry,
+                         xvar.maze.exit)
     xvar.solution = SolutionPath(
         xvar=xvar,
         rows=xvar.maze.rows,
         cols=xvar.maze.cols,
-        path_matrix=solver.a_star_algorithm(),
+        path_matrix=xvar.solver.a_star_algorithm(),
         wall_width=xvar.maze.wall_width,
-        colors=colors,
+        colors=xvar.colors_paths,
         start=xvar.maze.entry,
         end=xvar.maze.exit,
         cell_size=xvar.maze.cell_size,
     )
 
     # Generate MazeUIManager
-    manager: MazeUIManager = MazeUIManager(xvar)
+    manager: MazeUIManager = MazeUIManager(xvar, panel_width - 10)
     manager.draw_panel(xvar)
     if xvar.animation:
-        xvar.mlx.mlx_loop_hook(
-            xvar.mlx_ptr, draw_maze_walls_anim, xvar)
+        xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
     else:
         draw_maze_walls(xvar)
         render_frame(xvar, xvar.maze)

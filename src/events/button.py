@@ -7,16 +7,12 @@ class Button(MLXImage):
     def __init__(
         self,
         xvar: XVar,
-        x: int,
-        y: int,
         width: int,
         height: int,
         text: str,
         color: int,
         callback: Callable = None,
     ):
-        self.x = x
-        self.y = y
         self.width = width
         self.height = height
         self.text = text

@@ -1,4 +1,4 @@
-from .background import Background, MazeUIManager
+from .maze_ui import MazeUIManager
 from .maze import Maze
 from .render_functions import (
     draw_rectangle,
@@ -10,7 +10,6 @@ from .color_manager import ColorManager
 from .animation import draw_maze_walls_anim
 
 __all__ = [
-    "Background",
     "MazeUIManager",
     "Maze",
     "draw_rectangle",

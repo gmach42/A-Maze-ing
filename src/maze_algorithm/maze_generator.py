@@ -7,7 +7,7 @@ class MazeGenerator:
         self.grid: list[list[Cell]] = []
         self.width: int = width
         self.height: int = height
-        self.sets: list[int] = list(range(width * height))
+        self.sets: list[int] = []
         self.cardinal_points: dict = {
             "North": 1,
             "East": 2,
@@ -37,16 +37,6 @@ class MazeGenerator:
             (mid_height + 4, mid_width + 5),
             (mid_height + 4, mid_width + 6),
         ]
-
-        for y in range(height):
-            row: list = []
-            for x in range(width):
-                index: int = y * width + x
-                cell: Cell = Cell(index)
-                row.append(cell)
-                if (y, x) in (self.forty_two_gps):
-                    cell.set_forty_two()
-            self.grid.append(row)
 
     def find(self, index: int) -> int:
         """Search for the cell's boss. If it isn't its own boss, it will find
@@ -104,6 +94,17 @@ class MazeGenerator:
                         cell_2.del_north()
 
     def get_maze(self) -> list:
+        self.grid = []
+        for y in range(self.height):
+            row: list = []
+            for x in range(self.width):
+                index: int = y * self.width + x
+                cell: Cell = Cell(index)
+                row.append(cell)
+                if (y, x) in (self.forty_two_gps):
+                    cell.set_forty_two()
+            self.grid.append(row)
+        self.sets = list(range(self.width * self.height))
         self.generate()
         return [[cell.get_walls() for cell in line] for line in self.grid]
 
