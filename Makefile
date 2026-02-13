@@ -13,9 +13,10 @@ help:
 	@echo "  make debug       - Run the application in debug mode"
 	@echo "  make lint        - Run linters and type checkers"
 	@echo "  make lint-strict - Run linters and type checkers in strict mode"
+	@echo "  make keybind     - Show available keybinds while running the program"
 
 keybind:
-	@echo "Available keybinds while running the maze:"
+	@echo "Available keybinds while running the programm:"
 	@echo "  - 'h' to show this help message"
 	@echo "  - 'd' to show/hide the solution path"
 	@echo "  - 'r' to regenerate the maze"
