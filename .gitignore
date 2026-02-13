@@ -3,3 +3,6 @@ __pycache__/
 .vscode/
 .venv/
 **.lock
+mlx_CLXV-2.2.tgz
+mlx-2.2-py3-none-any.whl
+mlx_CLXV/
