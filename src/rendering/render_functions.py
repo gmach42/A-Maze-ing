@@ -54,6 +54,7 @@ def draw_42(xvar: XVar):
                 draw_rectangle(xvar.maze, x + (xvar.maze.wall_width // 2),
                                y + (xvar.maze.wall_width // 2), size, size,
                                color)
+                render_frame(xvar, xvar.maze)
 
 
 def draw_maze_walls(xvar: XVar) -> None:

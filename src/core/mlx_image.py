@@ -1,3 +1,4 @@
+import array
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING
 
@@ -19,9 +20,9 @@ class MLXImage(ABC):
         res = xvar.mlx.mlx_get_data_addr(self.img_ptr)
         self.data = res[0].cast("I")
 
-    def clear_buffer(self):
-        for i in range(len(self.data)):
-            self.data[i] = 0
+    @abstractmethod
+    def reset_draw(self):
+        pass
 
     @abstractmethod
     def regen(self):

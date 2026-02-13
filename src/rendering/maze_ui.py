@@ -62,12 +62,15 @@ class MazeUIManager(MLXImage):
         render_frame_panel(xvar, self)
 
     def regen(self, xvar: XVar) -> None:
-        self.clear_buffer()
+        self.reset_draw()
         draw_maze_walls(xvar)
 
     @staticmethod
     def regenerate(xvar: XVar):
+        xvar.maze.reset_draw(xvar)
+        xvar.solution.reset_draw()
         xvar.maze.maze_matrix = xvar.generator.get_maze()
+        xvar.solver.maze = xvar.maze.maze_matrix
         xvar.solution.path_matrix = xvar.solver.a_star_algorithm()
         if xvar.animation:
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
@@ -76,3 +79,6 @@ class MazeUIManager(MLXImage):
             render_frame(xvar, xvar.maze)
             xvar.solution.draw_solution()
             render_frame(xvar, xvar.solution)
+
+    def reset_draw(self):
+        pass

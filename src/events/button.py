@@ -31,3 +31,6 @@ class Button(MLXImage):
     def regen(self, xvar: XVar) -> None:
         self.clear_buffer()
         draw_maze_walls(xvar)
+
+    def reset_draw(self):
+        pass
