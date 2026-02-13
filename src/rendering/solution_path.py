@@ -107,14 +107,11 @@ class SolutionPath(MLXImage):
             draw_42(xvar)
 
     def reset_draw(self):
+        temp = self.colors
         self.colors = {
             'start': ColorManager.BLACK,
             'end': ColorManager.BLACK,
             'path': ColorManager.BLACK,
             }
         self.draw_solution()
-        self.colors = {
-            'start': ColorManager.START,
-            'end': ColorManager.END,
-            'path': ColorManager.PATH,
-            }
+        self.colors = temp
