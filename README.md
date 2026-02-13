@@ -75,6 +75,23 @@ function A_Star(start, goal, h)
 ```
 ### Code reusability
 ### Team & project management
+
+#### Task distribution
+
+**Bruno**
+- Maze Generation Algorithm
+- Buttons
+- Parsing
+- Animations
+
+**Gildas**
+- A* Pathfinding Algorithm
+- Keybind Managment
+- Color Manager
+- Drawing functions
+- Project Structuration
+
+
 #### Role of each member
 #### Planning and evolution
 #### Good points and points to improve
@@ -107,3 +124,4 @@ plotLine(x0, y0, x1, y1)
 
 
 ### Advanced features (multiple algortithms, display options, animation)
+# IA
