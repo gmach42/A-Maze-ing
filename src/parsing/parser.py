@@ -20,9 +20,9 @@ class EnvVariables(BaseModel):
     exit: tuple[int, int]
     output_file: str
     perfect: StrictBool
-    animation: bool = False
-    cell_size: int = 50
+    cell_size: int = 40
     wall_width: int = 10
+    animation: bool = False
     speed_animation: str = 'medium'
 
     @field_validator('entry', 'exit', mode='before')
@@ -49,6 +49,8 @@ def parsing(file_name: str) -> EnvVariables:
         'exit': None,
         'output_file': None,
         'perfect': None,
+        'cell_size': 40,
+        'wall_width': 10
     }
     try:
         with open(file_name, 'r') as file:

@@ -21,7 +21,7 @@ def manage_key(key, xvar: XVar) -> int:
         change_solution_color(xvar)
 
     if key == 103:  # 'g'
-        print("'r' key pressed, regenerating maze...")
+        print("'g' key pressed, changing 42's color...")
         change_42_color(xvar)
 
     if key == 114:  # 'r'
