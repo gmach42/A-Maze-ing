@@ -1,4 +1,5 @@
 from ..core import XVar
+from ..rendering.render_functions import draw_42
 
 
 def manage_key(key, xvar: XVar) -> int:
@@ -19,6 +20,10 @@ def manage_key(key, xvar: XVar) -> int:
         print("'s' key pressed, changing solution color...")
         change_solution_color(xvar)
 
+    if key == 103:  # 'g'
+        print("'r' key pressed, regenerating maze...")
+        change_42_color(xvar)
+
     if key == 114:  # 'r'
         print("'r' key pressed, regenerating maze...")
         MazeUIManager.regenerate(xvar)
@@ -36,6 +41,16 @@ def change_maze_color(xvar: XVar) -> None:
     print(f"Changing to: {ColorManager.get_color_name(new_color)}")
     xvar.maze.change_color(new_color, xvar)
     render_frame(xvar, xvar.maze)
+
+
+def change_42_color(xvar: XVar) -> None:
+    if xvar.animation:
+        if not xvar.mlx._python_ref_std["loop_f"]:
+            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
+        else:
+            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+    else:
+        draw_42(xvar)
 
 
 def change_solution_color(xvar: XVar) -> None:

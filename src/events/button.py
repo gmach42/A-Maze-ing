@@ -20,7 +20,7 @@ class Button(MLXImage):
         self.callback = callback
         super().__init__(xvar, width, height)
 
-    def is_clicked(self, mouse_x, mouse_y):
+    def is_clicked(self, mouse_x, mouse_y) -> bool:
         return (self.x <= mouse_x <= self.x + self.width and
                 self.y <= mouse_y <= self.y + self.height)
 
