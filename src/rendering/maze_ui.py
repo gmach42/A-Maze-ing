@@ -40,7 +40,7 @@ class MazeUIManager(MLXImage):
         self.color: int = color
         super().__init__(xvar, width, xvar.maze.img_height)
 
-    def add_button(self, xvar: XVar):
+    def add_button(self, xvar: XVar) -> None:
         for i, button in enumerate(self.buttons):
             if i < 3:
                 offset_x: int = xvar.maze.img_width + xvar.maze.wall_width + \
@@ -110,7 +110,7 @@ class MazeUIManager(MLXImage):
         self.add_button(xvar)
 
     def regen(self, xvar: XVar) -> None:
-        self.reset_draw()
+        self.reset_draw(xvar)
         draw_maze_walls(xvar)
 
     @staticmethod
@@ -119,7 +119,7 @@ class MazeUIManager(MLXImage):
         xvar.col = 0
         xvar.row = 0
         xvar.maze.reset_draw(xvar)
-        xvar.solution.reset_draw()
+        xvar.solution.reset_draw(xvar)
         render_frame(xvar, xvar.solution)
         xvar.solution.step = 0
         xvar.maze.maze_matrix = xvar.generator.get_maze()
@@ -130,9 +130,9 @@ class MazeUIManager(MLXImage):
         else:
             draw_maze_walls(xvar)
             render_frame(xvar, xvar.maze)
-            xvar.solution.draw_solution()
+            xvar.solution.draw_solution(xvar)
             if xvar.solution.display:
                 render_frame(xvar, xvar.solution)
 
-    def reset_draw(self) -> None:
+    def reset_draw(self, xvar: XVar) -> None:
         pass

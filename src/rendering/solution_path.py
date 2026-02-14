@@ -27,44 +27,27 @@ class SolutionPath(MLXImage):
         self.wall_width = wall_width
         self.colors = colors
         self.start = start
-        self.end = end,
+        self.end = end
         self.step: int = 0
         self.display: bool = False
 
-    def change_color(self, colors: dict[str, int]) -> None:
+    def change_color(self, colors: dict[str, int], xvar: XVar) -> None:
         self.colors = colors
-        self.regen()
+        self.regen(xvar)
 
-    def set_start_end(
-        self,
-        start: tuple[int, int],
-        end: tuple[int, int]
-    ) -> None:
+    def set_start_end(self, start: tuple[int, int], end: tuple[int,
+                                                               int]) -> None:
         self.start = start
         self.end = end
 
-    def regen(self) -> None:
-        self.draw_solution()
+    def regen(self, xvar: XVar) -> None:
+        self.draw_solution(xvar)
 
-    def change_path_color(xvar: XVar) -> None:
-        color_index = ColorManager.COLOR_LIST.index(
-            xvar.solution_path.path_color)
-        if color_index == len(ColorManager.COLOR_LIST) - 1:
-            new_color = ColorManager.WHITE
-        else:
-            new_color = ColorManager.COLOR_LIST[color_index + 1]
-        print("Changing path color to: ", end="")
-        print(ColorManager.get_color_name(new_color))
-
-        xvar.solution_path.change_path_color(new_color)
-        render_frame(xvar, xvar.solution_path.img_path,
-                     xvar.solution_path.cell_size)
-
-    def draw_solution(self) -> None:
+    def draw_solution(self, xvar: XVar) -> None:
         """Draw the solution path on the maze using `draw_rectangle()`"""
         y_start, x_start = self.path_matrix[0]
         y_end, x_end = self.path_matrix[-1]
-        size_path = self.cell_size - self.wall_width
+        size_path = xvar.maze.cell_size - self.wall_width
         offset = self.wall_width
 
         # Draw start
@@ -92,11 +75,11 @@ class SolutionPath(MLXImage):
 
         if self.step <= len(self.path_matrix) - 1:
             if self.step == 0:
-                color: int = self.colors.get("start")
+                color: int = self.colors.get("start", 0xFFFF0000)
             elif self.step == len(self.path_matrix) - 1:
-                color = self.colors.get("end")
+                color = self.colors.get("end", 0xFF00FF00)
             else:
-                color = self.colors.get("path")
+                color = self.colors.get("path", 0xFF0000FF)
             y, x = self.path_matrix[self.step]
             draw_rectangle(self, x * self.cell_size + offset,
                            y * self.cell_size + offset, size_path, size_path,
@@ -106,13 +89,12 @@ class SolutionPath(MLXImage):
         else:
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
 
-    def reset_draw(self) -> None:
-        # self.display = False
-        temp_colors: dict = self.colors
+    def reset_draw(self, xvar: XVar) -> None:
+        temp_colors: dict[str, int] = self.colors
         self.colors = {
             'start': ColorManager.BLACK,
             'end': ColorManager.BLACK,
             'path': ColorManager.BLACK,
-            }
-        self.draw_solution()
+        }
+        self.draw_solution(xvar)
         self.colors = temp_colors

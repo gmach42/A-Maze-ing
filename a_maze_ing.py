@@ -23,7 +23,7 @@ from pydantic import ValidationError
 from src.parsing.constants import MIN_COL_42, PANEL_WIDTH, MIN_ROW_42
 
 
-def config_xvar(xvar: XVar, env_variable: EnvVariables):
+def config_xvar(xvar: XVar, env_variable: EnvVariables) -> None:
     xvar.animation = env_variable.animation
     xvar.speed = env_variable.speed_animation
 
@@ -141,7 +141,7 @@ def main() -> None:
             "path": ColorManager.PATH,
         },
         start=xvar.maze.entry,
-        end=xvar.maze.exit,
+        end=env_variable.exit,
         cell_size=xvar.maze.cell_size,
     )
 
@@ -162,7 +162,8 @@ def main() -> None:
     else:
         draw_maze_walls(xvar)
         render_frame(xvar, xvar.maze)
-        xvar.solution.draw_solution()
+        xvar.solution.draw_solution(xvar)
+        # render_frame(xvar, xvar.solution)
 
     # Starting message
     print(

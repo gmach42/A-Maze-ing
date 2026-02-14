@@ -11,9 +11,9 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
         case "slow":
             limit: int = 1
         case "medium":
-            limit: int = 5
+            limit = 5
         case "fast":
-            limit: int = 10
+            limit = 10
 
     for _ in range(limit):
         if (0 <= xvar.row < xvar.maze.rows) and (0 <= xvar.col <

@@ -8,8 +8,8 @@ class Maze(MLXImage):
     def __init__(
         self,
         xvar: XVar,
-        entry: tuple,
-        exit: tuple,
+        entry: tuple[int, int],
+        exit: tuple[int, int],
         rows: int,
         cols: int,
         maze_matrix: list[list[int]],

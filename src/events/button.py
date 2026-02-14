@@ -1,6 +1,6 @@
 from typing import Callable
 from ..core import XVar, MLXImage
-from ..rendering.render_functions import draw_maze_walls, draw_rectangle
+from ..rendering.render_functions import draw_rectangle
 
 
 class Button(MLXImage):
@@ -12,7 +12,7 @@ class Button(MLXImage):
         height: int,
         text: str,
         color: int,
-        callback: Callable = None,
+        callback: Callable[[XVar], None] | None = None,
     ):
         self.x: int = 0
         self.y: int = 0
@@ -24,7 +24,7 @@ class Button(MLXImage):
         super().__init__(xvar, width, height)
         draw_rectangle(self, 0, 0, self.width, self.height, self.color)
 
-    def is_clicked(self, mouse_x, mouse_y) -> bool:
+    def is_clicked(self, mouse_x: int, mouse_y: int) -> bool:
         return (self.x <= mouse_x <= self.x + self.width
                 and self.y <= mouse_y <= self.y + self.height)
 
@@ -34,8 +34,7 @@ class Button(MLXImage):
             self.callback(xvar)
 
     def regen(self, xvar: XVar) -> None:
-        self.clear_buffer()
-        draw_maze_walls(xvar)
+        pass
 
-    def reset_draw(self) -> None:
+    def reset_draw(self, xvar: XVar) -> None:
         pass

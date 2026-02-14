@@ -7,6 +7,7 @@ from pydantic import (
     field_validator,
     model_validator,
 )
+from typing import Any
 from .errors import FormatError, MissingKey, ConfigError, TooManyVar
 from .constants import MIN_PIXEL_WIDTH, MIN_PIXEL_HEIGHT, MIN_ROWS, MIN_COLS
 
@@ -44,13 +45,13 @@ class EnvVariables(BaseModel):
 
     @field_validator("entry", "exit", mode="before")
     @classmethod
-    def check_tuple(cls, value: str):
+    def check_tuple(cls, value: str) -> tuple[int, int] | None:
         """
         Validate that the entry and exit points are in the correct format
         and convert them to tuples of integers.
         """
         clean_value: str = value.replace(")", "").replace("(", "").strip()
-        values: list = clean_value.split(",")
+        values: list[str] = clean_value.split(",")
         if len(values) != 2:
             raise ValueError("Wrong format tuple. Must be '(number,number)")
         try:
@@ -61,7 +62,7 @@ class EnvVariables(BaseModel):
             raise ValueError("Entry and exit must be integers!")
 
     @model_validator(mode="after")
-    def check_values(self):
+    def check_values(self) -> "EnvVariables":
         """
         Validate that entry and exit points are different
         and within maze dimensions.
@@ -82,7 +83,7 @@ def parsing_config(file_name: str) -> EnvVariables:
     Parse the configuration file and return an
     EnvVariables instance with the values.
     """
-    results = {
+    results: dict[str, Any] = {
         "width": None,
         "height": None,
         "entry": None,
@@ -97,7 +98,7 @@ def parsing_config(file_name: str) -> EnvVariables:
             line: str = file.readline()
             while line:
                 if line[0] != "#":
-                    string_split: list = line.split("=")
+                    string_split: list[Any] = line.split("=")
                     if len(string_split) == 2:
                         string_split[1] = string_split[1].strip("\n").strip()
                         if string_split[0].lower() == "seed":

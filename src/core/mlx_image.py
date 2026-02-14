@@ -20,9 +20,9 @@ class MLXImage(ABC):
         self.data = res[0].cast("I")
 
     @abstractmethod
-    def reset_draw(self, xvar: 'XVar'):
+    def reset_draw(self, xvar: 'XVar') -> None:
         pass
 
     @abstractmethod
-    def regen(self):
+    def regen(self, xvar: XVar) -> None:
         pass
