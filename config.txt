@@ -8,7 +8,7 @@ ENTRY=0,0
 EXIT=8,6
 # Output filename
 OUTPUT_FILE=maze.txt
-PERFECT=false
+PERFECT=true
 # Animation can be true or false
 ANIMATION=true
 # Speed animation can be slow, medium or fast

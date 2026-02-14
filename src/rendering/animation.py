@@ -52,5 +52,10 @@ def draw_maze_walls_anim(xvar: XVar) -> None:
             except IndexError:
                 print(f"{xvar.col=} et {xvar.row=}")
         else:
-            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
-            draw_42(xvar)
+            if xvar.solution.display:
+                draw_42(xvar)
+                xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
+                                       xvar.solution.draw_solution_anim, xvar)
+            else:
+                xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+                draw_42(xvar)
