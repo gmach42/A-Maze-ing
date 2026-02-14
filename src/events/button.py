@@ -29,6 +29,7 @@ class Button(MLXImage):
                 and self.y <= mouse_y <= self.y + self.height)
 
     def handle_callable(self, xvar: XVar) -> None:
+        # temp = xvar.manager.buttons
         if self.callback:
             self.callback(xvar)
 

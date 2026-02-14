@@ -3,6 +3,7 @@ from ..parsing import NoSolutionError
 
 
 class Solver:
+
     def __init__(
         self,
         maze: list[list[int]],
@@ -17,8 +18,7 @@ class Solver:
         if not self.is_valid_maze():
             raise ValueError(
                 "The maze is not valid: "
-                "Start and End are out of bound or in 42 obstacle"
-            )
+                "Start and End are out of bound or in 42 obstacle")
 
     @staticmethod
     def parse_maze_str(maze_str: str) -> list[list[int]]:
@@ -65,7 +65,8 @@ class Solver:
         return abs(x1 - x2) + abs(y1 - y2)
 
     def reconstruct_path(
-        self, node: tuple[int, int], came_from: dict[tuple[int, int], tuple[int, int]]
+        self, node: tuple[int, int], came_from: dict[tuple[int, int],
+                                                     tuple[int, int]]
     ) -> list[tuple[int, int]]:
         """
         Return the list of nodes of the correct path from the start
@@ -94,9 +95,10 @@ class Solver:
 
         # open_paths: list[(f_score, node)] is the list of cells path opened to
         # explore, sorted by priority (f_score)
-        open_paths: list[tuple[int, tuple[int, int]]] = [
-            (self.h(self.start, self.end), self.start)
-        ]
+        open_paths: list[tuple[int,
+                               tuple[int,
+                                     int]]] = [(self.h(self.start,
+                                                       self.end), self.start)]
 
         # Register the precedent node of each newly accessed node
         came_from: dict[tuple[int, int], tuple[int, int]] = {}
@@ -134,11 +136,7 @@ class Solver:
         start_row, start_col = self.start
         end_row, end_col = self.end
 
-        return (
-            0 <= start_row < rows
-            and 0 <= start_col < cols
-            and 0 <= end_row < rows
-            and 0 <= end_col < cols
-            and self.start not in self.is_42
-            and self.end not in self.is_42
-        )
+        return (0 <= start_row < rows and 0 <= start_col < cols
+                and 0 <= end_row < rows and 0 <= end_col < cols
+                and self.start not in self.is_42
+                and self.end not in self.is_42)
