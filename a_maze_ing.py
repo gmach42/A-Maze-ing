@@ -14,6 +14,7 @@ from src import (
     handle_click,
     ExecutionError,
     MazeUIManager,
+    output_maze,
 )
 from src import events, parsing
 from mlx import Mlx
@@ -132,6 +133,9 @@ def main() -> None:
         end=xvar.maze.exit,
         cell_size=xvar.maze.cell_size,
     )
+
+    # Output maze to file
+    output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
 
     # Generate MazeUIManager
     xvar.manager = MazeUIManager(xvar, panel_width - 10)

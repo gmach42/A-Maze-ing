@@ -140,31 +140,3 @@ class Solver:
             and self.start not in self.is_42
             and self.end not in self.is_42
         )
-
-    def cardinal_direction(self, path: list[tuple]) -> str:
-        """transform the path into a string of direction"""
-        # iterate on the whole path except last node
-        if not path:
-            raise ValueError("No SolutionPath found")
-        directions: str = ""
-        for i in range(len(path) - 1):
-            curr_row, curr_col = path[i]
-            next_row, next_col = path[i + 1]
-
-            # Compare row change
-            if next_row < curr_row:
-                directions += "N"
-            elif next_row > curr_row:
-                directions += "S"
-            # Compare col change
-            elif next_col < curr_col:
-                directions += "W"
-            elif next_col > curr_col:
-                directions += "E"
-
-        return directions
-
-    @staticmethod
-    def display_list(lst: list[list]) -> None:
-        for line in lst:
-            print(line)
