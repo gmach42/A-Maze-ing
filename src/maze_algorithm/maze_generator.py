@@ -1,5 +1,6 @@
 import random as rand
 from .utils_algorithm import Cell
+from ..parsing.constants import MIN_COL_42, MIN_ROW_42
 
 
 class MazeGenerator:
@@ -48,7 +49,7 @@ class MazeGenerator:
             (mid_height + 4, mid_width + 4),
             (mid_height + 4, mid_width + 5),
             (mid_height + 4, mid_width + 6),
-        ]
+        ] if width >= MIN_COL_42 and height >= MIN_ROW_42 else []
 
     def find(self, index: int) -> int:
         """Search for the cell's boss. If it isn't its own boss, it will find

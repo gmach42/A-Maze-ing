@@ -20,7 +20,7 @@ from src import (
 from src import events, parsing
 from mlx import Mlx
 from pydantic import ValidationError
-from src.parsing.constants import MIN_PANEL_WIDTH
+from src.parsing.constants import MIN_COL_42, PANEL_WIDTH, MIN_ROW_42
 
 
 def config_xvar(xvar: XVar, env_variable: EnvVariables):
@@ -30,6 +30,8 @@ def config_xvar(xvar: XVar, env_variable: EnvVariables):
 
 def main() -> None:
     xvar = XVar()
+
+    print("\nWelcome to A-Maze-ing!\n")
 
     # Mlx Initialisation
     try:
@@ -50,19 +52,25 @@ def main() -> None:
         else:
             config_file = sys.argv[1]
         env_variable: EnvVariables = parsing_config(config_file)
+
         config_xvar(xvar, env_variable)
         win_width = (env_variable.width + 1) * env_variable.cell_size
         win_height = (env_variable.height +
                       1) * env_variable.cell_size + env_variable.wall_width
 
         # Add panel's width
-        panel_width: int = max(win_width // 3, MIN_PANEL_WIDTH)
+        panel_width: int = PANEL_WIDTH
 
         # Define window width and height and validate it
         win_width += panel_width + env_variable.cell_size
         if not parsing.is_valid_window(xvar.screen_w, xvar.screen_h, win_width,
                                        win_height):
             raise ValueError("Invalid Window size")
+        if env_variable.width < MIN_COL_42 or env_variable.height < MIN_ROW_42:
+            print('=' * 40)
+            print("Litle Maze setting: NO 42 in the maze!")
+            print('=' * 40 + '\n')
+
     except ValidationError as e:
         for error in e.errors():
             print(
@@ -144,9 +152,10 @@ def main() -> None:
     xvar.manager = MazeUIManager(xvar, panel_width)
     xvar.manager.draw_panel(xvar)
 
-    # Init Maze pixels transparent to avoid garbage values when rendering
+    # Init images' pixels transparent to avoid garbage pixels when rendering
     # the maze for the first time (especially usefull for little windows)
     render_init(xvar.maze)
+    render_init(xvar.solution)
 
     if xvar.animation:
         xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
@@ -156,9 +165,9 @@ def main() -> None:
         xvar.solution.draw_solution()
 
     # Starting message
-    print("\nWelcome to A-Maze-ing!\n")
     print(
-        f"Generating maze of size {env_variable.width}x{env_variable.height}")
+        f"\nGenerating maze of size {env_variable.width}x{env_variable.height}"
+    )
     print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
 
     # Event hooks

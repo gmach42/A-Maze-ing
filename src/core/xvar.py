@@ -24,4 +24,3 @@ class XVar:
         self.row: int = 0
         self.col: int = 0
         self.manager: "MazeUIManager"
-        self._42flag: bool = True
