@@ -134,7 +134,7 @@ def main() -> None:
         cell_size=xvar.maze.cell_size,
     )
 
-    # Output maze to file
+    # Output maze to txt file
     output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
 
     # Generate MazeUIManager
