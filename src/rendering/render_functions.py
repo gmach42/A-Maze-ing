@@ -103,9 +103,10 @@ def display_path(xvar: XVar):
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
                                    xvar.solution.draw_solution_anim, xvar)
         else:
+            xvar.solution.display = True
             xvar.solution.draw_solution()
             render_frame(xvar, xvar.solution)
-            xvar.solution.display = True
     else:
+        xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
         xvar.solution.reset_draw()
         render_frame(xvar, xvar.solution)

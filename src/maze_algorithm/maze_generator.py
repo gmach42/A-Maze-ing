@@ -112,7 +112,10 @@ class MazeGenerator:
                         cell_1.del_south()
                         cell_2.del_north()
 
-    def unperfect(self):
+    def unperfect(self) -> None:
+        """When env variable perfect is False, it take 1/3 of all walls and
+        break them while being careful to not open too much areas.
+        """
         list_breakable_cells: list[Cell] = [
             cell for cells in self.grid for cell in cells
             if not cell.is_forty_two() and 0 < cell.x < self.width -

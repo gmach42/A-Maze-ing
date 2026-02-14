@@ -86,6 +86,7 @@ class SolutionPath(MLXImage):
 
     def draw_solution_anim(self, xvar: XVar) -> None:
         """Draw the solution path on the maze using `draw_rectangle()`"""
+        self.display = True
         size_path = self.cell_size - self.wall_width
         offset = self.wall_width
 
@@ -103,10 +104,10 @@ class SolutionPath(MLXImage):
             self.step += 1
             render_frame(xvar, self)
         else:
-            self.display = True
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
 
     def reset_draw(self):
+        self.display = False
         temp_colors: dict = self.colors
         self.colors = {
             'start': ColorManager.BLACK,
@@ -115,4 +116,3 @@ class SolutionPath(MLXImage):
             }
         self.draw_solution()
         self.colors = temp_colors
-        self.display = False
