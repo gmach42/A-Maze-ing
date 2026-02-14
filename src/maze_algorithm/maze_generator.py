@@ -4,12 +4,13 @@ from .utils_algorithm import Cell
 
 class MazeGenerator:
 
-    def __init__(self,
-                 height: int,
-                 width: int,
-                 perfect: bool,
-                 seed: int = None,
-                 ):
+    def __init__(
+        self,
+        height: int,
+        width: int,
+        perfect: bool,
+        seed: int = None,
+    ):
         if seed:
             rand.seed(seed)
         self.grid: list[list[Cell]] = []
@@ -122,22 +123,29 @@ class MazeGenerator:
         while i < round(len(list_breakable_cells) * 0.3):
             y: int = list_breakable_cells[0].y
             x: int = list_breakable_cells[0].x
-            if list_breakable_cells[0].south != 0 and not self.grid[
-                    y + 1][x].is_forty_two():
+            right: Cell = self.grid[y][x + 1]
+            left: Cell = self.grid[y][x - 1]
+            top: Cell = self.grid[y - 1][x]
+            bottom: Cell = self.grid[y + 1][x]
+            if list_breakable_cells[0].south != 0 and not (
+                    bottom.is_forty_two() and
+                    (bottom.get_walls() - bottom.north) == 0):
                 list_breakable_cells[0].del_south()
-                self.grid[y + 1][x].del_north()
-            elif list_breakable_cells[0].north != 0 and not self.grid[
-                    y - 1][x].is_forty_two():
+                bottom.del_north()
+            elif list_breakable_cells[0].north != 0 and not (
+                    top.is_forty_two() and (top.get_walls() - top.south) == 0):
                 list_breakable_cells[0].del_north()
-                self.grid[y - 1][x].del_south()
-            elif list_breakable_cells[0].east != 0 and not self.grid[y][
-                    x + 1].is_forty_two():
+                top.del_south()
+            elif list_breakable_cells[0].east != 0 and not (
+                    right.is_forty_two() and
+                    (right.get_walls() - right.west) == 0):
                 list_breakable_cells[0].del_east()
-                self.grid[y][x + 1].del_west()
-            elif list_breakable_cells[0].west != 0 and not self.grid[y][
-                    x - 1].is_forty_two():
+                right.del_west()
+            elif list_breakable_cells[0].west != 0 and not (
+                    left.is_forty_two() and
+                    (left.get_walls() - left.east) == 0):
                 list_breakable_cells[0].del_west()
-                self.grid[y][x - 1].del_east()
+                left.del_east()
             else:
                 i -= 1
             list_breakable_cells.pop(0)
