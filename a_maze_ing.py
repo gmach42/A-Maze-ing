@@ -53,7 +53,7 @@ def main() -> None:
         win_width = (env_variable.width + 1) * env_variable.cell_size
 
         # Add panel's width
-        panel_width: int = win_width // 3
+        panel_width: int = max(win_width // 3, 300)
 
         # Define window width and height and validate it
         win_width += panel_width
@@ -92,7 +92,7 @@ def main() -> None:
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-        
+
     # Generate and draw maze
     xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
                                    env_variable.perfect, env_variable.seed)
