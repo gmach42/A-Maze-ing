@@ -4,11 +4,19 @@ from .utils_algorithm import Cell
 
 class MazeGenerator:
 
-    def __init__(self, height: int, width: int):
+    def __init__(self,
+                 height: int,
+                 width: int,
+                 perfect: bool,
+                 seed: int = None,
+                 ):
+        if seed:
+            rand.seed(seed)
         self.grid: list[list[Cell]] = []
         self.width: int = width
         self.height: int = height
         self.boss_list: list[int] = []
+        self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
         self.cardinal_points: dict = {
             "North": 1,
@@ -103,6 +111,38 @@ class MazeGenerator:
                         cell_1.del_south()
                         cell_2.del_north()
 
+    def unperfect(self):
+        list_breakable_cells: list[Cell] = [
+            cell for cells in self.grid for cell in cells
+            if not cell.is_forty_two() and 0 < cell.x < self.width -
+            1 and 0 < cell.y < self.height - 1
+        ]
+        rand.shuffle(list_breakable_cells)
+        i: int = 0
+        while i < round(len(list_breakable_cells) * 0.3):
+            y: int = list_breakable_cells[0].y
+            x: int = list_breakable_cells[0].x
+            if list_breakable_cells[0].south != 0 and not self.grid[
+                    y + 1][x].is_forty_two():
+                list_breakable_cells[0].del_south()
+                self.grid[y + 1][x].del_north()
+            elif list_breakable_cells[0].north != 0 and not self.grid[
+                    y - 1][x].is_forty_two():
+                list_breakable_cells[0].del_north()
+                self.grid[y - 1][x].del_south()
+            elif list_breakable_cells[0].east != 0 and not self.grid[y][
+                    x + 1].is_forty_two():
+                list_breakable_cells[0].del_east()
+                self.grid[y][x + 1].del_west()
+            elif list_breakable_cells[0].west != 0 and not self.grid[y][
+                    x - 1].is_forty_two():
+                list_breakable_cells[0].del_west()
+                self.grid[y][x - 1].del_east()
+            else:
+                i -= 1
+            list_breakable_cells.pop(0)
+            i += 1
+
     def get_maze(self, algo: int = 1) -> list:
         self.grid = []
         for y in range(self.height):
@@ -124,6 +164,8 @@ class MazeGenerator:
                 if not cell.is_visited()
             ])
             self.depth_first_search(rand_cell)
+        if not self.perfect:
+            self.unperfect()
         return [[cell.get_walls() for cell in line] for line in self.grid]
 
     def depth_first_search(self, start_cell: Cell) -> None:

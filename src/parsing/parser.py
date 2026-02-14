@@ -45,6 +45,7 @@ class EnvVariables(BaseModel):
     wall_width: int = 1
     animation: bool = False
     speed_animation: str = "medium"
+    seed: str | None
 
     @field_validator("entry", "exit", mode="before")
     @classmethod
@@ -74,12 +75,10 @@ class EnvVariables(BaseModel):
             raise ValueError("Entry and exit points must be different")
         if self.entry[0] >= self.height or self.entry[1] >= self.width:
             raise ValueError(
-                "Entry coordinates must be within the maze dimensions"
-            )
+                "Entry coordinates must be within the maze dimensions")
         if self.exit[0] >= self.height or self.exit[1] >= self.width:
             raise ValueError(
-                "Exit coordinates must be within the maze dimensions"
-            )
+                "Exit coordinates must be within the maze dimensions")
         return self
 
 
@@ -106,27 +105,31 @@ def parsing_config(file_name: str) -> EnvVariables:
                     string_split: list = line.split("=")
                     if len(string_split) == 2:
                         string_split[1] = string_split[1].strip("\n").strip()
+                        if string_split[0].lower() == "seed":
+                            if string_split[1].lower() == "false":
+                                string_split[1] = None
                         if string_split[0].lower() in ["perfect", "animation"]:
                             if string_split[1].lower() == "true":
                                 string_split[1] = True
                             elif string_split[1].lower() == "false":
                                 string_split[1] = False
+                            else:
+                                raise MissingKey(
+                                    "Missing a value for perfect variable!")
                         results[string_split[0].lower()] = string_split[1]
                     else:
                         raise FormatError(
-                            "You need to use <key>=<value> format"
-                        )
+                            "You need to use <key>=<value> format")
                 line = file.readline()
-        if len(results) > 10:
+        if len(results) > 11:
             raise TooManyVar("Too much variables in configuration file!")
         for key, value in results.items():
             if not value and key in [
-                "width",
-                "height",
-                "entry",
-                "exit",
-                "output_file",
-                "perfect",
+                    "width",
+                    "height",
+                    "entry",
+                    "exit",
+                    "output_file",
             ]:
                 raise MissingKey(f"Missing a value for {key} variable!")
     except (ConfigError, OSError) as e:

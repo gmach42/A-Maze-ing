@@ -8,7 +8,10 @@ ENTRY=28,16
 EXIT=21,15
 # Output filename
 OUTPUT_FILE=maze.txt
-PERFECT=True
-# Optional: seed, algorithm, display_mode
+PERFECT=true
+# Animation can be true or false
 ANIMATION=true
+# Speed animation can be slow, medium or fast
 SPEED_ANIMATION=fast
+# If you want a random maze, let SEED to False. Else, assign a value
+SEED=42
