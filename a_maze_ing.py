@@ -80,14 +80,14 @@ def main() -> None:
         sys.exit(1)
 
     # Generate and draw maze
-    xvar.generator = MazeGenerator(env_variable.height, env_variable.width)
+    xvar.generator = MazeGenerator(env_variable.height, env_variable.width, env_variable.seed)
     xvar.maze = Maze(
         xvar,
         env_variable.entry,
         env_variable.exit,
         env_variable.height,
         env_variable.width,
-        xvar.generator.get_maze(2),
+        xvar.generator.get_maze(1),
         env_variable.cell_size,
         env_variable.wall_width,
         ColorManager.WALL,
