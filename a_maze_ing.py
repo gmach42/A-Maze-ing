@@ -33,8 +33,7 @@ def main() -> None:
         xvar.mlx = Mlx()
         xvar.mlx_ptr = xvar.mlx.mlx_init()
         _, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
-            xvar.mlx_ptr
-        )
+            xvar.mlx_ptr)
     except Exception as e:
         print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
         sys.exit(1)
@@ -57,9 +56,8 @@ def main() -> None:
         # Define window width and height and validate it
         win_width += panel_width
         win_height = (env_variable.height + 1) * env_variable.cell_size
-        if not parsing.is_valid_window(
-            xvar.screen_w, xvar.screen_h, win_width, win_height
-        ):
+        if not parsing.is_valid_window(xvar.screen_w, xvar.screen_h, win_width,
+                                       win_height):
             raise ValueError("Invalid Window size")
     except ValidationError as e:
         for error in e.errors():
@@ -85,9 +83,8 @@ def main() -> None:
 
     # Window creation
     try:
-        xvar.win = xvar.mlx.mlx_new_window(
-            xvar.mlx_ptr, win_width, win_height, "A-Maze-ing"
-        )
+        xvar.win = xvar.mlx.mlx_new_window(xvar.mlx_ptr, win_width, win_height,
+                                           "A-Maze-ing")
         if not xvar.win:
             raise Exception("Can't create main window")
     except Exception as e:
@@ -95,7 +92,8 @@ def main() -> None:
         sys.exit(1)
 
     # Generate and draw maze
-    xvar.generator = MazeGenerator(env_variable.height, env_variable.width, env_variable.seed)
+    xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
+                                   env_variable.perfect, env_variable.seed)
     xvar.maze = Maze(
         xvar,
         env_variable.entry,
@@ -149,8 +147,7 @@ def main() -> None:
     # Starting message
     print("\nWelcome to A-Maze-ing!\n")
     print(
-        f"Generating maze of size {env_variable.width}x{env_variable.height}"
-    )
+        f"Generating maze of size {env_variable.width}x{env_variable.height}")
     print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
 
     # Event hooks

@@ -4,14 +4,19 @@ from .utils_algorithm import Cell
 
 class MazeGenerator:
 
-    def __init__(self, height: int, width: int, seed: int = None):
+    def __init__(self,
+                 height: int,
+                 width: int,
+                 perfect: bool,
+                 seed: int = None,
+                 ):
         if seed:
             rand.seed(seed)
         self.grid: list[list[Cell]] = []
         self.width: int = width
         self.height: int = height
         self.boss_list: list[int] = []
-        self.perfect: bool = True
+        self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
         self.cardinal_points: dict = {
             "North": 1,
@@ -125,12 +130,12 @@ class MazeGenerator:
                     y - 1][x].is_forty_two():
                 list_breakable_cells[0].del_north()
                 self.grid[y - 1][x].del_south()
-            elif list_breakable_cells[0].east != 0 and not self.grid[
-                    y][x + 1].is_forty_two():
+            elif list_breakable_cells[0].east != 0 and not self.grid[y][
+                    x + 1].is_forty_two():
                 list_breakable_cells[0].del_east()
                 self.grid[y][x + 1].del_west()
-            elif list_breakable_cells[0].west != 0 and not self.grid[
-                    y][x - 1].is_forty_two():
+            elif list_breakable_cells[0].west != 0 and not self.grid[y][
+                    x - 1].is_forty_two():
                 list_breakable_cells[0].del_west()
                 self.grid[y][x - 1].del_east()
             else:

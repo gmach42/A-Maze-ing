@@ -115,7 +115,6 @@ def parsing_config(file_name: str) -> EnvVariables:
         sys.exit(1)
 
 
-def is_valid_window(
-    screen_width: int, screen_height: int, win_width: int, win_height: int
-) -> bool:
+def is_valid_window(screen_width: int, screen_height: int, win_width: int,
+                    win_height: int) -> bool:
     return 0 < win_width <= screen_width and 0 < win_height <= screen_height
