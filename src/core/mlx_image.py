@@ -22,7 +22,3 @@ class MLXImage(ABC):
     @abstractmethod
     def reset_draw(self, xvar: 'XVar') -> None:
         pass
-
-    @abstractmethod
-    def regen(self, xvar: XVar) -> None:
-        pass
