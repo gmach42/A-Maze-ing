@@ -16,12 +16,13 @@ help:
 
 keybind:
 	@echo "Available keybinds while running the programm:"
-	@echo "  - 'h' to show this help message"
+	@echo "  - 'a' to change the maze generation algorithm"
+	@echo "  - 'c' to change the color of the maze"
 	@echo "  - 'd' to show/hide the solution path"
+	@echo "  - 'g' to change the color of the 42 symbol"
+	@echo "  - 'h' to show this help message"
 	@echo "  - 'r' to regenerate the maze"
 	@echo "  - 's' to change the color of the solution path"
-	@echo "  - 'c' to change the color of the maze"
-	@echo "  - 'g' to change the color of the 42 symbol"
 	@echo "  - 'ESC' to quit the application"
 
 install:

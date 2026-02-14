@@ -46,7 +46,7 @@ class SolutionPath(MLXImage):
     def regen(self) -> None:
         self.draw_solution()
 
-    def change_path_color(xvar: XVar):
+    def change_path_color(xvar: XVar) -> None:
         color_index = ColorManager.COLOR_LIST.index(
             xvar.solution_path.path_color)
         if color_index == len(ColorManager.COLOR_LIST) - 1:
@@ -106,7 +106,7 @@ class SolutionPath(MLXImage):
         else:
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
 
-    def reset_draw(self):
+    def reset_draw(self) -> None:
         # self.display = False
         temp_colors: dict = self.colors
         self.colors = {

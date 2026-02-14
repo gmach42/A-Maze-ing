@@ -53,7 +53,7 @@ def main() -> None:
         win_width = (env_variable.width + 1) * env_variable.cell_size
 
         # Add panel's width
-        panel_width: int = max(win_width // 3, 300)
+        panel_width: int = max(win_width // 3, 500)
 
         # Define window width and height and validate it
         win_width += panel_width
