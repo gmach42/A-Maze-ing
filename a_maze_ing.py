@@ -166,6 +166,9 @@ def main() -> None:
     print("destroy images")
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.maze.img_ptr)
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.solution.img_ptr)
+    xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.manager.img_ptr)
+    for button in xvar.manager.buttons:
+        xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, button.img_ptr)
     print("destroy win(s)")
     xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
     print("destroy mlx")

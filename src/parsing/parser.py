@@ -10,21 +10,49 @@ from pydantic import (
 from .errors import FormatError, MissingKey, ConfigError, TooManyVar
 
 
+MIN_PIXEL_WIDTH = 200
+MIN_PIXEL_HEIGHT = 90
+MIN_ROWS = 7
+MIN_COLS = 9
+
+
 class EnvVariables(BaseModel):
-    width: int = Field(ge=7)
-    height: int = Field(ge=7)
+    """
+    A Pydantic model to represent the environment variables
+    for the maze generation.
+
+    Attributes:
+        width (int): The width of the maze in number of cells.
+        height (int): The height of the maze in number of cells.
+        entry (tuple[int, int]): The coordinates of the entry point (x, y).
+        exit (tuple[int, int]): The coordinates of the exit point (x, y).
+        output_file (str): The name of the output file for the maze image.
+        perfect (StrictBool): Whether to generate a perfect maze or not.
+        cell_size (int): The size of each cell in pixels.
+        wall_width (int): The width of the walls in pixels.
+        animation (bool): Whether to animate the maze generation or not.
+        speed_animation (str): The speed of the animation \
+            ("slow", "medium", "fast").
+    """
+
+    width: int = Field(ge=MIN_COLS)
+    height: int = Field(ge=MIN_ROWS)
     entry: tuple[int, int] = Field(ge=(0, 0))
     exit: tuple[int, int] = Field(ge=(0, 0))
     output_file: str
     perfect: StrictBool
-    cell_size: int = 40
-    wall_width: int = 10
+    cell_size: int = 1
+    wall_width: int = 1
     animation: bool = False
     speed_animation: str = "medium"
 
     @field_validator("entry", "exit", mode="before")
     @classmethod
     def check_tuple(cls, value: str):
+        """
+        Validate that the entry and exit points are in the correct format
+        and convert them to tuples of integers.
+        """
         clean_value: str = value.replace(")", "").replace("(", "").strip()
         values: list = clean_value.split(",")
         if len(values) != 2:
@@ -38,10 +66,10 @@ class EnvVariables(BaseModel):
 
     @model_validator(mode="after")
     def check_values(self):
-        if self.entry[0] < 0 or self.entry[1] < 0:
-            raise ValueError("Entry coordinates must be non-negative")
-        if self.exit[0] < 0 or self.exit[1] < 0:
-            raise ValueError("Exit coordinates must be non-negative")
+        """
+        Validate that entry and exit points are different
+        and within maze dimensions.
+        """
         if self.entry == self.exit:
             raise ValueError("Entry and exit points must be different")
         if self.entry[0] >= self.height or self.entry[1] >= self.width:
@@ -56,6 +84,10 @@ class EnvVariables(BaseModel):
 
 
 def parsing_config(file_name: str) -> EnvVariables:
+    """
+    Parse the configuration file and return an
+    EnvVariables instance with the values.
+    """
     results = {
         "width": None,
         "height": None,
@@ -105,14 +137,25 @@ def parsing_config(file_name: str) -> EnvVariables:
         return EnvVariables(**results)
     except ValidationError as e:
         print(
-            f"\nCaught a {type(e).__name__} error during parsing:",
+            f"\nCaught a {type(e).__name__} error during parsing config.txt:",
             file=sys.stderr,
         )
-        print(e.errors()[0]["msg"], "\n", file=sys.stderr)
+        for error in e.errors():
+            # Get location, defaulting to 'Configuration' if empty
+            # Model validation errors may not have a specific field
+            loc_tuple = error.get("loc", ())
+            field = loc_tuple[0] if loc_tuple else "Configuration"
+            msg = error.get("msg", "Unknown error")
+
+            print(f"  Field '{field}': {msg}", file=sys.stderr)
+
         sys.exit(1)
 
 
 def is_valid_window(
     screen_width: int, screen_height: int, win_width: int, win_height: int
 ) -> bool:
-    return 0 < win_width <= screen_width and 0 < win_height <= screen_height
+    return (
+        MIN_PIXEL_WIDTH < win_width <= screen_width
+        and MIN_PIXEL_HEIGHT < win_height <= screen_height
+    )

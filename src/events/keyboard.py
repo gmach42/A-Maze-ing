@@ -1,5 +1,5 @@
 from ..core import XVar
-from ..rendering.render_functions import draw_42
+from ..rendering.render_functions import draw_42, display_path
 
 
 HELP_MESSAGE = """
@@ -8,6 +8,7 @@ HELP_MESSAGE = """
 ╠══════════════════════════════════════════════════════╣
 ║  ESC   │ Exit application                            ║
 ║  c     │ Cycle maze wall colors                      ║
+║  d     │ Display/Hide solution path                  ║
 ║  s     │ Cycle solution path colors                  ║
 ║  g     │ Toggle 42 animation                         ║
 ║  r     │ Regenerate new maze                         ║
@@ -19,7 +20,9 @@ HELP_MESSAGE = """
 def manage_key(key, xvar: XVar) -> int:
     from ..rendering import MazeUIManager
     """Handle key press events"""
-    print(f"Got key {key}: ", end="")
+
+    # Uncomment this if you want to get the id of the key pressed:
+    # print(f"Got key {key}: ", end="")
 
     if key == 65307:  # ESC
         print("'ESC' key pressed, exiting...")
@@ -41,6 +44,10 @@ def manage_key(key, xvar: XVar) -> int:
     if key == 114:  # 'r'
         print("'r' key pressed, regenerating maze...")
         MazeUIManager.regenerate(xvar)
+
+    if key == 100:  # 'd'
+        print("'d' key pressed, displaying/hiding path...")
+        display_path(xvar)
 
     if key == 104:  # 'h'
         print("'h' key pressed, showing help message...")
