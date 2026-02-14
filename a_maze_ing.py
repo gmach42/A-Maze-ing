@@ -18,7 +18,7 @@ from src import (
     render_init,
 )
 from src import events, parsing
-from mlx import Mlx  # type: ignore[import-untyped]
+from mlx import Mlx
 from pydantic import ValidationError
 from src.parsing.constants import MIN_PANEL_WIDTH
 

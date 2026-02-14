@@ -1,5 +1,5 @@
 from typing import Any, TYPE_CHECKING
-from mlx import Mlx  # type: ignore[import-untyped]
+from mlx import Mlx
 from ..maze_algorithm import MazeGenerator, Solver
 
 if TYPE_CHECKING:
