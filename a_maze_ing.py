@@ -18,11 +18,11 @@ from src import (
     render_init,
 )
 from src import events, parsing
-from mlx import Mlx
+from mlx import Mlx  # type: ignore[import-untyped]
 from pydantic import ValidationError
 
 
-def config_xvar(xvar: XVar, env_variable: EnvVariables):
+def config_xvar(xvar: XVar, env_variable: EnvVariables) -> None:
     xvar.animation = env_variable.animation
     xvar.speed = env_variable.speed_animation
 
@@ -131,7 +131,7 @@ def main() -> None:
             "path": ColorManager.PATH,
         },
         start=xvar.maze.entry,
-        end=xvar.maze.exit,
+        end=env_variable.exit,
         cell_size=xvar.maze.cell_size,
     )
 
@@ -149,7 +149,7 @@ def main() -> None:
     else:
         draw_maze_walls(xvar)
         render_frame(xvar, xvar.maze)
-        xvar.solution.draw_solution()
+        xvar.solution.draw_solution(xvar)
         # render_frame(xvar, xvar.solution)
 
     # Starting message

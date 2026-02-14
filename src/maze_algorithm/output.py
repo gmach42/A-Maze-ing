@@ -1,4 +1,5 @@
-def output_maze(maze_matrix: list[list[int]], sol_matrix: list[tuple]) -> None:
+def output_maze(maze_matrix: list[list[int]],
+                sol_matrix: list[tuple[int, int]]) -> None:
     """Output the maze and its solution to a output_maze.txt file."""
     with open("output_maze.txt", "w") as f:
         # Maze in hexadecimal format
@@ -40,8 +41,3 @@ def maze_to_string(maze_matrix: list[list[int]]) -> str:
     """transform the maze into a string in hexadecimal format"""
     return "\n".join("".join(format(cell, "X") for cell in row)
                      for row in maze_matrix)
-
-
-def display_list(lst: list[list]) -> None:
-    for line in lst:
-        print(line)

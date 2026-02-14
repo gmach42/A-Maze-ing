@@ -18,7 +18,7 @@ HELP_MESSAGE = """
 """
 
 
-def manage_key(key, xvar: XVar) -> int:
+def manage_key(key: int, xvar: XVar) -> int:
     from ..rendering import MazeUIManager
     """Handle key press events"""
 
@@ -108,11 +108,11 @@ def change_solution_color(xvar: XVar) -> None:
         "start": new_colors[0],
         "end": new_colors[1],
         "path": new_colors[2],
-    })
+    }, xvar)
     render_frame(xvar, xvar.solution)
     xvar.solution.display = True
 
 
-def get_key_press(key, xvar: XVar) -> int:
+def get_key_press(key: int, xvar: XVar) -> None:
     """Helper to print key pressed"""
     print(f"Pressed key {key}")

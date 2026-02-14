@@ -1,11 +1,11 @@
 class MazeGenerationErrors(Exception):
-    def __init__(self, details: str = None):
+    def __init__(self, details: str | None = None):
         message: str = f"A generation error has been raised :\n{details}"
         super().__init__(message)
 
 
 class ConfigError(MazeGenerationErrors):
-    def __init__(self, mp: str = None):
+    def __init__(self, mp: str | None = None):
         details: str = f"A config file error :\n {mp}"
         super().__init__(details)
 
@@ -19,6 +19,10 @@ class MissingKey(ConfigError):
 
 
 class TooManyVar(ConfigError):
+    pass
+
+
+class NoSolutionError(Exception):
     pass
 
 

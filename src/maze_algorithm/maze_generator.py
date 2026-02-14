@@ -9,7 +9,7 @@ class MazeGenerator:
         height: int,
         width: int,
         perfect: bool,
-        seed: int = None,
+        seed: str | None = None,
     ):
         if seed:
             rand.seed(seed)
@@ -20,7 +20,7 @@ class MazeGenerator:
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
         self.algo: int = 1
-        self.cardinal_points: dict = {
+        self.cardinal_points: dict[str, int] = {
             "North": 1,
             "East": 2,
             "South": 4,
@@ -29,7 +29,7 @@ class MazeGenerator:
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
-        self.forty_two_gps: list[tuple] = [
+        self.forty_two_gps: list[tuple[int, int]] = [
             (mid_height + 0, mid_width + 0),
             (mid_height + 1, mid_width + 0),
             (mid_height + 2, mid_width + 0),
@@ -84,7 +84,7 @@ class MazeGenerator:
         stops when all cells have the same boss.
         """
         print("Kruskal algorithm in action!!")
-        walls_to_broke: list[tuple] = []
+        walls_to_broke: list[tuple[int, int, int, int, str]] = []
         for y in range(self.height):
             for x in range(self.width):
                 if self.grid[y][x].is_forty_two():
@@ -156,10 +156,10 @@ class MazeGenerator:
             list_breakable_cells.pop(0)
             i += 1
 
-    def get_maze(self) -> list:
+    def get_maze(self) -> list[list[int]]:
         self.grid = []
         for y in range(self.height):
-            row: list = []
+            row: list[Cell] = []
             for x in range(self.width):
                 index: int = y * self.width + x
                 cell: Cell = Cell(index, x, y)
@@ -198,10 +198,10 @@ class MazeGenerator:
             x: int
             y: int
             x, y = current.x, current.y
-            neighbors: list[tuple] = []
+            neighbors: list[tuple[str, Cell]] = []
 
             if x > 0:
-                neighbor = self.grid[y][x - 1]
+                neighbor: Cell = self.grid[y][x - 1]
                 if not neighbor.is_visited() and not neighbor.is_forty_two():
                     neighbors.append(('W', neighbor))
 

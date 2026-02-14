@@ -4,7 +4,8 @@ from .errors import (
     FormatError,
     MissingKey,
     TooManyVar,
-    ExecutionError)
+    ExecutionError,
+    NoSolutionError)
 
 __all__ = [
     'EnvVariables',
@@ -14,5 +15,6 @@ __all__ = [
     'FormatError',
     'MissingKey',
     'TooManyVar',
-    'ExecutionError'
+    'ExecutionError',
+    'NoSolutionError'
 ]

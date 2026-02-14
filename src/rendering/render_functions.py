@@ -120,7 +120,7 @@ def draw_maze_walls(xvar: XVar) -> None:
 
 def render_frame(xvar: XVar, img_data: MLXImage) -> None:
     """Render the image to the window"""
-    offset = img_data.cell_size // 2
+    offset = xvar.maze.cell_size // 2
     xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win, img_data.img_ptr,
                                      offset, offset)
 
@@ -134,7 +134,7 @@ def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
                                      x, offset)
 
 
-def display_path(xvar: XVar):
+def display_path(xvar: XVar) -> None:
     if not xvar.solution.display:
         xvar.solution.display = True
         xvar.solution.step = 0
@@ -142,15 +142,15 @@ def display_path(xvar: XVar):
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
                                    xvar.solution.draw_solution_anim, xvar)
         else:
-            xvar.solution.draw_solution()
+            xvar.solution.draw_solution(xvar)
             render_frame(xvar, xvar.solution)
     else:
         xvar.solution.display = False
         xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
-        xvar.solution.reset_draw()
+        xvar.solution.reset_draw(xvar)
         render_frame(xvar, xvar.solution)
 
 
-def render_init(img: MLXImage):
+def render_init(img: MLXImage) -> None:
     draw_rectangle(img, 0, 0, img.img_width, img.img_height,
                    0)

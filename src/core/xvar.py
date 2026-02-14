@@ -1,5 +1,5 @@
 from typing import Any, TYPE_CHECKING
-from mlx import Mlx
+from mlx import Mlx  # type: ignore[import-untyped]
 from ..maze_algorithm import MazeGenerator, Solver
 
 if TYPE_CHECKING:
@@ -9,8 +9,8 @@ if TYPE_CHECKING:
 class XVar:
     """Structure for main vars"""
 
-    def __init__(self):
-        self.mlx: Mlx = None
+    def __init__(self) -> None:
+        self.mlx: "Mlx" = None
         self.mlx_ptr: Any = None
         self.screen_w: int = 0
         self.screen_h: int = 0
