@@ -99,23 +99,13 @@ def draw_maze_walls(xvar: XVar) -> None:
                         xvar.maze.color,
                     )
                 if cell_value & Border.SOUTH:
-                    draw_rectangle(
-                        xvar.maze,
-                        x,
-                        y + xvar.maze.cell_size,
-                        xvar.maze.cell_size + xvar.maze.wall_width,
-                        xvar.maze.wall_width,
-                        xvar.maze.color,
-                    )
+                    draw_rectangle(xvar.maze, x, y + xvar.maze.cell_size,
+                                   xvar.maze.cell_size + xvar.maze.wall_width,
+                                   xvar.maze.wall_width, xvar.maze.color)
                 if cell_value & Border.WEST:
-                    draw_rectangle(
-                        xvar.maze,
-                        x,
-                        y,
-                        xvar.maze.wall_width,
-                        xvar.maze.cell_size + xvar.maze.wall_width,
-                        xvar.maze.color,
-                    )
+                    draw_rectangle(xvar.maze, x, y, xvar.maze.wall_width,
+                                   xvar.maze.cell_size + xvar.maze.wall_width,
+                                   xvar.maze.color)
                 if cell_value & Border.EAST:
                     draw_rectangle(
                         xvar.maze,
