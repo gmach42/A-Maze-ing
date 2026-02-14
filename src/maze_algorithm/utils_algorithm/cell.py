@@ -1,14 +1,20 @@
 class Cell:
-    def __init__(self, number: int):
+    def __init__(self, number: int, x: int, y: int):
+        self.x: int = x
+        self.y: int = y
         self.north: int = 1
         self.east: int = 2
         self.south: int = 4
         self.west: int = 8
         self.index: int = number
         self.forty_two: bool = False
+        self.visited: bool = False
 
     def set_forty_two(self):
         self.forty_two = self.forty_two is False
+
+    def set_is_visited(self):
+        self.is_visited = True
 
     def del_north(self):
         self.north = 0
@@ -30,3 +36,6 @@ class Cell:
 
     def is_forty_two(self):
         return self.forty_two
+
+    def is_visited(self):
+        return self.visited

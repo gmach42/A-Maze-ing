@@ -3,6 +3,7 @@ from .utils_algorithm import Cell
 
 
 class MazeGenerator:
+
     def __init__(self, height: int, width: int):
         self.grid: list[list[Cell]] = []
         self.width: int = width
@@ -99,14 +100,28 @@ class MazeGenerator:
             row: list = []
             for x in range(self.width):
                 index: int = y * self.width + x
-                cell: Cell = Cell(index)
+                cell: Cell = Cell(index, x, y)
                 row.append(cell)
                 if (y, x) in (self.forty_two_gps):
                     cell.set_forty_two()
+                    cell.set_is_visited()
             self.grid.append(row)
         self.sets = list(range(self.width * self.height))
         self.generate()
         return [[cell.get_walls() for cell in line] for line in self.grid]
+
+    def depth_first_search(self):
+        list_cells: list[Cell] = []
+        rand_cell: Cell = rand.choice([
+            cell for cells in self.grid for cell in cells
+            if not cell.is_visited()
+        ])
+        while rand_cell:
+            list_cells.append(rand_cell)
+            rand_cell.set_is_visited()
+            if rand_cell.x > 0 and rand_cell.y > 0:
+                if 
+
 
     # def divide(
     #         self, x: int, y: int, width: int, height: int,
