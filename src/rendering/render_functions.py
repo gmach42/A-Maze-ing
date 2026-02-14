@@ -153,4 +153,4 @@ def display_path(xvar: XVar):
 
 def render_init(img: MLXImage):
     draw_rectangle(img, 0, 0, img.img_width, img.img_height,
-                   ColorManager.BACKGROUND)
+                   0)

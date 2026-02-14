@@ -63,10 +63,7 @@ class MazeUIManager(MLXImage):
                 offset_y + round(button.height // 2) - 9, ColorManager.GREEN,
                 button.text)
 
-    def handle_mouse_click(self):
-        pass
-
-    def draw_panel(self, xvar: XVar):
+    def draw_panel(self, xvar: XVar) -> None:
 
         x_start: int = 0
         y_start: int = 0
@@ -89,7 +86,7 @@ class MazeUIManager(MLXImage):
         draw_maze_walls(xvar)
 
     @staticmethod
-    def regenerate(xvar: XVar):
+    def regenerate(xvar: XVar) -> None:
 
         xvar.col = 0
         xvar.row = 0
@@ -109,5 +106,5 @@ class MazeUIManager(MLXImage):
             if xvar.solution.display:
                 render_frame(xvar, xvar.solution)
 
-    def reset_draw(self):
+    def reset_draw(self) -> None:
         pass
