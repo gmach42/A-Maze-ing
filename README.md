@@ -83,6 +83,7 @@ function A_Star(start, goal, h)
 - Buttons
 - Parsing
 - Animations
+- MazeUi
 
 **Gildas**
 - A* Pathfinding Algorithm
