@@ -59,11 +59,11 @@ class MazeUIManager(MLXImage):
                                              offset_y)
             # To be noted that mlx_string_put is in ABGR (Blue <> Red)
             # (Well documented and fonctionning library Mlx is!)
-            text_x = offset_x + button.width // 2 - (len(button.text) // 2) * 11
-            xvar.mlx.mlx_string_put(
-                xvar.mlx_ptr, xvar.win, text_x,
-                offset_y + round(button.height // 2) - 9, ColorManager.CYAN,
-                button.text)
+            text_x = offset_x + button.width // 2 - (len(button.text) //
+                                                     2) * 11
+            xvar.mlx.mlx_string_put(xvar.mlx_ptr, xvar.win, text_x,
+                                    offset_y + round(button.height // 2) - 9,
+                                    ColorManager.CYAN, button.text)
 
     def draw_panel(self, xvar: XVar) -> None:
 
