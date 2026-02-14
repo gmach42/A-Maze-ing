@@ -19,6 +19,8 @@ class ColorManager:
     ORANGE = 0xFFFFA500
     PURPLE = 0xFF800080
     PINK = 0xFFFFC0CB
+    LIGHTBLUE = 0xBB5000FF
+    LIGHTPURPLE = 0xFF8060C0
 
     # Pastel colors
     PASTEL_RED = 0xFFFF6961
@@ -39,6 +41,8 @@ class ColorManager:
     END = MAGENTA
     PATH = SLATEBLUE
     OBSTACLE = GRAY
+    BUTTON = LIGHTBLUE
+    PANEL = LIGHTPURPLE
 
     COLOR_LIST = [
         WHITE,
@@ -58,6 +62,8 @@ class ColorManager:
         SKY,
         CYAN,
         PASTEL_BLUE,
+        LIGHTBLUE,
+        LIGHTPURPLE,
         SLATEBLUE,
         BLUE,
         PURPLE,
@@ -100,6 +106,8 @@ class ColorManager:
         EARTH: "Earth",
         BEIGE: "Beige",
         SKY: "Sky",
+        LIGHTBLUE: "Light Blue",
+        LIGHTPURPLE: "Light Purple",
     }
 
     @classmethod

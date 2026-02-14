@@ -18,8 +18,8 @@ class MazeUIManager(MLXImage):
         self,
         xvar: XVar,
         width: int,
-        color: int = 0xFF8060C0,
-        button_color: int = 0xBB5000FF,
+        color: int = ColorManager.PANEL,
+        button_color: int = ColorManager.BUTTON,
     ):
         button_h = max(MIN_BUTTON_HEIGHT, round(xvar.maze.img_height * 0.08))
         button_w = max(MIN_BUTTON_WIDTH, round(width * 0.4))
@@ -59,10 +59,10 @@ class MazeUIManager(MLXImage):
                                              offset_y)
             # To be noted that mlx_string_put is in ABGR (Blue <> Red)
             # (Well documented and fonctionning library Mlx is!)
+            text_x = offset_x + button.width // 2 - (len(button.text) // 2) * 11
             xvar.mlx.mlx_string_put(
-                xvar.mlx_ptr, xvar.win, offset_x +
-                round(button.width // 2 - (len(button.text) // 2) * 11),
-                offset_y + round(button.height // 2) - 9, 0xFF00FFFF,
+                xvar.mlx_ptr, xvar.win, text_x,
+                offset_y + round(button.height // 2) - 9, ColorManager.CYAN,
                 button.text)
 
     def draw_panel(self, xvar: XVar) -> None:
@@ -85,27 +85,24 @@ class MazeUIManager(MLXImage):
         offset_x: int = xvar.maze.img_width + xvar.maze.wall_width + \
             xvar.maze.cell_size
         offset_y: int = round(
-            0.25 * self.img_height) // 2 + xvar.maze.cell_size // 2 - 8
+            0.25 * self.img_height) // 2 + xvar.maze.cell_size // 2
 
-        draw_rectangle(self, round(self.img_width * 0.2),
-                       offset_y + 8 - self.img_height // 20,
-                       round(self.img_width * 0.6), 10,
-                       0xBB5000FF)
-        draw_rectangle(self, round(self.img_width * 0.2),
-                       offset_y + 8 + self.img_height // 40,
-                       round(self.img_width * 0.6), 10,
-                       0xBB5000FF)
-        draw_rectangle(self, round(self.img_width * 0.2),
-                       offset_y + 8 - self.img_height // 20,
-                       round(self.img_width * 0.6), 10,
-                       0xBB5000FF)
+        # Decorative lines for the welcome message
+        draw_rectangle(
+            self, round(self.img_width * 0.2),
+            offset_y - xvar.maze.cell_size // 2 - self.img_height // 20,
+            round(self.img_width * 0.6), 10, ColorManager.BUTTON)
+        draw_rectangle(
+            self, round(self.img_width * 0.2),
+            offset_y - xvar.maze.cell_size // 2 + self.img_height // 20,
+            round(self.img_width * 0.6), 10, ColorManager.BUTTON)
+
         render_frame_panel(xvar, self)
 
         # RED and BLUE inversed -> mlx_string_put is in ABGR (Blue <> Red)
-        xvar.mlx.mlx_string_put(
-            xvar.mlx_ptr, xvar.win,
-            round(self.img_width // 2 - (len(word) // 2) * 11) + offset_x,
-            offset_y, ColorManager.CYAN, word)
+        text_x = offset_x + self.img_width // 2 - (len(word) // 2) * 10
+        xvar.mlx.mlx_string_put(xvar.mlx_ptr, xvar.win, text_x, offset_y - 7,
+                                ColorManager.CYAN, word)
 
         self.add_button(xvar)
 
