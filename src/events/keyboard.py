@@ -7,6 +7,7 @@ HELP_MESSAGE = """
 ║           A-MAZE-ING - KEYBINDS HELP                 ║
 ╠══════════════════════════════════════════════════════╣
 ║  ESC   │ Exit application                            ║
+║  a     │ Change Maze generation algorithm            ║
 ║  c     │ Cycle maze wall colors                      ║
 ║  d     │ Display/Hide solution path                  ║
 ║  s     │ Cycle solution path colors                  ║
@@ -22,36 +23,40 @@ def manage_key(key, xvar: XVar) -> int:
     """Handle key press events"""
 
     # Uncomment this if you want to get the id of the key pressed:
-    # print(f"Got key {key}: ", end="")
+    # print(f"Got key {key}: ")
 
     if key == 65307:  # ESC
-        print("'ESC' key pressed, exiting...")
+        print("\n'ESC' key pressed, exiting...")
         xvar.mlx.mlx_loop_exit(xvar.mlx_ptr)
-        return 0
 
     if key == 99:  # 'c'
-        print("'c' key pressed, changing maze color...")
+        print("\n'c' key pressed, changing maze color...")
         change_maze_color(xvar)
 
     if key == 115:  # 's'
-        print("'s' key pressed, changing solution color...")
+        print("\n's' key pressed, changing solution color...")
         change_solution_color(xvar)
 
     if key == 103:  # 'g'
-        print("'g' key pressed, changing 42's color...")
+        print("\n'g' key pressed, changing 42's color...")
         change_42_color(xvar)
 
     if key == 114:  # 'r'
-        print("'r' key pressed, regenerating maze...")
+        print("\n'r' key pressed, regenerating maze...")
         MazeUIManager.regenerate(xvar)
 
     if key == 100:  # 'd'
-        print("'d' key pressed, displaying/hiding path...")
+        print("\n'd' key pressed, displaying/hiding path...")
         display_path(xvar)
 
     if key == 104:  # 'h'
-        print("'h' key pressed, showing help message...")
+        print("\n'h' key pressed, showing help message...")
         print(HELP_MESSAGE)
+
+    if key == 97:  # 'a'
+        print("\n'a' key pressed, changing maze algortihm...")
+        change_algo(xvar)
+        MazeUIManager.regenerate(xvar)
 
     return 0
 

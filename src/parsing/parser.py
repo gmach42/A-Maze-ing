@@ -8,12 +8,7 @@ from pydantic import (
     model_validator,
 )
 from .errors import FormatError, MissingKey, ConfigError, TooManyVar
-
-
-MIN_PIXEL_WIDTH = 200
-MIN_PIXEL_HEIGHT = 90
-MIN_ROWS = 7
-MIN_COLS = 9
+from .constants import MIN_PIXEL_WIDTH, MIN_PIXEL_HEIGHT, MIN_ROWS, MIN_COLS
 
 
 class EnvVariables(BaseModel):

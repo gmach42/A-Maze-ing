@@ -28,7 +28,7 @@ class Button(MLXImage):
         return (self.x <= mouse_x <= self.x + self.width
                 and self.y <= mouse_y <= self.y + self.height)
 
-    def handle_callable(self, xvar: XVar):
+    def handle_callable(self, xvar: XVar) -> None:
         if self.callback:
             self.callback(xvar)
 
@@ -36,5 +36,5 @@ class Button(MLXImage):
         self.clear_buffer()
         draw_maze_walls(xvar)
 
-    def reset_draw(self):
+    def reset_draw(self) -> None:
         pass
