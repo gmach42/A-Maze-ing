@@ -1,5 +1,5 @@
 from ..core import XVar, MLXImage
-from .render_functions import draw_maze_walls
+from .render_functions import draw_maze_walls, draw_42
 
 
 class Maze(MLXImage):
@@ -38,6 +38,7 @@ class Maze(MLXImage):
         temp_color: int = self.color
         self.color = 0xFF000000
         draw_maze_walls(xvar)
+        draw_42(xvar)
         self.color = temp_color
 
     def regen(self, xvar: XVar) -> None:

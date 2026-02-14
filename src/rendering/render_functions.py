@@ -27,7 +27,7 @@ def draw_rectangle(img_data: MLXImage, x: int, y: int, width: int, height: int,
         data[start_offset:start_offset + draw_width] = line_buffer
 
 
-def draw_42(xvar: XVar):
+def draw_42(xvar: XVar) -> None:
     color: int = random.choice(
         [col for col in ColorManager.COLOR_LIST if col != xvar.maze.color])
     for row, col in xvar.generator.forty_two_gps:

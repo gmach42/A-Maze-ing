@@ -1,9 +1,11 @@
 import sys
 from src import (ColorManager, Maze, SolutionPath, draw_maze_walls_anim,
                  draw_maze_walls, render_frame, MazeGenerator, Solver, XVar,
-                 EnvVariables, parsing, handle_click, ExecutionError, MazeUIManager)
+                 EnvVariables, parsing, handle_click, ExecutionError,
+                 MazeUIManager)
 from src import events
 from mlx import Mlx
+from pydantic import ValidationError
 
 
 def config_xvar(xvar: XVar, env_variable: EnvVariables):
@@ -40,6 +42,14 @@ def main() -> None:
         panel_width: int = round(win_width * 0.3)
         win_width += panel_width
         win_height = (env_variable.height + 1) * env_variable.cell_size
+    except ValidationError as e:
+        for error in e.errors():
+            print(
+                f"Error in configuration file: "
+                f"{error['loc'][0]} - {error['msg']}",
+                file=sys.stderr,
+            )
+        sys.exit(1)
     except ValueError:
         print(
             "Please enter a valid value for the initialisation of the maze",
@@ -47,8 +57,17 @@ def main() -> None:
         )
         sys.exit(1)
     except ExecutionError as e:
-        print(e)
+        print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
+    except FileNotFoundError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+    # except Exception as e:
+    #     print(
+    #         f"An unexpected {type(e).__name__} error occurred: {e}",
+    #         file=sys.stderr,
+    #     )
+    #     sys.exit(1)
 
     # Window creation
     try:
@@ -68,7 +87,7 @@ def main() -> None:
         env_variable.exit,
         env_variable.height,
         env_variable.width,
-        xvar.generator.get_maze(),
+        xvar.generator.get_maze(2),
         env_variable.cell_size,
         env_variable.wall_width,
         ColorManager.WALL,
@@ -101,6 +120,12 @@ def main() -> None:
         render_frame(xvar, xvar.maze)
         xvar.solution.draw_solution()
         # render_frame(xvar, xvar.solution)
+
+    # Starting message
+    print("\nWelcome to A-Maze-ing!\n")
+    print(
+        f"Generating maze of size {env_variable.width}x{env_variable.height}")
+    print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
 
     # Event hooks
     xvar.mlx.mlx_key_hook(xvar.win, events.manage_key, xvar)
