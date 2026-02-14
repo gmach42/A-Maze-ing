@@ -1,5 +1,4 @@
 import sys
-import time
 from src import (
     ColorManager,
     Maze,
@@ -93,7 +92,7 @@ def main() -> None:
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-    tiem_start = time.time()
+        
     # Generate and draw maze
     xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
                                    env_variable.perfect, env_variable.seed)
@@ -138,8 +137,6 @@ def main() -> None:
 
     # Output maze to txt file
     output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
-    tiem_end = time.time()
-    print(tiem_end - tiem_start)
 
     render_init(xvar.maze)
 
