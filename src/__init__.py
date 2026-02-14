@@ -11,6 +11,7 @@ from .rendering import (
     draw_maze_walls_anim,
     draw_maze_walls,
     render_frame,
+    render_init,
 )
 from .events import manage_close, manage_key, get_key_press, handle_click
 from .parsing import EnvVariables, parsing_config, errors, ExecutionError
@@ -38,4 +39,5 @@ __all__ = [
     "ExecutionError",
     "handle_click",
     "parsing",
+    "render_init",
 ]

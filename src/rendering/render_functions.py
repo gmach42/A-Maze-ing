@@ -147,3 +147,8 @@ def display_path(xvar: XVar):
     else:
         xvar.solution.reset_draw()
         render_frame(xvar, xvar.solution)
+
+
+def render_init(img: MLXImage):
+    draw_rectangle(img, 0, 0, img.img_width, img.img_height,
+                   ColorManager.BACKGROUND)

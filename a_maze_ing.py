@@ -15,6 +15,7 @@ from src import (
     ExecutionError,
     MazeUIManager,
     output_maze,
+    render_init,
 )
 from src import events, parsing
 from mlx import Mlx
@@ -52,7 +53,7 @@ def main() -> None:
         win_width = (env_variable.width + 1) * env_variable.cell_size
 
         # Add panel's width
-        panel_width: int = round(win_width * 0.3)
+        panel_width: int = max(round(win_width * 0.3), 300)
 
         # Define window width and height and validate it
         win_width += panel_width
@@ -136,6 +137,8 @@ def main() -> None:
 
     # Output maze to txt file
     output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
+
+    render_init(xvar.maze)
 
     # Generate MazeUIManager
     xvar.manager = MazeUIManager(xvar, panel_width - 10)
