@@ -27,34 +27,27 @@ def draw_rectangle(img_data: MLXImage, x: int, y: int, width: int, height: int,
         data[start_offset:start_offset + draw_width] = line_buffer
 
 
-def draw_42(xvar: XVar):
+def draw_42(xvar: XVar) -> None:
     color: int = random.choice(
         [col for col in ColorManager.COLOR_LIST if col != xvar.maze.color])
-    for row in range(xvar.maze.rows):
-        for col in range(xvar.maze.cols):
-            cell_value = xvar.maze.maze_matrix[row][col]
-            y = row * xvar.maze.cell_size
-            x = col * xvar.maze.cell_size
-            if cell_value == (Border.NORTH | Border.SOUTH | Border.EAST
-                              | Border.WEST):
-                size: int = xvar.maze.cell_size - xvar.maze.wall_width
-                draw_rectangle(xvar.maze, x, y,
-                               xvar.maze.cell_size + xvar.maze.wall_width,
-                               xvar.maze.wall_width, color)
-                draw_rectangle(xvar.maze, x, y + xvar.maze.cell_size,
-                               xvar.maze.cell_size + xvar.maze.wall_width,
-                               xvar.maze.wall_width, color)
-                draw_rectangle(xvar.maze, x, y, xvar.maze.wall_width,
-                               xvar.maze.cell_size + xvar.maze.wall_width,
-                               color)
-                draw_rectangle(xvar.maze, x + xvar.maze.cell_size, y,
-                               xvar.maze.wall_width,
-                               xvar.maze.cell_size + xvar.maze.wall_width,
-                               color)
-                draw_rectangle(xvar.maze, x + (xvar.maze.wall_width // 2),
-                               y + (xvar.maze.wall_width // 2), size, size,
-                               color)
-                render_frame(xvar, xvar.maze)
+    for row, col in xvar.generator.forty_two_gps:
+        y = row * xvar.maze.cell_size
+        x = col * xvar.maze.cell_size
+        size: int = xvar.maze.cell_size - xvar.maze.wall_width
+        draw_rectangle(xvar.maze, x, y,
+                       xvar.maze.cell_size + xvar.maze.wall_width,
+                       xvar.maze.wall_width, color)
+        draw_rectangle(xvar.maze, x, y + xvar.maze.cell_size,
+                       xvar.maze.cell_size + xvar.maze.wall_width,
+                       xvar.maze.wall_width, color)
+        draw_rectangle(xvar.maze, x, y, xvar.maze.wall_width,
+                       xvar.maze.cell_size + xvar.maze.wall_width, color)
+        draw_rectangle(xvar.maze, x + xvar.maze.cell_size, y,
+                       xvar.maze.wall_width,
+                       xvar.maze.cell_size + xvar.maze.wall_width, color)
+        draw_rectangle(xvar.maze, x + (xvar.maze.wall_width // 2),
+                       y + (xvar.maze.wall_width // 2), size, size, color)
+        render_frame(xvar, xvar.maze)
 
 
 def draw_maze_walls(xvar: XVar) -> None:
@@ -104,5 +97,15 @@ def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
 
 
 def display_path(xvar: XVar):
-    xvar.solution.draw_solution()
-    render_frame(xvar, xvar.solution)
+    if not xvar.solution.display:
+        xvar.solution.step = 0
+        if xvar.animation:
+            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
+                                   xvar.solution.draw_solution_anim, xvar)
+        else:
+            xvar.solution.draw_solution()
+            render_frame(xvar, xvar.solution)
+            xvar.solution.display = True
+    else:
+        xvar.solution.reset_draw()
+        render_frame(xvar, xvar.solution)

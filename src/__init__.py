@@ -12,28 +12,13 @@ from .rendering import (
     draw_maze_walls,
     render_frame,
 )
-from .events import manage_close, manage_key, get_key_press
+from .events import manage_close, manage_key, get_key_press, handle_click
 from .parsing import EnvVariables, parsing, errors, ExecutionError
 
-
 __all__ = [
-    "XVar",
-    "MLXImage",
-    "Border",
-    "MazeGenerator",
-    "Solver",
-    "ColorManager",
-    "Maze",
-    "MazeUIManager",
-    "SolutionPath",
-    "draw_maze_walls_anim",
-    "draw_maze_walls",
-    "render_frame",
-    "manage_close",
-    "manage_key",
-    "get_key_press",
-    "EnvVariables",
-    "parsing",
-    "errors",
-    "ExecutionError"
+    "XVar", "MLXImage", "Border", "MazeGenerator", "Solver", "ColorManager",
+    "Maze", "MazeUIManager", "SolutionPath", "draw_maze_walls_anim",
+    "draw_maze_walls", "render_frame", "manage_close", "manage_key",
+    "get_key_press", "EnvVariables", "parsing", "errors", "ExecutionError",
+    "handle_click"
 ]

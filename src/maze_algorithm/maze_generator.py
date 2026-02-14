@@ -3,11 +3,13 @@ from .utils_algorithm import Cell
 
 
 class MazeGenerator:
+
     def __init__(self, height: int, width: int):
         self.grid: list[list[Cell]] = []
         self.width: int = width
         self.height: int = height
-        self.sets: list[int] = []
+        self.boss_list: list[int] = []
+        self.list_cells: list[Cell] = []
         self.cardinal_points: dict = {
             "North": 1,
             "East": 2,
@@ -45,11 +47,11 @@ class MazeGenerator:
         Returns:
             _type_: The cell's boss
         """
-        set: int = self.sets[index]
+        set: int = self.boss_list[index]
         if set == index:
             return index
-        self.sets[index] = self.find(set)
-        return self.sets[index]
+        self.boss_list[index] = self.find(set)
+        return self.boss_list[index]
 
     def union(self, index_1: int, index_2: int) -> bool:
         """Find the cells's bosses. If they are the same, it do nothing. Else,
@@ -58,11 +60,19 @@ class MazeGenerator:
         boss_1: int = self.find(index_1)
         boss_2: int = self.find(index_2)
         if boss_1 != boss_2:
-            self.sets[boss_1] = boss_2
+            self.boss_list[boss_1] = boss_2
             return True
         return False
 
-    def generate(self):
+    def kruskal(self) -> None:
+        """This one will create a list of all breakable walls by checking if
+        they belong to the 42 shape or not.
+        Then, it will take wall by wall and check if the neighboring cells have
+        the same 'boss' (assigned during cell's creation (self.boss_list)). If
+        so, it does nothing. If not, it assigns the cell_a's boss to cell_b,
+        break the wall between both, and move on to the next wall. The loop
+        stops when all cells have the same boss.
+        """
         walls_to_broke: list[tuple] = []
         for y in range(self.height):
             for x in range(self.width):
@@ -93,112 +103,88 @@ class MazeGenerator:
                         cell_1.del_south()
                         cell_2.del_north()
 
-    def get_maze(self) -> list:
+    def get_maze(self, algo: int = 1) -> list:
         self.grid = []
         for y in range(self.height):
             row: list = []
             for x in range(self.width):
                 index: int = y * self.width + x
-                cell: Cell = Cell(index)
+                cell: Cell = Cell(index, x, y)
                 row.append(cell)
                 if (y, x) in (self.forty_two_gps):
                     cell.set_forty_two()
+                    cell.set_is_visited()
             self.grid.append(row)
-        self.sets = list(range(self.width * self.height))
-        self.generate()
+        if algo == 1:
+            self.boss_list = list(range(self.width * self.height))
+            self.kruskal()
+        if algo == 2:
+            rand_cell: Cell = rand.choice([
+                cell for cells in self.grid for cell in cells
+                if not cell.is_visited()
+            ])
+            self.depth_first_search(rand_cell)
         return [[cell.get_walls() for cell in line] for line in self.grid]
 
-    # def divide(
-    #         self, x: int, y: int, width: int, height: int,
-    #         orientation: Orientation
-    #         ) -> None:
-    #     if width < 2 or height < 2:
-    #         return
-    #     horizontal: bool = orientation == Orientation.HORIZONTAL
-    #     chosen_line_card: int = self.cardinal_points.get("South", 4) if\
-    #         horizontal else self.cardinal_points.get("East", 2)
-    #     next_line_card: int = self.cardinal_points.get("North", 1) if\
-    #         horizontal else self.cardinal_points.get("West", 8)
+    def depth_first_search(self, start_cell: Cell) -> None:
+        """This algo will check all neighbors of the current cell and, if they
+        aren't visited yet, break the wall between both and do the same logic
+        to the neighbor until all cells are visited.
 
-    #     # -2 because we treat it as index AND we want both halves have at
-    #     #  least one cell of width or length
-    #     wx: int = x + (0 if horizontal else rand.randint(0, width - 2))
-    #     wy: int = y + (rand.randint(0, height - 2) if horizontal else 0)
+        Args:
+            start_cell (Cell): A randomly cell in all maze
+        """
+        stack: list[Cell] = [start_cell]
+        start_cell.set_is_visited()
 
-    #     # Length of wall
-    #     length: int = width if horizontal else height
+        while stack:
+            current: Cell = stack[-1]
+            x: int
+            y: int
+            x, y = current.x, current.y
+            neighbors: list[tuple] = []
 
-    #     # What direction for the wall
-    #     dx: int = 1 if horizontal else 0
-    #     dy: int = 0 if horizontal else 1
-    #     # Direction vers la cellule voisine séparée par le mur
-    #     nx_offset, ny_offset = (0, 1) if horizontal else (1, 0)
+            if x > 0:
+                neighbor = self.grid[y][x - 1]
+                if not neighbor.is_visited() and not neighbor.is_forty_two():
+                    neighbors.append(('W', neighbor))
 
-    #     # Where will be the passage in the wall
-    #     # px: int = wx + (rand.randint(0, width - 1) if horizontal else 0)
-    #     # py: int = wy + (0 if horizontal else rand.randint(0, height - 1))
-    #     valid_passages = []
-    #     for i in range(length):
-    #         cx, cy = wx + i * dx, wy + i * dy
+            if y > 0:
+                neighbor = self.grid[y - 1][x]
+                if not neighbor.is_visited() and not neighbor.is_forty_two():
+                    neighbors.append(('N', neighbor))
 
-    #         # Un passage est valide si ni la cellule actuelle ni sa voisine de
-    #         # l'autre côté du mur ne sont dans le "42"
-    #         if (cy, cx) not in self.forty_two_gps and\
-    #                 (cy + ny_offset, cx + nx_offset) not in self.forty_two_gps:
-    #             valid_passages.append((cx, cy))
+            if x < self.width - 1:
+                neighbor = self.grid[y][x + 1]
+                if not neighbor.is_visited() and not neighbor.is_forty_two():
+                    neighbors.append(('E', neighbor))
 
-    #     # Si aucun passage n'est possible sur cette ligne, on change de ligne
-    #     # ou on annule la division
-    #     if not valid_passages:
-    #         return
+            if y < self.height - 1:
+                neighbor = self.grid[y + 1][x]
+                if not neighbor.is_visited() and not neighbor.is_forty_two():
+                    neighbors.append(('S', neighbor))
 
-    #     px, py = rand.choice(valid_passages)
+            if neighbors:
+                # Chosing neighbor randomly
+                direction: str
+                next_cell: Cell
+                direction, next_cell = rand.choice(neighbors)
 
-    #     # # Determines which line or column will be modify in second part of
-    #     # # for loop
-    #     # nl: int = 1 if horizontal else 0
-    #     # nc: int = 0 if horizontal else 1
+                # Deleting walls between cells
+                if direction == 'W':
+                    current.del_west()
+                    next_cell.del_east()
+                elif direction == 'N':
+                    current.del_north()
+                    next_cell.del_south()
+                elif direction == 'E':
+                    current.del_east()
+                    next_cell.del_west()
+                elif direction == 'S':
+                    current.del_south()
+                    next_cell.del_north()
 
-    #     for i in range(length):
-    #         cx, cy = wx + i * dx, wy + i * dy
-    #         if (cx != px or cy != py):
-    #             try:
-    #                 self.grid[cy][cx] |= chosen_line_card
-    #             except IndexError:
-    #                 raise MazeGenerationErrors(
-    #                     "IndexError in that line 'self.grid[wx][wy] |="
-    #                     f"chosen_line_card' with {wx=}, {wy=}, {ny_offset=}"
-    #                     f" and {nx_offset=}")
-    #             try:
-    #                 self.grid[cy + ny_offset][cx + nx_offset] |= next_line_card
-    #             except IndexError:
-    #                 raise MazeGenerationErrors(
-    #                     "IndexError in that line 'self.grid[wx + nc][wy + nl]"
-    #                     f" |= next_line_card' with {cx=}, {cy=}, {ny_offset=}"
-    #                     f" and {nx_offset=}")
-
-    #     # Call for first new side
-    #     nx: int = x
-    #     ny: int = y
-    #     nw: int = width if horizontal else (wx - x + 1)
-    #     nh: int = (wy - y + 1) if horizontal else height
-    #     self.divide(nx, ny, nw, nh, self.chose_orientation(nw, nh))
-
-    #     # Call for second side
-    #     nx, ny = [x, wy + 1] if horizontal else [wx + 1, y]
-    #     nw, nh = [width, height - (wy - y) - 1] if horizontal else\
-    #         [width - (wx - x) - 1, height]
-    #     self.divide(nx, ny, nw, nh, self.chose_orientation(nw, nh))
-
-
-def main():
-    generator = MazeGenerator(20, 15)
-    print(generator.grid)
-    print(generator.get_maze())
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except Exception as e:
-        print(e)
+                next_cell.set_is_visited()
+                stack.append(next_cell)
+            else:
+                stack.pop()

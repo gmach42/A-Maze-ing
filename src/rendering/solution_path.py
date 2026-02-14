@@ -1,6 +1,6 @@
 from ..core import MLXImage, XVar
 from .color_manager import ColorManager
-from .render_functions import draw_rectangle, render_frame, draw_42
+from .render_functions import draw_rectangle, render_frame
 
 
 class SolutionPath(MLXImage):
@@ -29,6 +29,7 @@ class SolutionPath(MLXImage):
         self.start = start
         self.end = end,
         self.step: int = 0
+        self.display: bool = False
 
     def change_color(self, colors: dict[str, int]) -> None:
         self.colors = colors
@@ -102,19 +103,16 @@ class SolutionPath(MLXImage):
             self.step += 1
             render_frame(xvar, self)
         else:
+            self.display = True
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
-            # xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
-            draw_42(xvar)
 
     def reset_draw(self):
+        temp_colors: dict = self.colors
         self.colors = {
             'start': ColorManager.BLACK,
             'end': ColorManager.BLACK,
             'path': ColorManager.BLACK,
             }
         self.draw_solution()
-        self.colors = {
-            'start': ColorManager.START,
-            'end': ColorManager.END,
-            'path': ColorManager.PATH,
-            }
+        self.colors = temp_colors
+        self.display = False

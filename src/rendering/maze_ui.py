@@ -15,30 +15,40 @@ class MazeUIManager(MLXImage):
                  xvar: XVar,
                  width: int,
                  color: ColorManager = ColorManager.SKY):
-        self.buttons = [
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 4,
-                   "Regenerate", ColorManager.BLUE, self.regenerate),
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 4,
-                   "Display path", ColorManager.BLUE, display_path),
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 4,
-                   "Change wall's color", ColorManager.BLUE,
+        self.buttons: list[Button] = [
+            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+                   "REGENERATE", ColorManager.BLUE, self.regenerate),
+            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+                   "DISPLAY PATH", ColorManager.BLUE, display_path),
+            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+                   "CHANGE WALL'S COLOR", ColorManager.BLUE,
                    change_maze_color),
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 4,
-                   "Change 42's color", ColorManager.BLUE, change_42_color)
+            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+                   "CHANGE 42'S COLOR", ColorManager.BLUE, change_42_color)
         ]
-        self.labels = []
         self.color: int = color
         super().__init__(xvar, width, xvar.maze.img_height)
-        print(width)
 
-    def add_button(self, button: Button):
-        self.buttons.append(button)
+    def add_button(self, xvar: XVar):
+        for i, button in enumerate(self.buttons):
+            offset_x: int = round(
+                self.img_width * 0.1) + xvar.maze.img_width + (
+                    xvar.maze.wall_width // 2) + 5 + (xvar.maze.cell_size // 2)
+            offset_y: int = xvar.maze.cell_size + (
+                xvar.maze.cell_size // 2) // 4 + (i * (button.width // 2))
 
-    def draw_all(self):
-        pass
-
-    def add_label(self, xvar: XVar, x: int, y: int, color: int, txt: str):
-        xvar.mlx.mlx_string_put(xvar.mlx_ptr, xvar.mlx.win, x, y, color, txt)
+            button.x = offset_x
+            button.y = offset_y
+            xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win,
+                                             button.img_ptr, offset_x,
+                                             offset_y)
+            # To be noted that mlx_string_put is in ABGR (Blue <> Red)
+            # (Well documented and fonctionning library Mlx is!)
+            xvar.mlx.mlx_string_put(
+                xvar.mlx_ptr, xvar.win, offset_x +
+                round(button.width // 2 - (len(button.text) // 2) * 11),
+                offset_y + round(button.height // 2) - 9, ColorManager.GREEN,
+                button.text)
 
     def handle_mouse_click(self):
         pass
@@ -59,6 +69,7 @@ class MazeUIManager(MLXImage):
             start_offset: int = dy * self.img_width + x_start
             self.data[start_offset:start_offset + draw_width] = line_buffer
         render_frame_panel(xvar, self)
+        self.add_button(xvar)
 
     def regen(self, xvar: XVar) -> None:
         self.reset_draw()
@@ -69,7 +80,6 @@ class MazeUIManager(MLXImage):
 
         xvar.col = 0
         xvar.row = 0
-        xvar.solution.step = 0
         xvar.maze.reset_draw(xvar)
         xvar.solution.reset_draw()
         render_frame(xvar, xvar.solution)

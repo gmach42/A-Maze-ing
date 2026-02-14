@@ -1,8 +1,7 @@
-.PHONY: help install run test clean debug lint lint-strict
-
 VENV := .venv
 PYTHON := $(VENV)/bin/python3
 POETRY := $(VENV)/bin/poetry
+PIP := $(VENV)/bin/pip
 
 help:
 	@echo "Available commands:"
@@ -13,9 +12,10 @@ help:
 	@echo "  make debug       - Run the application in debug mode"
 	@echo "  make lint        - Run linters and type checkers"
 	@echo "  make lint-strict - Run linters and type checkers in strict mode"
+	@echo "  make keybind     - Show available keybinds while running the program"
 
 keybind:
-	@echo "Available keybinds while running the maze:"
+	@echo "Available keybinds while running the programm:"
 	@echo "  - 'h' to show this help message"
 	@echo "  - 'd' to show/hide the solution path"
 	@echo "  - 'r' to regenerate the maze"
@@ -25,15 +25,12 @@ keybind:
 	@echo "  - 'ESC' to quit the application"
 
 install:
-	python3 -m venv .venv
-	$(POETRY) install
-
-run: $(VENV)/bin/activate
-	$(PYTHON) a_maze_ing.py
-
-$(VENV)/bin/activate: pyproject.toml
 	python3 -m venv $(VENV)
-	$(POETRY) install
+	$(PIP) install --upgrade pip
+	$(PIP) install -r requirement.txt
+
+run:
+	@$(PYTHON) a_maze_ing.py
 
 debug:
 	$(PYTHON) -m pdb a_maze_ing.py
@@ -42,8 +39,9 @@ test:
 	$(PYTHON) -m pytest -v
 
 clean:
-	rm -rf __pycache__
-	rm -rf poetry.lock
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
 	rm -rf $(VENV)
 
 lint:
@@ -58,3 +56,5 @@ lint:
 lint-strict:
 	$(PYTHON) -m flake8 .
 	$(PYTHON) -m mypy . --strict
+
+.PHONY: help install run test clean debug lint lint-strict
