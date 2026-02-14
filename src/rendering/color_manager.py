@@ -64,7 +64,6 @@ class ColorManager:
         MAGENTA,
         PINK,
     ]
-    # FT = random.choice([color for color in COLOR_LIST if color != WALL])
 
     PATH_COLOR_LIST = [
         (START, END, PATH),
