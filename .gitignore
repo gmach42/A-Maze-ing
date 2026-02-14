@@ -5,3 +5,5 @@ __pycache__/
 **.lock
 mlx_CLXV-2.2.tgz
 mlx_CLXV/
+output_maze.txt
+config.txt

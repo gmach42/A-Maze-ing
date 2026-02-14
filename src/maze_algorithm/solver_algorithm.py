@@ -105,7 +105,7 @@ class Solver:
 
         while len(open_paths) > 0:
             # get the best next cell to visit: the one with the lowest priority
-            open_paths.sort()
+            open_paths.sort(reverse=True)
             _, curr_node = open_paths.pop()
             if curr_node == self.end:
                 goal_path = self.reconstruct_path(self.end, came_from)
