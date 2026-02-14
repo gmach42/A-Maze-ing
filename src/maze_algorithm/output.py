@@ -4,9 +4,9 @@ def output_maze(maze_matrix: list[list[int]], sol_matrix: list[tuple]) -> None:
         # Maze in hexadecimal format
         f.write(maze_to_string(maze_matrix) + "\n")
         # Start
-        f.write('\n' + str(sol_matrix[0]).strip('()') + "\n")
+        f.write('\n' + str(sol_matrix[0]).strip('()').replace(' ', '') + "\n")
         # End
-        f.write(str(sol_matrix[-1]).strip('()') + "\n")
+        f.write(str(sol_matrix[-1]).strip('()').replace(' ', '') + "\n")
         # Solution in cardinal direction
         f.write(sol_cardinal_direction(sol_matrix) + "\n")
 
@@ -38,9 +38,8 @@ def sol_cardinal_direction(sol_matrix: list[tuple[int, int]]) -> str:
 
 def maze_to_string(maze_matrix: list[list[int]]) -> str:
     """transform the maze into a string in hexadecimal format"""
-    return "\n".join(
-        "".join(format(cell, "X") for cell in row) for row in maze_matrix
-    )
+    return "\n".join("".join(format(cell, "X") for cell in row)
+                     for row in maze_matrix)
 
 
 def display_list(lst: list[list]) -> None:

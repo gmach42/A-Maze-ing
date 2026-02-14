@@ -1,5 +1,4 @@
 import sys
-import time
 from src import (
     ColorManager,
     Maze,
@@ -16,6 +15,7 @@ from src import (
     ExecutionError,
     MazeUIManager,
     output_maze,
+    render_init,
 )
 from src import events, parsing
 from mlx import Mlx
@@ -53,7 +53,7 @@ def main() -> None:
         win_width = (env_variable.width + 1) * env_variable.cell_size
 
         # Add panel's width
-        panel_width: int = win_width // 3
+        panel_width: int = max(win_width // 3, 300)
 
         # Define window width and height and validate it
         win_width += panel_width
@@ -92,7 +92,7 @@ def main() -> None:
     except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
-    tiem_start = time.time()
+
     # Generate and draw maze
     xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
                                    env_variable.perfect, env_variable.seed)
@@ -135,10 +135,10 @@ def main() -> None:
         cell_size=xvar.maze.cell_size,
     )
 
-    # Output maze to file
+    # Output maze to txt file
     output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
-    tiem_end = time.time()
-    print(tiem_end - tiem_start)
+
+    render_init(xvar.maze)
 
     # Generate MazeUIManager
     xvar.manager = MazeUIManager(xvar, panel_width - 10)

@@ -12,6 +12,8 @@ from ..events.keyboard import (change_maze_color, change_42_color, change_algo,
 
 class MazeUIManager(MLXImage):
 
+    MIN_PANEL_WIDTH = 300
+
     def __init__(self,
                  xvar: XVar,
                  width: int,
@@ -68,7 +70,7 @@ class MazeUIManager(MLXImage):
 
         x_start: int = 0
         y_start: int = 0
-        x_end: int = self.img_width - 1
+        x_end: int = max(self.img_width - 1, self.MIN_PANEL_WIDTH)
         y_end: int = self.img_height - 1
         draw_width: int = x_end - x_start
         if draw_width <= 0 or y_start >= y_end:

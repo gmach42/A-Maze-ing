@@ -4,6 +4,7 @@ from .render_functions import (
     draw_rectangle,
     draw_maze_walls,
     render_frame,
+    render_init,
 )
 from .solution_path import SolutionPath
 from .color_manager import ColorManager
@@ -18,4 +19,5 @@ __all__ = [
     "SolutionPath",
     "ColorManager",
     "draw_maze_walls_anim",
+    "render_init",
 ]
