@@ -20,6 +20,7 @@ from src import (
 from src import events, parsing
 from mlx import Mlx
 from pydantic import ValidationError
+from src.parsing.constants import MIN_PANEL_WIDTH
 
 
 def config_xvar(xvar: XVar, env_variable: EnvVariables):
@@ -51,13 +52,14 @@ def main() -> None:
         env_variable: EnvVariables = parsing_config(config_file)
         config_xvar(xvar, env_variable)
         win_width = (env_variable.width + 1) * env_variable.cell_size
+        win_height = (env_variable.height +
+                      1) * env_variable.cell_size + env_variable.wall_width
 
         # Add panel's width
-        panel_width: int = max(win_width // 3, 500)
+        panel_width: int = max(win_width // 3, MIN_PANEL_WIDTH)
 
         # Define window width and height and validate it
-        win_width += panel_width
-        win_height = (env_variable.height + 1) * env_variable.cell_size
+        win_width += panel_width + env_variable.cell_size
         if not parsing.is_valid_window(xvar.screen_w, xvar.screen_h, win_width,
                                        win_height):
             raise ValueError("Invalid Window size")
@@ -138,11 +140,13 @@ def main() -> None:
     # Output maze to txt file
     output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
 
-    render_init(xvar.maze)
-
     # Generate MazeUIManager
-    xvar.manager = MazeUIManager(xvar, panel_width - 10)
+    xvar.manager = MazeUIManager(xvar, panel_width)
     xvar.manager.draw_panel(xvar)
+
+    # Init Maze pixels transparent to avoid garbage values when rendering
+    # the maze for the first time (especially usefull for little windows)
+    render_init(xvar.maze)
 
     if xvar.animation:
         xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
@@ -150,7 +154,6 @@ def main() -> None:
         draw_maze_walls(xvar)
         render_frame(xvar, xvar.maze)
         xvar.solution.draw_solution()
-        # render_frame(xvar, xvar.solution)
 
     # Starting message
     print("\nWelcome to A-Maze-ing!\n")
@@ -168,15 +171,15 @@ def main() -> None:
     xvar.mlx.mlx_loop(xvar.mlx_ptr)
 
     # Cleaning resources
-    print("destroy images")
+    print("\nDestroying images")
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.maze.img_ptr)
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.solution.img_ptr)
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.manager.img_ptr)
     for button in xvar.manager.buttons:
         xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, button.img_ptr)
-    print("destroy win(s)")
+    print("Destroying window")
     xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
-    print("destroy mlx")
+    print("Destroying mlx")
     xvar.mlx.mlx_release(xvar.mlx_ptr)
 
 

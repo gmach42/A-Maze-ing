@@ -1,4 +1,6 @@
 import array
+
+from src.parsing.constants import MIN_PANEL_WIDTH
 from ..events import Button
 # from mlx import Mlx
 from ..core import XVar, MLXImage
@@ -12,26 +14,26 @@ from ..events.keyboard import (change_maze_color, change_42_color, change_algo,
 
 class MazeUIManager(MLXImage):
 
-    MIN_PANEL_WIDTH = 300
-
     def __init__(self,
                  xvar: XVar,
                  width: int,
-                 color: ColorManager = ColorManager.SKY):
+                 color: ColorManager = ColorManager.SKY,
+                 button_color: ColorManager = ColorManager.BLUE,
+                 ):
         self.buttons: list[Button] = [
-            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
-                   "REGENERATE", ColorManager.BLUE, self.regenerate),
-            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
-                   "DISPLAY PATH", ColorManager.BLUE, display_path),
-            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
-                   "CHANGE WALL'S COLOR", ColorManager.BLUE,
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 10,
+                   "REGENERATE", button_color, self.regenerate),
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 10,
+                   "DISPLAY PATH", button_color, display_path),
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 10,
+                   "CHANGE WALL'S COLOR", button_color,
                    change_maze_color),
-            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
-                   "CHANGE 42'S COLOR", ColorManager.BLUE, change_42_color),
-            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
-                   "CHANGE ALGO", ColorManager.BLUE, change_algo),
-            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
-                   "CHANGE COLOR PATH", ColorManager.BLUE,
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 10,
+                   "CHANGE 42'S COLOR", button_color, change_42_color),
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 10,
+                   "CHANGE ALGO", button_color, change_algo),
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 10,
+                   "CHANGE COLOR PATH", button_color,
                    change_solution_color)
         ]
         self.color: int = color
@@ -70,7 +72,7 @@ class MazeUIManager(MLXImage):
 
         x_start: int = 0
         y_start: int = 0
-        x_end: int = max(self.img_width - 1, self.MIN_PANEL_WIDTH)
+        x_end: int = max(self.img_width - 1, MIN_PANEL_WIDTH)
         y_end: int = self.img_height - 1
         draw_width: int = x_end - x_start
         if draw_width <= 0 or y_start >= y_end:
