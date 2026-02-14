@@ -35,7 +35,7 @@ class EnvVariables(BaseModel):
             val_2: int = int(values[1])
             return (val_2, val_1)
         except ValueError:
-            raise ValueError("Entry an exit must be integers!")
+            raise ValueError("Entry and exit must be integers!")
 
     @model_validator(mode="after")
     def check_values(self):
@@ -53,14 +53,8 @@ class EnvVariables(BaseModel):
                 "Exit coordinates must be within the maze dimensions")
         return self
 
-    @model_validator(mode="after")
-    def check_window(self):
-        pass
-        # TODO Model validator to check if the windows is not too bif (Could be done in main?)
-        # TODO Check if start end are not in 42 ? (Done in main)
 
-
-def parsing(file_name: str) -> EnvVariables:
+def parsing_config(file_name: str) -> EnvVariables:
     results = {
         "width": None,
         "height": None,
@@ -117,5 +111,11 @@ def parsing(file_name: str) -> EnvVariables:
             f"\nCaught a {type(e).__name__} error during parsing:",
             file=sys.stderr,
         )
-        print(e.errors()[0]["msg"], '\n', file=sys.stderr)
+        print(e.errors()[0]["msg"], "\n", file=sys.stderr)
         sys.exit(1)
+
+
+def is_valid_window(
+    screen_width: int, screen_height: int, win_width: int, win_height: int
+) -> bool:
+    return 0 < win_width <= screen_width and 0 < win_height <= screen_height

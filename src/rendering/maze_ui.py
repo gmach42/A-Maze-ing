@@ -42,6 +42,8 @@ class MazeUIManager(MLXImage):
             xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win,
                                              button.img_ptr, offset_x,
                                              offset_y)
+            # To be noted that mlx_string_put is in ABGR (Blue <> Red)
+            # (Well documented and fonctionning library Mlx is!)
             xvar.mlx.mlx_string_put(
                 xvar.mlx_ptr, xvar.win, offset_x +
                 round(button.width // 2 - (len(button.text) // 2) * 11),
