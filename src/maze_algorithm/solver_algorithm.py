@@ -7,10 +7,17 @@ class Solver:
         maze: list[list[int]],
         start: tuple[int, int],
         end: tuple[int, int],
+        is_42: list[tuple[int, int]],
     ):
         self.maze = maze
         self.start = start
         self.end = end
+        self.is_42 = is_42
+        if not self.is_valid_maze():
+            raise ValueError(
+                "The maze is not valid: "
+                "Start and End are out of bound or in 42 obstacle"
+            )
 
     @staticmethod
     def parse_maze_str(maze_str: str) -> list[list[int]]:
@@ -83,15 +90,11 @@ class Solver:
         - h(n): heuristic (or estimated) cost to reach the goal from cell n
         """
 
-        if not self.is_valid_maze(self.maze, self.start, self.end):
-            raise ValueError(
-                "Invalid maze: start or end position is out of bounds"
-            )
-
         # open_paths: list[(f_score, node)] is the list of cells path opened to
         # explore, sorted by priority (f_score)
         open_paths: list[(int, tuple)] = [
-            (self.h(self.start, self.end), self.start)]
+            (self.h(self.start, self.end), self.start)
+        ]
 
         # Register the precedent node of each newly accessed node
         came_from: dict[tuple, tuple] = {}
@@ -122,21 +125,20 @@ class Solver:
 
         return None
 
-    @staticmethod
-    def is_valid_maze(
-        maze: list[list[int]], start: tuple[int, int], end: tuple[int, int]
-    ) -> bool:
+    def is_valid_maze(self) -> bool:
         """Check if the maze is valid (start and end are within bounds)"""
-        rows = len(maze)
-        cols = len(maze[0]) if rows > 0 else 0
-        start_row, start_col = start
-        end_row, end_col = end
+        rows = len(self.maze)
+        cols = len(self.maze[0]) if rows > 0 else 0
+        start_row, start_col = self.start
+        end_row, end_col = self.end
 
         return (
             0 <= start_row < rows
             and 0 <= start_col < cols
             and 0 <= end_row < rows
             and 0 <= end_col < cols
+            and self.start not in self.is_42
+            and self.end not in self.is_42
         )
 
     def cardinal_direction(self, path: list[tuple]) -> str:

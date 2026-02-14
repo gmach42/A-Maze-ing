@@ -1,4 +1,4 @@
-from .parser import EnvVariables, parsing
+from .parser import EnvVariables, parsing_config, is_valid_window
 from .errors import (
     ConfigError,
     FormatError,
@@ -8,7 +8,8 @@ from .errors import (
 
 __all__ = [
     'EnvVariables',
-    'parsing',
+    'parsing_config',
+    'is_valid_window',
     'ConfigError',
     'FormatError',
     'MissingKey',
