@@ -79,6 +79,14 @@ def change_42_color(xvar: XVar) -> None:
         draw_42(xvar)
 
 
+def change_algo(xvar: XVar) -> None:
+    if xvar.generator.algo == 1:
+        xvar.generator.algo = 2
+    elif xvar.generator.algo == 2:
+        xvar.generator.algo = 1
+    print("The algorithm has been changed.")
+
+
 def change_solution_color(xvar: XVar) -> None:
     from ..rendering import ColorManager, render_frame
     colors_index = ColorManager.PATH_COLOR_LIST.index(
@@ -97,6 +105,7 @@ def change_solution_color(xvar: XVar) -> None:
         "path": new_colors[2],
     })
     render_frame(xvar, xvar.solution)
+    xvar.solution.display = True
 
 
 def get_key_press(key, xvar: XVar) -> int:

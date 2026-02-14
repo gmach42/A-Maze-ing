@@ -107,7 +107,7 @@ class SolutionPath(MLXImage):
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
 
     def reset_draw(self):
-        self.display = False
+        # self.display = False
         temp_colors: dict = self.colors
         self.colors = {
             'start': ColorManager.BLACK,

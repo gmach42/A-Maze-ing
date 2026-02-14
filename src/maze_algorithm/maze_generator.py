@@ -19,6 +19,7 @@ class MazeGenerator:
         self.boss_list: list[int] = []
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
+        self.algo: int = 1
         self.cardinal_points: dict = {
             "North": 1,
             "East": 2,
@@ -82,6 +83,7 @@ class MazeGenerator:
         break the wall between both, and move on to the next wall. The loop
         stops when all cells have the same boss.
         """
+        print("Kruskal algorithm in action!!")
         walls_to_broke: list[tuple] = []
         for y in range(self.height):
             for x in range(self.width):
@@ -154,7 +156,7 @@ class MazeGenerator:
             list_breakable_cells.pop(0)
             i += 1
 
-    def get_maze(self, algo: int = 1) -> list:
+    def get_maze(self) -> list:
         self.grid = []
         for y in range(self.height):
             row: list = []
@@ -166,10 +168,10 @@ class MazeGenerator:
                     cell.set_forty_two()
                     cell.set_is_visited()
             self.grid.append(row)
-        if algo == 1:
+        if self.algo == 1:
             self.boss_list = list(range(self.width * self.height))
             self.kruskal()
-        if algo == 2:
+        if self.algo == 2:
             rand_cell: Cell = rand.choice([
                 cell for cells in self.grid for cell in cells
                 if not cell.is_visited()
@@ -187,6 +189,7 @@ class MazeGenerator:
         Args:
             start_cell (Cell): A randomly cell in all maze
         """
+        print("Depth First Search algorithm in action!!")
         stack: list[Cell] = [start_cell]
         start_cell.set_is_visited()
 

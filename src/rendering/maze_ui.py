@@ -6,7 +6,8 @@ from .color_manager import ColorManager
 from .animation import draw_maze_walls_anim
 from .render_functions import (draw_maze_walls, render_frame_panel,
                                render_frame, display_path)
-from ..events.keyboard import change_maze_color, change_42_color
+from ..events.keyboard import (change_maze_color, change_42_color, change_algo,
+                               change_solution_color)
 
 
 class MazeUIManager(MLXImage):
@@ -16,27 +17,37 @@ class MazeUIManager(MLXImage):
                  width: int,
                  color: ColorManager = ColorManager.SKY):
         self.buttons: list[Button] = [
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
                    "REGENERATE", ColorManager.BLUE, self.regenerate),
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
                    "DISPLAY PATH", ColorManager.BLUE, display_path),
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
                    "CHANGE WALL'S COLOR", ColorManager.BLUE,
                    change_maze_color),
-            Button(xvar, round(width * 0.8), xvar.maze.img_height // 8,
-                   "CHANGE 42'S COLOR", ColorManager.BLUE, change_42_color)
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
+                   "CHANGE 42'S COLOR", ColorManager.BLUE, change_42_color),
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
+                   "CHANGE ALGO", ColorManager.BLUE, change_algo),
+            Button(xvar, round(width * 0.4), xvar.maze.img_height // 8,
+                   "CHANGE COLOR PATH", ColorManager.BLUE,
+                   change_solution_color)
         ]
         self.color: int = color
         super().__init__(xvar, width, xvar.maze.img_height)
 
     def add_button(self, xvar: XVar):
         for i, button in enumerate(self.buttons):
-            offset_x: int = round(
-                self.img_width * 0.1) + xvar.maze.img_width + (
-                    xvar.maze.wall_width // 2) + 5 + (xvar.maze.cell_size // 2)
-            offset_y: int = xvar.maze.cell_size + (
-                xvar.maze.cell_size // 2) // 4 + (i * (button.width // 2))
-
+            if i < 3:
+                offset_x: int = xvar.maze.img_width + (
+                    xvar.maze.wall_width) + (xvar.maze.cell_size // 2) + round(
+                        self.img_width * 0.08)
+                offset_y: int = xvar.maze.cell_size + ((i + 1) *
+                                                       (button.height * 2))
+            else:
+                offset_x = xvar.maze.img_width + (xvar.maze.wall_width) + (
+                    xvar.maze.cell_size // 2) + round(self.img_width * 0.52)
+                offset_y = xvar.maze.cell_size + (((i + 1) - 3) *
+                                                  (button.height * 2))
             button.x = offset_x
             button.y = offset_y
             xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win,
@@ -83,6 +94,7 @@ class MazeUIManager(MLXImage):
         xvar.maze.reset_draw(xvar)
         xvar.solution.reset_draw()
         render_frame(xvar, xvar.solution)
+        xvar.solution.step = 0
         xvar.maze.maze_matrix = xvar.generator.get_maze()
         xvar.solver.maze = xvar.maze.maze_matrix
         xvar.solution.path_matrix = xvar.solver.a_star_algorithm()
@@ -92,7 +104,8 @@ class MazeUIManager(MLXImage):
             draw_maze_walls(xvar)
             render_frame(xvar, xvar.maze)
             xvar.solution.draw_solution()
-            render_frame(xvar, xvar.solution)
+            if xvar.solution.display:
+                render_frame(xvar, xvar.solution)
 
     def reset_draw(self):
         pass

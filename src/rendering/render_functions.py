@@ -98,15 +98,16 @@ def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
 
 def display_path(xvar: XVar):
     if not xvar.solution.display:
+        xvar.solution.display = True
         xvar.solution.step = 0
         if xvar.animation:
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
                                    xvar.solution.draw_solution_anim, xvar)
         else:
-            xvar.solution.display = True
             xvar.solution.draw_solution()
             render_frame(xvar, xvar.solution)
     else:
+        xvar.solution.display = False
         xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
         xvar.solution.reset_draw()
         render_frame(xvar, xvar.solution)
