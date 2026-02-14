@@ -80,6 +80,15 @@ class MazeUIManager(MLXImage):
             start_offset: int = dy * self.img_width + x_start
             self.data[start_offset:start_offset + draw_width] = line_buffer
         render_frame_panel(xvar, self)
+        word: str = 'BIENVENUE SUR A_MAZE_ING!!'
+        offset_x: int = xvar.maze.img_width + (xvar.maze.wall_width) + (
+            xvar.maze.cell_size // 2)
+        offset_y: int = xvar.maze.cell_size
+        xvar.mlx.mlx_string_put(
+            xvar.mlx_ptr, xvar.win,
+            round(self.img_width // 2 - (len(word) // 2) * 11) + offset_x,
+            offset_y + round(self.img_height // 8) - 9, ColorManager.BLUE,
+            word)
         self.add_button(xvar)
 
     def regen(self, xvar: XVar) -> None:
