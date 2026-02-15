@@ -137,8 +137,7 @@ def parsing_config(file_name: str) -> EnvVariables:
                 raise MissingKey(f"Missing a value for {key} variable!")
     except (ConfigError, OSError) as e:
         print(e)
-        # sys.exit(1)
-        raise
+        sys.exit(1)
 
     try:
         return EnvVariables(**results)
@@ -155,8 +154,7 @@ def parsing_config(file_name: str) -> EnvVariables:
             msg = error.get("msg", "Unknown error")
 
             print(f"  Field '{field}': {msg}", file=sys.stderr)
-        raise
-        # sys.exit(1)
+        sys.exit(1)
 
 
 def is_valid_window(
