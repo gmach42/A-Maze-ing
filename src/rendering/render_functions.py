@@ -136,18 +136,25 @@ def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
 
 def display_path(xvar: XVar) -> None:
     if not xvar.solution.display:
-        xvar.solution.display = True
-        xvar.solution.step = 0
         if xvar.animation:
-            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
-                                   xvar.solution.draw_solution_anim, xvar)
+            if xvar.row == xvar.maze.rows:
+                xvar.solution.display = True
+                xvar.solution.step = 0
+                xvar.mlx.mlx_loop_hook(xvar.mlx_ptr,
+                                       xvar.solution.draw_solution_anim, xvar)
+            else:
+                print("Wait until the animation ends")
         else:
+            xvar.solution.display = True
+            xvar.solution.step = 0
             xvar.solution.draw_solution(xvar)
             render_frame(xvar, xvar.solution)
     else:
         xvar.solution.display = False
-        xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+        if xvar.solution.step != len(xvar.solution.path_matrix):
+            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
         xvar.solution.reset_draw(xvar)
+        xvar.solution.step = 0
         render_frame(xvar, xvar.solution)
 
 

@@ -1,7 +1,6 @@
 from ..core import XVar
 from ..rendering.render_functions import draw_42, display_path
 
-
 HELP_MESSAGE = """
 ╔══════════════════════════════════════════════════════╗
 ║           A-MAZE-ING - KEYBINDS HELP                 ║
@@ -62,16 +61,19 @@ def manage_key(key: int, xvar: XVar) -> int:
 
 
 def change_maze_color(xvar: XVar) -> None:
-    from ..rendering import ColorManager, render_frame
-    color_index = ColorManager.COLOR_LIST.index(xvar.maze.color)
-    if color_index == len(ColorManager.COLOR_LIST) - 1:
-        new_color = ColorManager.COLOR_LIST[0]
+    if xvar.mlx._python_ref_std["loop_f"]:
+        print("Wait until the animation ends")
     else:
-        new_color = ColorManager.COLOR_LIST[color_index + 1]
+        from ..rendering import ColorManager, render_frame
+        color_index = ColorManager.COLOR_LIST.index(xvar.maze.color)
+        if color_index == len(ColorManager.COLOR_LIST) - 1:
+            new_color = ColorManager.COLOR_LIST[0]
+        else:
+            new_color = ColorManager.COLOR_LIST[color_index + 1]
 
-    print(f"Changing to: {ColorManager.get_color_name(new_color)}")
-    xvar.maze.change_color(new_color, xvar)
-    render_frame(xvar, xvar.maze)
+        print(f"Changing to: {ColorManager.get_color_name(new_color)}")
+        xvar.maze.change_color(new_color, xvar)
+        render_frame(xvar, xvar.maze)
 
 
 def change_42_color(xvar: XVar) -> None:
@@ -79,7 +81,13 @@ def change_42_color(xvar: XVar) -> None:
         if not xvar.mlx._python_ref_std["loop_f"]:
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
         else:
-            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+            if xvar.row == xvar.maze.rows and (
+                (xvar.solution.step == len(xvar.solution.path_matrix)
+                 and xvar.solution.display) or
+                    (xvar.solution.step == 0 and not xvar.solution.display)):
+                xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+            else:
+                print("Wait until the animation ends")
     else:
         draw_42(xvar)
 
@@ -93,24 +101,29 @@ def change_algo(xvar: XVar) -> None:
 
 
 def change_solution_color(xvar: XVar) -> None:
-    from ..rendering import ColorManager, render_frame
-    colors_index = ColorManager.PATH_COLOR_LIST.index(
-        (xvar.solution.colors["start"], xvar.solution.colors["end"],
-         xvar.solution.colors["path"]))
-    if colors_index == len(ColorManager.PATH_COLOR_LIST) - 1:
-        new_colors = ColorManager.PATH_COLOR_LIST[0]
+    if xvar.mlx._python_ref_std["loop_f"]:
+        print("Wait until the animation ends")
     else:
-        new_colors = ColorManager.PATH_COLOR_LIST[colors_index + 1]
-    print(
-        f"Changing path color to: {ColorManager.get_color_name(new_colors[0])}"
-    )
-    xvar.solution.change_color({
-        "start": new_colors[0],
-        "end": new_colors[1],
-        "path": new_colors[2],
-    }, xvar)
-    render_frame(xvar, xvar.solution)
-    xvar.solution.display = True
+        from ..rendering import ColorManager, render_frame
+        colors_index = ColorManager.PATH_COLOR_LIST.index(
+            (xvar.solution.colors["start"], xvar.solution.colors["end"],
+             xvar.solution.colors["path"]))
+        if colors_index == len(ColorManager.PATH_COLOR_LIST) - 1:
+            new_colors = ColorManager.PATH_COLOR_LIST[0]
+        else:
+            new_colors = ColorManager.PATH_COLOR_LIST[colors_index + 1]
+        print(
+            "Changing path color to:"
+            f" {ColorManager.get_color_name(new_colors[2])}"
+        )
+        xvar.solution.change_color(
+            {
+                "start": new_colors[0],
+                "end": new_colors[1],
+                "path": new_colors[2],
+            }, xvar)
+        render_frame(xvar, xvar.solution)
+        xvar.solution.display = True
 
 
 def get_key_press(key: int, xvar: XVar) -> None:
