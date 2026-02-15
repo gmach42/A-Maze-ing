@@ -4,6 +4,9 @@ from ..parsing.constants import MIN_COL_42, MIN_ROW_42
 
 
 class MazeGenerator:
+    """The center of maze generation. It contains both algorithms, the usefull
+    variables (perfect, width, etc...) and helpfull functions to create maze.
+    """
 
     def __init__(
         self,
@@ -21,12 +24,6 @@ class MazeGenerator:
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
         self.algo: int = 1
-        self.cardinal_points: dict[str, int] = {
-            "North": 1,
-            "East": 2,
-            "South": 4,
-            "West": 8,
-        }
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
@@ -115,6 +112,14 @@ class MazeGenerator:
                         cell_1.del_south()
                         cell_2.del_north()
 
+    @staticmethod
+    def check_neighbors(right: Cell, left: Cell, top: Cell,
+                        bottom: Cell) -> bool:
+        """It checks if cell is the center of a 3x3 area.
+        """
+        return right.get_walls() == 2 and left.get_walls(
+        ) == 8 and top.get_walls() == 1 and bottom.get_walls() == 4
+
     def unperfect(self) -> None:
         """When env variable perfect is False, it take 1/3 of all walls and
         break them while being careful to not open too much areas.
@@ -133,31 +138,47 @@ class MazeGenerator:
             left: Cell = self.grid[y][x - 1]
             top: Cell = self.grid[y - 1][x]
             bottom: Cell = self.grid[y + 1][x]
+            actual_walls: int = list_breakable_cells[0].get_walls()
             if list_breakable_cells[0].south != 0 and not (
-                    bottom.is_forty_two() and
-                    (bottom.get_walls() - bottom.north) == 0):
+                    actual_walls - list_breakable_cells[0].south
+                    == 0) and not (bottom.is_forty_two() and
+                                   (bottom.get_walls() - bottom.north) == 0):
                 list_breakable_cells[0].del_south()
                 bottom.del_north()
             elif list_breakable_cells[0].north != 0 and not (
-                    top.is_forty_two() and (top.get_walls() - top.south) == 0):
+                    actual_walls - list_breakable_cells[0].north
+                    == 0) and not (top.is_forty_two() and
+                                   (top.get_walls() - top.south) == 0):
                 list_breakable_cells[0].del_north()
                 top.del_south()
             elif list_breakable_cells[0].east != 0 and not (
-                    right.is_forty_two() and
-                    (right.get_walls() - right.west) == 0):
+                    actual_walls - list_breakable_cells[0].east
+                    == 0) and not (right.is_forty_two() and
+                                   (right.get_walls() - right.west) == 0):
                 list_breakable_cells[0].del_east()
                 right.del_west()
             elif list_breakable_cells[0].west != 0 and not (
-                    left.is_forty_two() and
-                    (left.get_walls() - left.east) == 0):
+                    actual_walls - list_breakable_cells[0].west
+                    == 0) and not (left.is_forty_two() and
+                                   (left.get_walls() - left.east) == 0):
                 list_breakable_cells[0].del_west()
                 left.del_east()
             else:
                 i -= 1
+            if list_breakable_cells[0].get_walls() == 0:
+                if self.check_neighbors(right, left, top, bottom):
+                    list_breakable_cells[0].south = 4
             list_breakable_cells.pop(0)
             i += 1
 
     def get_maze(self) -> list[list[int]]:
+        """It empties the grid before recreate it with new cells. Then it calls
+        asked algorithm and break more walls if perfect is false.
+
+        Returns:
+            list[list[int]]: The maze in the form of a list of lists of
+            integers
+        """
         self.grid = []
         for y in range(self.height):
             row: list[Cell] = []

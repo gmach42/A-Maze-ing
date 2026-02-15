@@ -1,6 +1,8 @@
 *This project has been created as part of the 42 curriculum by bfitte and gmach.*
 
 # Description
+A generator of mazes, possibly perfect ones, that writes the result to a file using a hexadecimal wall representation. It also provides a visual
+ representation of the maze and some animation possibilities.
 # Instructions
 # Resources
 ## Usage examples
@@ -13,7 +15,37 @@ A heap queue (also called a priority queue) is a special data structure that all
 
 Taxicab geometry or Manhattan geometry is geometry where the familiar Euclidean distance is ignored, and the distance between two points is instead defined to be the sum of the absolute differences of their respective Cartesian coordinates, a distance function (or metric) called the taxicab distance, Manhattan distance, or city block distance.
 
-A* algorithm:
+#### Kruskal algorithm:
+Kruskal's algorithm is a "greedy" algorithm typically used to find a Minimum Spanning Tree. In the context of maze generation, it treats every cell as a separate set and progressively merges them by breaking walls until all cells belong to a single set, ensuring a perfect maze (one path between any two cells).
+
+Logic and Implementation:
+
+Wall Collection: The algorithm begins by creating a list of all possible "breakable" walls between adjacent cells, strictly excluding any walls associated with the "42" shape.
+
+Randomization: The list of walls (walls_to_broke) is shuffled randomly to ensure the maze structure is non-deterministic.
+
+Set Union (The "Boss" System): For each wall in the shuffled list, the algorithm checks the "boss" of the two cells separated by that wall.
+
+Wall Breaking: If the two cells have different bosses (meaning they are not yet connected), the algorithm calls a union function to merge the sets. The wall between the two cells is then deleted.
+
+Cycle Prevention: If both cells already share the same boss, the wall is left intact to prevent the creation of loops/cycles within the maze.
+
+#### Depth-First Search (DFS)
+The Depth-First Search algorithm, often called the "recursive backtracker," is a randomized algorithm that explores as deep as possible along each branch before backtracking.
+
+Logic and Implementation:
+
+Initialization: The algorithm starts with a designated start_cell, marks it as visited, and pushes it onto a stack.
+
+Navigation: It peeks at the top of the stack to identify the current cell.
+
+Neighbor Selection: The algorithm identifies all adjacent neighbors (North, South, East, West) that have not been visited and are not part of the protected "42" shape.
+
+Wall Removal: If unvisited neighbors are available, one is chosen at random (rand.choice). The wall between the current cell and the chosen neighbor is deleted, the neighbor is marked as visited, and it is pushed onto the stack.
+
+Backtracking: If no unvisited neighbors exist, the algorithm pops the current cell from the stack and repeats the process from the previous cell. The loop terminates when the stack is empty.
+
+#### A* algorithm:
 The way A* works is that it assigns a cost to each of the cells of the maze and the algorithm selects the SolutionPath with minimum cost. The cost of a cell (n) has two parts and is defined as:
 ```math
 f(n) = g(n)+h(n)
