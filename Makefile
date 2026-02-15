@@ -28,7 +28,7 @@ keybind:
 install:
 	python3 -m venv $(VENV)
 	$(PIP) install --upgrade pip
-	$(PIP) install -r requirement.txt
+	$(PIP) install -r requirements.txt
 
 run:
 	@$(PYTHON) a_maze_ing.py

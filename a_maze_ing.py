@@ -49,8 +49,9 @@ def parse_arguments_and_config() -> tuple[EnvVariables, int, int]:
     env_variable = parsing_config(config_file)
 
     win_width = (env_variable.width + 1) * env_variable.cell_size
-    win_height = (env_variable.height +
-                  1) * env_variable.cell_size + env_variable.wall_width
+    win_height = (
+        env_variable.height + 1
+    ) * env_variable.cell_size + env_variable.wall_width
 
     return env_variable, win_width, win_height
 
@@ -65,8 +66,10 @@ def create_window(xvar: XVar, width: int, height: int) -> any:
 
 def setup_maze_and_solution(xvar: XVar, env_variable: EnvVariables) -> None:
     """Initialize maze generator, maze, solver and solution."""
-    xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
-                                   env_variable.perfect, env_variable.seed)
+    xvar.generator = MazeGenerator(
+        env_variable.height, env_variable.width, env_variable.perfect,
+        env_variable.seed
+    )
 
     xvar.maze = Maze(
         xvar,
@@ -148,16 +151,17 @@ def main() -> None:
         win_width += panel_width + env_variable.cell_size
 
         # Validate window size
-        if not parsing.is_valid_window(xvar.screen_w, xvar.screen_h, win_width,
-                                       win_height):
+        if not parsing.is_valid_window(
+            env_variable, xvar.screen_w, xvar.screen_h, win_width, win_height
+        ):
             raise ValueError("Invalid Window size")
 
         # In case maze is too small to contain 42, print a warning and
         # do not generate 42 in the maze (list of 42 coordinates will be empty)
         if env_variable.width < MIN_COL_42 or env_variable.height < MIN_ROW_42:
-            print('=' * 40)
+            print("=" * 40)
             print("Little Maze setting: NO 42 in the maze!")
-            print('=' * 40 + '\n')
+            print("=" * 40 + "\n")
 
     except (ValidationError, ValueError, ExecutionError,
             FileNotFoundError) as e:
@@ -196,9 +200,8 @@ def main() -> None:
         xvar.solution.draw_solution(xvar)
 
     # Display maze info
-    print(
-        f"\nGenerating maze of size {env_variable.width}x{env_variable.height}"
-    )
+    print("\nGenerating maze of size"
+          f" {env_variable.width}x{env_variable.height}")
     print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
 
     # Setup event hooks
