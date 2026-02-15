@@ -1,14 +1,14 @@
 # Maze width (number of rows -> max x + 1)
-WIDTH=20
+WIDTH=70
 # Maze height (number of cols -> max y + 1)
-HEIGHT=20
+HEIGHT=40
 # Entry coordinates (x, y)
 ENTRY=0,0
 # Exit coordinates (x, y) max = (WIDTH - 1, HEIGHT - 1)
-EXIT=10,10
+EXIT=69,39
 # Output filename
 OUTPUT_FILE=maze.txt
-PERFECT=true
+PERFECT=false
 # Animation can be true or false
 ANIMATION=false
 # Speed animation can be slow, medium or fast
