@@ -86,7 +86,7 @@ def change_42_color(xvar: XVar) -> None:
             if xvar.row == xvar.maze.rows and (
                 (xvar.solution.step == len(xvar.solution.path_matrix)
                  and xvar.solution.display) or
-                (xvar.solution.step == 0 and not xvar.solution.display)):
+                    (xvar.solution.step == 0 and not xvar.solution.display)):
                 xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
             else:
                 print("Wait until the animation ends")

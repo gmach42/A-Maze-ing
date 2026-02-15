@@ -9,7 +9,13 @@ from pydantic import (
 )
 from typing import Any
 from .errors import FormatError, MissingKey, ConfigError, TooManyVar
-from .constants import MIN_PIXEL_WIDTH, MIN_PIXEL_HEIGHT, MIN_ROWS, MIN_COLS
+from .constants import (
+    MIN_PIXEL_WIDTH,
+    MIN_PIXEL_HEIGHT,
+    MIN_ROWS,
+    MIN_COLS,
+    PANEL_WIDTH,
+)
 
 
 class EnvVariables(BaseModel):
@@ -41,7 +47,7 @@ class EnvVariables(BaseModel):
     wall_width: int = 1
     animation: bool = False
     speed_animation: str = "medium"
-    seed: str | None
+    seed: str | None = None
 
     @field_validator("entry", "exit", mode="before")
     @classmethod
@@ -70,11 +76,11 @@ class EnvVariables(BaseModel):
         if self.entry == self.exit:
             raise ValueError("Entry and exit points must be different")
         if self.entry[0] >= self.height or self.entry[1] >= self.width:
-            raise ValueError(
-                "Entry coordinates must be within the maze dimensions")
+            raise ValueError("Entry coordinates must be within the maze"
+                             " dimensions")
         if self.exit[0] >= self.height or self.exit[1] >= self.width:
-            raise ValueError(
-                "Exit coordinates must be within the maze dimensions")
+            raise ValueError("Exit coordinates must be within the maze"
+                             " dimensions")
         return self
 
 
@@ -111,21 +117,22 @@ def parsing_config(file_name: str) -> EnvVariables:
                                 string_split[1] = False
                             else:
                                 raise MissingKey(
-                                    "Missing a value for perfect variable!")
+                                    "Missing a value for perfect variable!"
+                                )
                         results[string_split[0].lower()] = string_split[1]
                     else:
-                        raise FormatError(
-                            "You need to use <key>=<value> format")
+                        raise FormatError("You need to use <key>=<value>"
+                                          " format")
                 line = file.readline()
         if len(results) > 11:
             raise TooManyVar("Too much variables in configuration file!")
         for key, value in results.items():
             if not value and key in [
-                    "width",
-                    "height",
-                    "entry",
-                    "exit",
-                    "output_file",
+                "width",
+                "height",
+                "entry",
+                "exit",
+                "output_file",
             ]:
                 raise MissingKey(f"Missing a value for {key} variable!")
     except (ConfigError, OSError) as e:
@@ -147,17 +154,29 @@ def parsing_config(file_name: str) -> EnvVariables:
             msg = error.get("msg", "Unknown error")
 
             print(f"  Field '{field}': {msg}", file=sys.stderr)
-
         sys.exit(1)
 
 
 def is_valid_window(
-    screen_width: int, screen_height: int, win_width: int, win_height: int
+    env_variable: EnvVariables,
+    screen_width: int,
+    screen_height: int,
+    win_width: int,
+    win_height: int,
 ) -> bool:
     """
     Validate that the window dimensions are within the screen size and
     above the minimum pixel requirements.
     """
+
+    max_width: int = int((
+        screen_width - PANEL_WIDTH - env_variable.cell_size
+    ) / env_variable.cell_size - 1)
+    max_height: int = int((
+        screen_height - env_variable.wall_width
+    ) / env_variable.cell_size - 1)
+    print(f"Max width for this window: {max_width}")
+    print(f"Max height for this window: {max_height}\n")
     return (
         MIN_PIXEL_WIDTH < win_width <= screen_width
         and MIN_PIXEL_HEIGHT < win_height <= screen_height

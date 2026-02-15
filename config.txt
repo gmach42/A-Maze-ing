@@ -1,11 +1,11 @@
 # Maze width (number of rows -> max x + 1)
-WIDTH=20
+WIDTH=25
 # Maze height (number of cols -> max y + 1)
-HEIGHT=11
+HEIGHT=18
 # Entry coordinates (x, y)
 ENTRY=0,0
 # Exit coordinates (x, y) max = (WIDTH - 1, HEIGHT - 1)
-EXIT=10,10
+EXIT=24,17
 # Output filename
 OUTPUT_FILE=maze.txt
 PERFECT=true
