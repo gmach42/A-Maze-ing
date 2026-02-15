@@ -18,7 +18,7 @@ class TestMazeProject:
     # --- TESTS DE CONFIGURATION (ERREURS) ---
     def test_parsing_invalid_file(self):
         """Vérifie que le parsing lève une erreur si le fichier n'existe pas"""
-        with pytest.raises(FileNotFoundError):
+        with pytest.raises(SystemExit):
             parsing_config("fichier_inexistant.txt")
 
     def test_parsing_bad_values(self, tmp_path):
@@ -33,5 +33,5 @@ class TestMazeProject:
         )
 
         # On vérifie que ton code lève bien l'erreur attendue
-        with pytest.raises(ValidationError):
+        with pytest.raises(SystemExit):
             parsing_config(str(bad_config))

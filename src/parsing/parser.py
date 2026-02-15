@@ -47,7 +47,7 @@ class EnvVariables(BaseModel):
     wall_width: int = 1
     animation: bool = False
     speed_animation: str = "medium"
-    seed: str | None
+    seed: str | None = None
 
     @field_validator("entry", "exit", mode="before")
     @classmethod
