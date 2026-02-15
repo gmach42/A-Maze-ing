@@ -13,6 +13,7 @@ class MazeGenerator:
         width: int,
         perfect: bool,
         seed: str | None = None,
+        algo: int | None = 1
     ):
         if seed:
             rand.seed(seed)
@@ -22,7 +23,7 @@ class MazeGenerator:
         self.boss_list: list[int] = []
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
-        self.algo: int = 1
+        self.algo: int = algo
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
