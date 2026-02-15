@@ -106,10 +106,6 @@ class MazeUIManager(MLXImage):
 
         self.add_button(xvar)
 
-    def regen(self, xvar: XVar) -> None:
-        self.reset_draw(xvar)
-        draw_maze_walls(xvar)
-
     @staticmethod
     def regenerate(xvar: XVar) -> None:
 
