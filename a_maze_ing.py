@@ -1,4 +1,9 @@
 import sys
+from maze_algorithm import (
+    MazeGenerator,
+    Solver,
+    output_maze
+    )
 from src import (
     ColorManager,
     Maze,
@@ -6,8 +11,6 @@ from src import (
     draw_maze_walls_anim,
     draw_maze_walls,
     render_frame,
-    MazeGenerator,
-    Solver,
     XVar,
     EnvVariables,
     parsing_config,
@@ -15,7 +18,6 @@ from src import (
     ExecutionError,
     ConfigError,
     MazeUIManager,
-    output_maze,
     render_init,
 )
 from src import events, parsing

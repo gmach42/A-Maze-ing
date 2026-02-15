@@ -1,5 +1,5 @@
 from .utils_algorithm import Border
-from ..parsing import NoSolutionError
+from .utils_algorithm import NoSolutionError
 
 
 class Solver:

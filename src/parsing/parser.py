@@ -1,4 +1,3 @@
-import sys
 from pydantic import (
     BaseModel,
     Field,
@@ -141,10 +140,6 @@ def parsing_config(file_name: str) -> EnvVariables:
     try:
         return EnvVariables(**results)
     except ValidationError as e:
-        # print(
-        #     f"\nCaught a {type(e).__name__} error during parsing config.txt:",
-        #     file=sys.stderr,
-        # )
         final_message: str = ""
         for error in e.errors():
             # Get location, defaulting to 'Configuration' if empty
@@ -154,7 +149,6 @@ def parsing_config(file_name: str) -> EnvVariables:
             msg = error.get("msg", "Unknown error")
             final_message += f"Field '{field}': {msg}\n"
         raise ConfigError(final_message)
-        # sys.exit(1)
 
 
 def is_valid_window(

@@ -2,7 +2,6 @@ __authors__ = "Gildas", "Bruno"
 __version__ = "0.1.0"
 
 from .core import XVar, MLXImage
-from .maze_algorithm import Border, MazeGenerator, Solver, output_maze
 from .rendering import (
     ColorManager,
     Maze,
@@ -25,10 +24,6 @@ from .parsing import (
 __all__ = [
     "XVar",
     "MLXImage",
-    "Border",
-    "MazeGenerator",
-    "Solver",
-    "output_maze",
     "ConfigError",
     "ColorManager",
     "Maze",

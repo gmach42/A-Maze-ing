@@ -22,10 +22,6 @@ class TooManyVar(ConfigError):
     pass
 
 
-class NoSolutionError(Exception):
-    pass
-
-
 class ExecutionError(Exception):
     def __init__(self, details: str):
         message: str = f' An execution error has been raised: {details}'
