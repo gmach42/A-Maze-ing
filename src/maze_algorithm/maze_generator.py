@@ -115,6 +115,12 @@ class MazeGenerator:
                         cell_1.del_south()
                         cell_2.del_north()
 
+    @staticmethod
+    def check_neighbors(right: Cell, left: Cell, top: Cell,
+                        bottom: Cell) -> bool:
+        return right.get_walls() == 2 and left.get_walls(
+        ) == 8 and top.get_walls() == 1 and bottom.get_walls() == 4
+
     def unperfect(self) -> None:
         """When env variable perfect is False, it take 1/3 of all walls and
         break them while being careful to not open too much areas.
@@ -160,6 +166,9 @@ class MazeGenerator:
                 left.del_east()
             else:
                 i -= 1
+            if list_breakable_cells[0].get_walls() == 0:
+                if self.check_neighbors(right, left, top, bottom):
+                    list_breakable_cells[0].south = 4
             list_breakable_cells.pop(0)
             i += 1
 
