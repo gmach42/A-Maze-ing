@@ -123,6 +123,7 @@ class SolutionPath(MLXImage):
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
 
     def reset_draw(self, xvar: XVar) -> None:
+        """Erase the solution path by drawing it with black color."""
         temp_colors: dict[str, int] = self.colors
         self.colors = {
             'start': ColorManager.BLACK,

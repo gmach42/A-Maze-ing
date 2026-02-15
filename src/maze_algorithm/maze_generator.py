@@ -4,8 +4,23 @@ from ..parsing.constants import MIN_COL_42, MIN_ROW_42
 
 
 class MazeGenerator:
-    """The center of maze generation. It contains both algorithms, the usefull
+    """
+    The center of maze generation. It contains both algorithms, the usefull
     variables (perfect, width, etc...) and helpfull functions to create maze.
+
+    Attributes:
+        grid (list[list[Cell]]): The grid of cells representing the maze
+        width (int): The width of the maze in number of cells
+        height (int): The height of the maze in number of cells
+        boss_list (list[int]): List used for the union-find structure in
+            Kruskal's algorithm
+        perfect (bool): Flag indicating if the maze should be perfect or not
+        list_cells (list[Cell]): List of all cells in the maze
+        algo (int): The algorithm to use for maze generation
+            (1 for Kruskal, 2 for Depth First Search)
+        forty_two_gps (list[tuple[int, int]]): List of coordinates
+            of the cells forming the 42 obstacle. If the maze is too small,
+            this list will be empty.
     """
 
     def __init__(
@@ -15,6 +30,18 @@ class MazeGenerator:
         perfect: bool,
         seed: str | None = None,
     ):
+        """
+        Initialize the MazeGenerator with the given parameters and create the
+        grid of cells.
+
+        Args:
+            height (int): The height of the maze in number of cells
+            width (int): The width of the maze in number of cells
+            perfect (bool): Flag indicating if the maze should be perfect or
+                not
+            seed (str | None): Optional seed for random number generation to
+                ensure reproducibility
+        """
         if seed:
             rand.seed(seed)
         self.grid: list[list[Cell]] = []

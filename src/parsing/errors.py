@@ -1,4 +1,8 @@
 class MazeGenerationErrors(Exception):
+    """
+    A base class for exceptions related to maze generation and
+    configuration errors.
+    """
     def __init__(self, details: str | None = None):
         message: str = f"A generation error has been raised :\n{details}"
         super().__init__(message)

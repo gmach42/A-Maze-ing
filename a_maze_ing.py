@@ -24,6 +24,7 @@ from src.parsing.constants import MIN_COL_42, PANEL_WIDTH, MIN_ROW_42
 
 
 def config_xvar(xvar: XVar, env_variable: EnvVariables) -> None:
+    """Configure XVar with environment variables."""
     xvar.animation = env_variable.animation
     xvar.speed = env_variable.speed_animation
 

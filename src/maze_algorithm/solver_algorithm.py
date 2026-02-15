@@ -3,6 +3,17 @@ from ..parsing import NoSolutionError
 
 
 class Solver:
+    """
+    Solver class that implements the A* algorithm to find the shortest path
+    from the start to the end in a maze.
+
+    Attributes:
+        maze (list[list[int]]): The maze represented as a 2D grid of integers
+        start (tuple[int, int]): The starting coordinates in the maze
+        end (tuple[int, int]): The ending coordinates in the maze
+        is_42 (list[tuple[int, int]]): List of coordinates representing 42
+            obstacles in the maze
+    """
 
     def __init__(
         self,
@@ -11,6 +22,22 @@ class Solver:
         end: tuple[int, int],
         is_42: list[tuple[int, int]],
     ):
+        """
+        Initialize the Solver with the maze, start and end coordinates, and
+        the list of 42 obstacles.
+
+        Args:
+            maze (list[list[int]]): The maze represented as a 2D grid of
+                integers
+            start (tuple[int, int]): The starting coordinates in the maze
+            end (tuple[int, int]): The ending coordinates in the maze
+            is_42 (list[tuple[int, int]]): List of coordinates representing 42
+                obstacles in the maze
+
+        Raises:
+            ValueError: If the maze is not valid (start and end are out of
+                bounds or in 42 obstacles)
+        """
         self.maze = maze
         self.start = start
         self.end = end
@@ -32,6 +59,10 @@ class Solver:
             raise
 
     def get_neighbors(self, cell: tuple[int, int]) -> list[tuple[int, int]]:
+        """
+        Returns the list of neighboring cells that can be accessed
+        from the current cell
+        """
         row, col = cell
         cell_walls: int = Border(self.maze[row][col])
         neighbors: list[tuple[int, int]] = []
@@ -56,7 +87,9 @@ class Solver:
     @staticmethod
     def h(cell1: tuple[int, int], cell2: tuple[int, int]) -> int:
         """
-        Heuristic function chosen here is the manhattan distance
+        The Heuristic function chosen here is the
+        [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+
         Calculate the distance between 2 points on a grid by summing the
         absolute differences in their x and y coordinates
         """
@@ -122,7 +155,7 @@ class Solver:
                 new_cost = path_cost.get(curr_node, 10000) + 1
                 if neighbor not in path_cost or new_cost < path_cost[neighbor]:
                     path_cost[neighbor] = new_cost
-                    # f(n) = g(n) + h(n)
+                    # f(n)-> priority = g(n)-> new_cost + h(n)-> estimated_cost
                     priority = new_cost + self.h(neighbor, self.end)
                     open_paths.append((priority, neighbor))
                     came_from[neighbor] = curr_node

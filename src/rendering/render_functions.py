@@ -7,28 +7,48 @@ from .color_manager import ColorManager
 
 def draw_rectangle(img_data: MLXImage, x: int, y: int, width: int, height: int,
                    color: int) -> None:
-    """Draw a filled rectangle"""
+    """
+    Main function used to draw in this program.
+    It fills a rectangle area in the image data array with a specified color.
+
+    Args:
+        img_data (MLXImage): The image data to draw on
+        x (int): The x-coordinate of the top-left corner of the rectangle
+        y (int): The y-coordinate of the top-left corner of the rectangle
+        width (int): The width of the rectangle in pixels
+        height (int): The height of the rectangle in pixels
+        color (int): The color to fill the rectangle, in ARGB format
+    """
+
+    # Secure the rectangle coordinates to be within the image boundaries
     x_start = max(0, x)
     y_start = max(0, y)
     x_end = min(x + width, img_data.img_width)
     y_end = min(y + height, img_data.img_height)
 
+    # If the rectangle is completely outside the image boundaries, do nothing
     draw_width = x_end - x_start
     if draw_width <= 0 or y_start >= y_end:
         return
 
+    # Create a line buffer of the color for improved performance
     line_buffer = array.array("I", [color] * draw_width)
 
     img_width = img_data.img_width
     data = img_data.data
 
+    # Fill the data array row by row with the line buffer
     for dy in range(y_start, y_end):
         start_offset = dy * img_width + x_start
         data[start_offset:start_offset + draw_width] = line_buffer
 
 
 def draw_42(xvar: XVar) -> None:
+    """Draw the 42 logo on the maze."""
+
     color: int = ColorManager.BLACK
+    # If the maze color is not black, choose a random color for the 42 logo
+    # that is different from the maze color
     if xvar.maze.color is not ColorManager.BLACK:
         color = random.choice(
             [col for col in ColorManager.COLOR_LIST if col != xvar.maze.color])
@@ -80,7 +100,7 @@ def draw_42(xvar: XVar) -> None:
 
 
 def draw_maze_walls(xvar: XVar) -> None:
-    """Draw walls around each cell"""
+    """Draw the maze walls based on the maze matrix using `draw_rectangle()`"""
 
     for row in range(xvar.maze.rows):
         for col in range(xvar.maze.cols):
@@ -134,6 +154,7 @@ def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
 
 
 def display_path(xvar: XVar) -> None:
+    """Display the solution path on the maze, with optional animation."""
     if not xvar.solution.display:
         if xvar.animation:
             if xvar.row == xvar.maze.rows:
@@ -158,4 +179,8 @@ def display_path(xvar: XVar) -> None:
 
 
 def render_init(img: MLXImage) -> None:
+    """
+    Set all pixels of an MLXImage to 0 (transparent) to avoid glitches on
+    the first frame.
+    """
     draw_rectangle(img, 0, 0, img.img_width, img.img_height, 0)

@@ -5,7 +5,17 @@ from .render_functions import draw_rectangle, render_frame, draw_42
 
 def draw_maze_walls_anim(xvar: XVar) -> None:
     """
-    Draw walls around each cell using `draw_rectangle` and `Border`
+    Main function to draw the **maze walls** with **animation**.
+
+    It iterates through the maze matrix and draws each cell's walls based on
+    the presence of walls using bit flags. The animation speed is controlled
+    by the `speed` attribute of `XVar`, which determines how many cells are
+    drawn per frame. Once all cells are drawn, it checks if the solution path
+    should be displayed and sets up the appropriate rendering hooks for the
+    solution animation or static display.
+
+    Raises:
+        IndexError: If the current row or column exceeds the maze dimensions.
     """
     match xvar.speed:
         case "slow":

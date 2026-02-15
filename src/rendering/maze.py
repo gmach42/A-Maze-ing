@@ -74,4 +74,5 @@ class Maze(MLXImage):
         self.color = temp_color
 
     def regen(self, xvar: XVar) -> None:
+        """Redraw the maze with the current color and 42 logo."""
         draw_maze_walls(xvar)

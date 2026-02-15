@@ -1,5 +1,15 @@
 from typing import Final
 
+"""
+Module to define all the constants used throughout the program.
+
+Centralize all constants in one place for better maintainability
+and readability.
+
+Using `Final` ensures that these constants cannot be modified after
+their initial assignment
+"""
+
 MIN_PIXEL_WIDTH: Final[int] = 200
 MIN_PIXEL_HEIGHT: Final[int] = 90
 MIN_ROWS: Final[int] = 3

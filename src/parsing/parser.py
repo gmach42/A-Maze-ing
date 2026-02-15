@@ -154,6 +154,10 @@ def parsing_config(file_name: str) -> EnvVariables:
 def is_valid_window(
     screen_width: int, screen_height: int, win_width: int, win_height: int
 ) -> bool:
+    """
+    Validate that the window dimensions are within the screen size and
+    above the minimum pixel requirements.
+    """
     return (
         MIN_PIXEL_WIDTH < win_width <= screen_width
         and MIN_PIXEL_HEIGHT < win_height <= screen_height
