@@ -44,6 +44,7 @@ class ColorManager:
     BUTTON = LIGHTBLUE
     PANEL = LIGHTPURPLE
 
+    # Predefined color lists for cycling through colors for the maze and 42
     COLOR_LIST = [
         WHITE,
         GRAY,
@@ -71,6 +72,7 @@ class ColorManager:
         PINK,
     ]
 
+    # Predefined color combinations for the solution path (start, end, path)
     PATH_COLOR_LIST = [
         (START, END, PATH),
         (RED, GREEN, BLUE),
@@ -82,6 +84,7 @@ class ColorManager:
         (EARTH, LIGHTGRASS, SANDYBROWN),
     ]
 
+    # Mapping of color values to their names for display purposes
     COLOR_NAMES = {
         WHITE: "White",
         GRAY: "Gray",
@@ -112,4 +115,5 @@ class ColorManager:
 
     @classmethod
     def get_color_name(cls, color: int) -> str:
+        """Return the name of the color given its MLX integer value."""
         return cls.COLOR_NAMES.get(color, f"Unknown color: {color:#0{10}X}")

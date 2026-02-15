@@ -13,7 +13,7 @@ from .rendering import (
     render_frame,
     render_init,
 )
-from .events import manage_close, manage_key, get_key_press, handle_click
+from .events import manage_close, manage_key, handle_click
 from .parsing import EnvVariables, parsing_config, errors, ExecutionError
 
 __all__ = [

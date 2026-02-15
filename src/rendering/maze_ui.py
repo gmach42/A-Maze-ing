@@ -13,6 +13,14 @@ from ..events.keyboard import (change_maze_color, change_42_color, change_algo,
 
 
 class MazeUIManager(MLXImage):
+    """
+    Class to manage the UI elements of the maze, inheriting from MLXImage.
+
+    Attributes:
+        buttons (list[Button]): List of Button objects representing
+            the UI buttons
+        color (int): Color used for the panel background
+    """
 
     def __init__(
         self,
@@ -21,6 +29,16 @@ class MazeUIManager(MLXImage):
         color: int = ColorManager.PANEL,
         button_color: int = ColorManager.BUTTON,
     ):
+        """
+        Initialize the MazeUIManager with buttons and panel color.
+        Args:
+            xvar (XVar): The main variable containing all necessary data
+            width (int): The width of the UI panel
+            color (int, optional): The background color of the panel.
+                Defaults to ColorManager.PANEL.
+            button_color (int, optional): The color of the buttons.
+                Defaults to ColorManager.BUTTON.
+        """
         button_h = max(MIN_BUTTON_HEIGHT, round(xvar.maze.img_height * 0.08))
         button_w = max(MIN_BUTTON_WIDTH, round(width * 0.4))
         self.buttons: list[Button] = [
@@ -41,6 +59,7 @@ class MazeUIManager(MLXImage):
         super().__init__(xvar, width, xvar.maze.img_height)
 
     def add_button(self, xvar: XVar) -> None:
+        """Add a button to the UI panel and display it."""
         for i, button in enumerate(self.buttons):
             if i < 3:
                 offset_x: int = xvar.maze.img_width + xvar.maze.wall_width + \
@@ -66,6 +85,7 @@ class MazeUIManager(MLXImage):
                                     ColorManager.CYAN, button.text)
 
     def draw_panel(self, xvar: XVar) -> None:
+        """Draw the UI panel background and decorative elements."""
 
         x_start: int = 0
         y_start: int = 0
@@ -106,12 +126,12 @@ class MazeUIManager(MLXImage):
 
         self.add_button(xvar)
 
-    def regen(self, xvar: XVar) -> None:
-        self.reset_draw(xvar)
-        draw_maze_walls(xvar)
-
     @staticmethod
     def regenerate(xvar: XVar) -> None:
+        """
+        Major function to regenerate the maze and
+        update the display accordingly.
+        """
 
         xvar.col = 0
         xvar.row = 0

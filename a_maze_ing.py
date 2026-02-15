@@ -120,6 +120,16 @@ def cleanup_resources(xvar: XVar) -> None:
 
 
 def main() -> None:
+    """
+    Main entry point of the A-Maze-ing application.
+
+    Orchestrates the program execution lifecycle:
+    1. Initializes MLX and parses configuration/arguments.
+    2. Creates the window and generates the maze/solution.
+    3. Sets up the UI, event hooks, and rendering loop.
+    4. Handles resource cleanup upon exit.
+    """
+
     print("\nWelcome to A-Maze-ing!\n")
 
     xvar = XVar()

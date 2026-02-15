@@ -61,7 +61,8 @@ def manage_key(key: int, xvar: XVar) -> int:
 
 
 def change_maze_color(xvar: XVar) -> None:
-    if xvar.mlx._python_ref_std["loop_f"]:
+    """Change maze wall color and redraw the maze."""
+    if xvar.mlx._python_ref_std.get("loop_f"):
         print("Wait until the animation ends")
     else:
         from ..rendering import ColorManager, render_frame
@@ -77,14 +78,15 @@ def change_maze_color(xvar: XVar) -> None:
 
 
 def change_42_color(xvar: XVar) -> None:
+    """Change 42's color and redraw it."""
     if xvar.animation:
-        if not xvar.mlx._python_ref_std["loop_f"]:
+        if not xvar.mlx._python_ref_std.get("loop_f"):
             xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
         else:
             if xvar.row == xvar.maze.rows and (
                 (xvar.solution.step == len(xvar.solution.path_matrix)
                  and xvar.solution.display) or
-                    (xvar.solution.step == 0 and not xvar.solution.display)):
+                (xvar.solution.step == 0 and not xvar.solution.display)):
                 xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
             else:
                 print("Wait until the animation ends")
@@ -93,6 +95,7 @@ def change_42_color(xvar: XVar) -> None:
 
 
 def change_algo(xvar: XVar) -> None:
+    """Change maze generation algorithm"""
     if xvar.generator.algo == 1:
         xvar.generator.algo = 2
     elif xvar.generator.algo == 2:
@@ -101,7 +104,8 @@ def change_algo(xvar: XVar) -> None:
 
 
 def change_solution_color(xvar: XVar) -> None:
-    if xvar.mlx._python_ref_std["loop_f"]:
+    """Change solution path color and redraw it."""
+    if xvar.mlx._python_ref_std.get("loop_f"):
         print("Wait until the animation ends")
     else:
         from ..rendering import ColorManager, render_frame
@@ -112,10 +116,8 @@ def change_solution_color(xvar: XVar) -> None:
             new_colors = ColorManager.PATH_COLOR_LIST[0]
         else:
             new_colors = ColorManager.PATH_COLOR_LIST[colors_index + 1]
-        print(
-            "Changing path color to:"
-            f" {ColorManager.get_color_name(new_colors[2])}"
-        )
+        print("Changing path color to:"
+              f" {ColorManager.get_color_name(new_colors[2])}")
         xvar.solution.change_color(
             {
                 "start": new_colors[0],
@@ -124,8 +126,3 @@ def change_solution_color(xvar: XVar) -> None:
             }, xvar)
         render_frame(xvar, xvar.solution)
         xvar.solution.display = True
-
-
-def get_key_press(key: int, xvar: XVar) -> None:
-    """Helper to print key pressed"""
-    print(f"Pressed key {key}")

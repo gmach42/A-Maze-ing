@@ -1,4 +1,4 @@
-from .keyboard import manage_key, get_key_press
+from .keyboard import manage_key
 from .window import manage_close
 from .button import Button
 from .mouse import handle_click

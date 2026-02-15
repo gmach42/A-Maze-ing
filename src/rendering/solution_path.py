@@ -4,6 +4,20 @@ from .render_functions import draw_rectangle, render_frame
 
 
 class SolutionPath(MLXImage):
+    """
+    Class to represent the solution path of the maze, inheriting from MLXImage.
+
+    Attributes:
+        path_matrix (list[tuple[int, int]]): List of coordinates representing
+            the solution path
+        cell_size (int): Size of each cell in pixels
+        wall_width (int): Width of the walls in pixels
+        colors (dict[str, int]): Dictionary of colors for start, end, and path
+        start (tuple[int, int]): Coordinates of the start cell
+        end (tuple[int, int]): Coordinates of the end cell
+        step (int): Current step in the animation
+        display (bool): Flag to indicate if the solution should be displayed
+    """
 
     def __init__(
         self,
@@ -17,6 +31,20 @@ class SolutionPath(MLXImage):
         end: tuple[int, int],
         cell_size: int,
     ):
+        """
+        Initialize the SolutionPath with the given parameters and create the
+        image buffer.
+
+        Args:
+            xvar (XVar): The main variable containing all necessary data
+            rows (int): Number of rows in the maze
+            cols (int): Number of columns in the maze
+            path_matrix (list[tuple[int, int]]): List of coordinates
+                representing the solution path
+            wall_width (int): Width of the walls in pixels
+            colors (dict[str, int]): Dictionary of colors for start, end, and
+                path
+        """
         pixel_width = cols * cell_size + wall_width + 1
         pixel_height = rows * cell_size + wall_width + 1
 
@@ -32,15 +60,18 @@ class SolutionPath(MLXImage):
         self.display: bool = False
 
     def change_color(self, colors: dict[str, int], xvar: XVar) -> None:
+        """Change the colors used for the solution path and redraw it."""
         self.colors = colors
         self.regen(xvar)
 
     def set_start_end(self, start: tuple[int, int], end: tuple[int,
                                                                int]) -> None:
+        """Setter for start and end coordinates."""
         self.start = start
         self.end = end
 
     def regen(self, xvar: XVar) -> None:
+        """Redraw the solution path."""
         self.draw_solution(xvar)
 
     def draw_solution(self, xvar: XVar) -> None:
@@ -68,18 +99,20 @@ class SolutionPath(MLXImage):
                            self.colors["path"])
 
     def draw_solution_anim(self, xvar: XVar) -> None:
-        """Draw the solution path on the maze using `draw_rectangle()`"""
+        """
+        Draw an animation of the solution path on the maze with default colors.
+        """
         self.display = True
         size_path = self.cell_size - self.wall_width
         offset = self.wall_width
 
         if self.step <= len(self.path_matrix) - 1:
             if self.step == 0:
-                color: int = self.colors.get("start", 0xFFFF0000)
+                color: int = self.colors.get("start", ColorManager.START)
             elif self.step == len(self.path_matrix) - 1:
-                color = self.colors.get("end", 0xFF00FF00)
+                color = self.colors.get("end", ColorManager.END)
             else:
-                color = self.colors.get("path", 0xFF0000FF)
+                color = self.colors.get("path", ColorManager.PATH)
             y, x = self.path_matrix[self.step]
             draw_rectangle(self, x * self.cell_size + offset,
                            y * self.cell_size + offset, size_path, size_path,

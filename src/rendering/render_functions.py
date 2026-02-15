@@ -128,8 +128,7 @@ def render_frame(xvar: XVar, img_data: MLXImage) -> None:
 def render_frame_panel(xvar: XVar, img_data: MLXImage) -> None:
     """Render the image to the window"""
     offset: int = xvar.maze.cell_size // 2
-    x: int = (offset + xvar.maze.img_width +
-              (xvar.maze.wall_width * 2) + 5)
+    x: int = (offset + xvar.maze.img_width + (xvar.maze.wall_width * 2) + 5)
     xvar.mlx.mlx_put_image_to_window(xvar.mlx_ptr, xvar.win, img_data.img_ptr,
                                      x, offset)
 
@@ -159,5 +158,4 @@ def display_path(xvar: XVar) -> None:
 
 
 def render_init(img: MLXImage) -> None:
-    draw_rectangle(img, 0, 0, img.img_width, img.img_height,
-                   0)
+    draw_rectangle(img, 0, 0, img.img_width, img.img_height, 0)
