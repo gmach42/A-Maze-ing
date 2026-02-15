@@ -169,17 +169,17 @@ def main() -> None:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Create window
-    try:
-        xvar.win = create_window(xvar, win_width, win_height)
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
-
     # Setup maze and solution
     try:
         setup_maze_and_solution(xvar, env_variable)
     except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Create window
+    try:
+        xvar.win = create_window(xvar, win_width, win_height)
+    except Exception as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 
