@@ -10,55 +10,30 @@ With fully customizable dimensions, color themes, and animation speeds, users ca
 
 # Instructions
 
-To install and run the application:
-```
+### Installation & Execution
+
+To install dependencies and launch the application:
+```bash
 make install
 make run
 ```
 
-To display all available make commands:
-```py
-make help
-or
-make
-```
+### Commands
 
-To run unit tests:
-```
-make test
-```
+| Command | Description |
+| :--- | :--- |
+| `make help` | Display all available make commands |
+| `make test` | Run unit tests |
+| `make clean` | Remove temporary files |
+| `make clean-all` | Full cleanup (includes virtual environment) |
+| `make lint` | Check code quality |
+| `make keybind` | Display keybindings help message |
 
-To clean the project:
-```
-make clean
-```
-or
-```py
-make clean-all  # Also removes the virtual environment
-```
+### Configuration
 
-To lint the code:
-```py
-make lint
-or
-make lint-strict # Uses mypy --strict mode
-```
+To customize the maze, edit the `config.txt` file and run `make run` again.
+> For details on available options, see the **[Config file structure](#struct-and-format-of-config-file)** section.
 
-To display the help message with keybinds:
-```
-make keybind
-```
-
-For personalization, edit the config file `config.txt` and then run `make run` again
-See the "Config file structure" section for more information.
-
-# Resources
-- [MLX documentation](https://harm-smits.github.io/42docs/libs/minilibx/)
-- [Maze generation algorithms](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
-- [A* pathfinding algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
-- [Config file parsing in Python](https://docs.python.org/3/library/configparser.html)
-- [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
-## Usage examples
 ## Features
 
 ### Core Functionality
@@ -70,7 +45,7 @@ See the "Config file structure" section for more information.
 ### Visualization & Customization
 - **Animated Generation**: Watch the maze being built and solved in real-time.
 - **Color Themes**: Cycle through different color schemes for walls and the solution path.
-- **Configurable Settings**: creating a `config.txt` allows for easy personalization of all parameters.
+- **Configurable Settings**: creating a `config.txt` allows for easy personalization of all parameters (See the [Config file structure](#struct-and-format-of-config-file) for more information).
 
 ### Interactive Controls
 | Key | Action |
@@ -87,16 +62,21 @@ See the "Config file structure" section for more information.
 - **Window buttons**, clickable and with the same functionalities as the keybinds listed above
 
 ### Technical Highlights
-- **Robust Error Handling**: Manages invalid configurations and edge cases gracefully.
+- **Robust Error Handling**: Manages invalid configurations and edge cases.
 - **Modular Architecture**: Clean separation of concerns (Generation, Solving, Rendering, UI).
 - **Unit Testing**: Comprehensive tests for critical components.
 - **Performance**: Optimized for larger maze sizes.
 
-## Technical choices
-MLX is bad
-like
-really bad
-but it's fun nonetheless
+## Technical Choices & Constraints
+
+The uses of **MinilibX (MLX)** throughout this project has been an enjoyable and painfull experience at the same time. MLX is a minimal graphics library primarily designed for C, with limited Python support and documentation. To deliver a final display which satisfied our design goals, we made several architectural decisions and compromises:
+
+- **Custom Animation Engine**: Implemented a frame-based rendering system from scratch, as MLX lacks native animation support.
+- **Color Management**: Developed a custom palette system to handle color cycling within MLX's limited capabilities.
+- **Performance Optimization**: Added an additional code layer to use the mlx base function to allow faster rendering and computing (Passing directly 16-bit color values instead of ARGB tuples for example).
+- **Font Constraints**: Adapted UI design to fixed-size fonts, as scalable text is not supported.
+
+> **Note**: We encountered and worked around several MLX limitations, such as inconsistent color formats (ABGR vs ARGB) and sparse documentation. Despite these challenges, we successfully created a visually appealing and interactive maze generator that meets our project goals.
 
 ### Struct and format of config file
 
@@ -114,133 +94,100 @@ The config.txt file allows only strictly defined values following the format `KE
 | `SPEED_ANIMATION` | String | Animation speed (`slow`, `medium`, `fast`) |
 | `SEED` | String | Custom seed for generation (use `'false'` for random) |
 
-### Maze generation algorithm chosen
+## Algorithms & Logic
 
-A heap queue (also called a priority queue) is a special data structure that allows quick access to the smallest (min-heap) or largest (max-heap) element
+### 1. Maze Generation
+We implemented two distinct algorithms to generate mazes, each offering unique visual and structural characteristics.
 
-Taxicab geometry or Manhattan geometry is geometry where the familiar Euclidean distance is ignored, and the distance between two points is instead defined to be the sum of the absolute differences of their respective Cartesian coordinates, a distance function (or metric) called the taxicab distance, Manhattan distance, or city block distance.
+#### **Kruskal's Algorithm** (Randomized)
+*Creates a "perfect" maze with a Minimum Spanning Tree structure.*
 
-#### Kruskal algorithm:
-Kruskal's algorithm is a "greedy" algorithm typically used to find a Minimum Spanning Tree. In the context of maze generation, it treats every cell as a separate set and progressively merges them by breaking walls until all cells belong to a single set, ensuring a perfect maze (one path between any two cells).
+Kruskal's algorithm is a "greedy" approach that treats every cell as a separate set and progressively merges them by breaking walls until all cells belong to a single set. This guarantees a perfect maze where exactly one path exists between any two cells.
 
-Logic and Implementation:
+**Logic & Implementation:**
 
-Wall Collection: The algorithm begins by creating a list of all possible "breakable" walls between adjacent cells, strictly excluding any walls associated with the "42" shape.
+1.  **Wall Collection**: The algorithm begins by identifying all possible "breakable" walls between adjacent cells, strictly excluding any walls that form the protected "42" shape.
+2.  **Randomization**: This list of potential walls (`walls_to_broke`) is shuffled randomly to ensure the generated maze is non-deterministic and unique every run.
+3.  **Set Union (The "Boss" System)**: For each wall in the list, we check the "boss" (set identifier) of the two cells separated by that wall.
+    - **Wall Breaking**: If the cells have different bosses (meaning they are not yet connected), we call a `union` function to merge their sets and delete the wall.
+    - **Cycle Prevention**: If both cells already share the same boss, the wall is left intact to prevent creating loops or cycles.
 
-Randomization: The list of walls (walls_to_broke) is shuffled randomly to ensure the maze structure is non-deterministic.
+#### **Depth-First Search (DFS)** (Recursive Backtracker)
+*Creates a maze with long, winding corridors and fewer dead ends.*
 
-Set Union (The "Boss" System): For each wall in the shuffled list, the algorithm checks the "boss" of the two cells separated by that wall.
+DFS, often called the "recursive backtracker," is a randomized algorithm that explores as deep as possible along each branch before backtracking. It mimics a human blindly exploring a maze and marking their path.
 
-Wall Breaking: If the two cells have different bosses (meaning they are not yet connected), the algorithm calls a union function to merge the sets. The wall between the two cells is then deleted.
+**Logic & Implementation:**
 
-Cycle Prevention: If both cells already share the same boss, the wall is left intact to prevent the creation of loops/cycles within the maze.
+1.  **Initialization**: We start at a designated cell, mark it as visited, and push it onto a stack.
+2.  **Navigation**: The algorithm peeks at the top of the stack to identify the current active cell.
+3.  **Neighbor Selection**: It identifies all valid adjacent neighbors (North, South, East, West) that have **not** been visited and are not part of the "42" structure.
+4.  **Wall Removal**:
+    - If unvisited neighbors exist, one is chosen at random. The wall between the current cell and the neighbor is removed, the neighbor is marked visited and pushed to the stack.
+    - This creates a long, continuous corridor.
+5.  **Backtracking**: If no unvisited neighbors exist (a dead end), the algorithm pops the current cell from the stack and backtracks to the previous one, repeating the process until the stack is empty.
 
-#### Depth-First Search (DFS)
-The Depth-First Search algorithm, often called the "recursive backtracker," is a randomized algorithm that explores as deep as possible along each branch before backtracking.
+### 2. Pathfinding: A* Algorithm
+To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that finds the shortest path by combining actual cost with a [heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) estimate.
 
-Logic and Implementation:
+- **Cost Function :** $f(n) = g(n) + h(n)$
+    - $f(n)$: Total estimated cost of the cheapest solution through node $n$.
+    - $g(n)$: Exact cost from start to current cell.
+    - $h(n)$: Heuristic estimated cost to goal (using **Manhattan Distance**).
+- **Logic**: The algorithm prioritizes exploring cells with the lowest $f(n)$, ensuring the most promising paths are checked first.
 
-Initialization: The algorithm starts with a designated start_cell, marks it as visited, and pushes it onto a stack.
+<p align="center">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Manhattan_distance.svg/960px-Manhattan_distance.svg.png" width="300" alt="Manhattan Distance">
+  <br>
+  <em>Manhattan Distance in red, blue and yellow</em>
+    <br>
+  <em>Green represents the Euclidean distance</em>
+</p>
 
-Navigation: It peeks at the top of the stack to identify the current cell.
+> **Resources**: [Bitwise Operations](https://github.com/Tutors42Lyon/bitwise_operations/tree/main) | [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
 
-Neighbor Selection: The algorithm identifies all adjacent neighbors (North, South, East, West) that have not been visited and are not part of the protected "42" shape.
+## Architecture & Reusability
 
-Wall Removal: If unvisited neighbors are available, one is chosen at random (rand.choice). The wall between the current cell and the chosen neighbor is deleted, the neighbor is marked as visited, and it is pushed onto the stack.
+The codebase follows a strict **modular architecture**:
 
-Backtracking: If no unvisited neighbors exist, the algorithm pops the current cell from the stack and repeats the process from the previous cell. The loop terminates when the stack is empty.
+- **Standalone Modules**: Components like `maze_generator`, `solver`, and `rendering` are decoupled. The generation logic can be extracted and reused in other projects (e.g., a Pacman clone) without dependencies on the UI.
+- **Config-Driven**: The system is fully data-driven via `config.txt`, making it adaptable without code changes.
+- **Type Safety**: Extensive use of Python type hints and `mypy` strict mode ensures code reliability.
 
-#### A* algorithm:
-The way A* works is that it assigns a cost to each of the cells of the maze and the algorithm selects the SolutionPath with minimum cost. The cost of a cell (n) has two parts and is defined as:
-```math
-f(n) = g(n)+h(n)
-```
-Where f(n) is the total cost to reach the cell n and g(n) and h(n) are defined as:
+## Team & Project Management
 
-g(n) → It is the actual cost to reach cell n from the start cell.
+**Project Context**: 42 School Curriculum
+**Development Time**: ~7 days
 
-h(n) → It is the heuristic cost to reach to the goal cell from cell n. It is the estimated cost to reach the goal cell from cell n.
+### Task Distribution
 
-from [A* algorithm](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92)
+| **Bruno (`bfitte`)** | **Gildas (`gmach`)** |
+| :--- | :--- |
+| Maze Generation Logic | A* Pathfinding Logic |
+| UI & Button System | Event & Input System |
+| Config Parsing | Color Management |
+| Animation System | Architecture & Refactoring |
 
-Thought about doing an adjacency matrix but using a Border approach seems more practicable in our case
+### Retrospective
 
-Binary operator:
-https://github.com/Tutors42Lyon/bitwise_operations/tree/main
+**Successes:**
+- Successfully delivered all planned features, including bonus UI elements like clickable buttons (o7 changing button color on click).
+- Overcame significant limitations in the MLX library to build a robust rendering engine.
 
-```python
-function A_Star(start, goal, h)
-    // The set of discovered nodes that may need to be (re-)expanded.
-    // Initially, only the start node is known.
-    // This is usually implemented as a min-heap or priority queue rather than a hash-set.
-    openSet := {start}
+**Areas for Improvement:**
+- **Initial Planning**: We started with a monolithic structure and had to refactor heavily midway. A more detailed architecture plan upfront would have saved time.
+- **Scope Management**: We had many ambitious ideas but had to cut some due to time constraints and the complexity of working with MLX.
 
-    // For node n, cameFrom[n] is the node immediately preceding it on the cheapest SolutionPath from the start
-    // to n currently known.
-    cameFrom := an empty map
+## Resources & Tools
 
-    // For node n, gScore[n] is the cost of the cheapest SolutionPath from start to n currently known.
-    gScore := map with default value of Infinity
-    gScore[start] := 0
+We chose **MinilibX (MLX)** over ASCII rendering because, although more challenging to work with, it allows for a more engaging and visually appealing result and we liked the challenge!
 
-    // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
-    // how cheap a SolutionPath could be from start to finish if it goes through n.
-    fScore := map with default value of Infinity
-    fScore[start] := h(start)
+- **Graphics**: [MinilibX Documentation](https://harm-smits.github.io/42docs/libs/minilibx) / [Bresenham's Line Algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
+- **Algorithms**: [Maze Generation (Wiki)](https://en.wikipedia.org/wiki/Maze_generation_algorithm) / [A* Search (Wiki)](https://en.wikipedia.org/wiki/A*_search_algorithm) / [A* Algorithm in python](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92) / [Heuristics](https://en.wikipedia.org/wiki/Heuristic_(computer_science))
 
-    while openSet is not empty
-        // This operation can occur in O(Log(N)) time if openSet is a min-heap or a priority queue
-        current := the node in openSet having the lowest fScore[] value
-        if current = goal
-            return reconstruct_SolutionPath(cameFrom, current)
-
-        openSet.Remove(current)
-        for each neighbor of current
-            // d(current,neighbor) is the weight of the edge from current to neighbor
-            // tentative_gScore is the distance from start to the neighbor through current
-            tentative_gScore := gScore[current] + d(current, neighbor)
-            if tentative_gScore < gScore[neighbor]
-                // This SolutionPath to neighbor is better than any previous one. Record it!
-                cameFrom[neighbor] := current
-                gScore[neighbor] := tentative_gScore
-                fScore[neighbor] := tentative_gScore + h(neighbor)
-                if neighbor not in openSet
-                    openSet.add(neighbor)
-
-    // Open set is empty but goal was never reached
-    return failure
-```
-### Code reusability
-### Team & project management
-
-#### Task distribution
-
-**Bruno**
-- Maze Generation Algorithm
-- Buttons
-- Parsing
-- Animations
-- MazeUi
-
-**Gildas**
-- A* Pathfinding Algorithm
-- Keybind Managment
-- Color Manager
-- Drawing functions
-- Project Structuration
-
-
-#### Role of each member
-#### Planning and evolution
-#### Good points and points to improve
-#### Tools used and why
-
-Algorithm used to draw a line ([Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm))
-
-### Advanced features (multiple algortithms, display options, animation)
-# IA
-    - Help on writting this README
-    - Documentation (algorithms, logic or python syntax)
-    - Help on wirtting certains docstrings (in particular the class' one)
-    - Problem solving
-    - Advices on programm structure
+### AI Usage
+Generative AI tools were used during development for:
+- Writing and enhancing technical documentation (including this README).
+- Clarifying obscure MLX behaviors and C-to-Python binding issues.
+- Generating certains docstrings (particurly for the complex class docstrings)
+- Helping for the structuring of the codebase.
