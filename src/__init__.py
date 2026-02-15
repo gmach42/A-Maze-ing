@@ -14,7 +14,13 @@ from .rendering import (
     render_init,
 )
 from .events import manage_close, manage_key, handle_click
-from .parsing import EnvVariables, parsing_config, errors, ExecutionError
+from .parsing import (
+    EnvVariables,
+    parsing_config,
+    ConfigError,
+    errors,
+    ExecutionError
+    )
 
 __all__ = [
     "XVar",
@@ -23,6 +29,7 @@ __all__ = [
     "MazeGenerator",
     "Solver",
     "output_maze",
+    "ConfigError",
     "ColorManager",
     "Maze",
     "MazeUIManager",

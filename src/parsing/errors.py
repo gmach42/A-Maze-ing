@@ -6,7 +6,7 @@ class MazeGenerationErrors(Exception):
 
 class ConfigError(MazeGenerationErrors):
     def __init__(self, mp: str | None = None):
-        details: str = f"A config file error :\n {mp}"
+        details: str = f"A config file error :\n{mp}"
         super().__init__(details)
 
 

@@ -135,26 +135,26 @@ def parsing_config(file_name: str) -> EnvVariables:
                 "output_file",
             ]:
                 raise MissingKey(f"Missing a value for {key} variable!")
-    except (ConfigError, OSError) as e:
-        print(e)
-        sys.exit(1)
+    except (ConfigError, OSError):
+        raise
 
     try:
         return EnvVariables(**results)
     except ValidationError as e:
-        print(
-            f"\nCaught a {type(e).__name__} error during parsing config.txt:",
-            file=sys.stderr,
-        )
+        # print(
+        #     f"\nCaught a {type(e).__name__} error during parsing config.txt:",
+        #     file=sys.stderr,
+        # )
+        final_message: str = ""
         for error in e.errors():
             # Get location, defaulting to 'Configuration' if empty
             # Model validation errors may not have a specific field
             loc_tuple = error.get("loc", ())
             field = loc_tuple[0] if loc_tuple else "Configuration"
             msg = error.get("msg", "Unknown error")
-
-            print(f"  Field '{field}': {msg}", file=sys.stderr)
-        sys.exit(1)
+            final_message += f"Field '{field}': {msg}\n"
+        raise ConfigError(final_message)
+        # sys.exit(1)
 
 
 def is_valid_window(
