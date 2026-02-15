@@ -4,6 +4,9 @@ from ..parsing.constants import MIN_COL_42, MIN_ROW_42
 
 
 class MazeGenerator:
+    """The center of maze generation. It contains both algorithms, the usefull
+    variables (perfect, width, etc...) and helpfull functions to create maze.
+    """
 
     def __init__(
         self,
@@ -21,12 +24,6 @@ class MazeGenerator:
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
         self.algo: int = 1
-        self.cardinal_points: dict[str, int] = {
-            "North": 1,
-            "East": 2,
-            "South": 4,
-            "West": 8,
-        }
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
@@ -118,6 +115,8 @@ class MazeGenerator:
     @staticmethod
     def check_neighbors(right: Cell, left: Cell, top: Cell,
                         bottom: Cell) -> bool:
+        """It checks if cell is the center of a 3x3 area.
+        """
         return right.get_walls() == 2 and left.get_walls(
         ) == 8 and top.get_walls() == 1 and bottom.get_walls() == 4
 
@@ -173,6 +172,13 @@ class MazeGenerator:
             i += 1
 
     def get_maze(self) -> list[list[int]]:
+        """It empties the grid before recreate it with new cells. Then it calls
+        asked algorithm and break more walls if perfect is false.
+
+        Returns:
+            list[list[int]]: The maze in the form of a list of lists of
+            integers
+        """
         self.grid = []
         for y in range(self.height):
             row: list[Cell] = []
