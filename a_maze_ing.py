@@ -28,84 +28,46 @@ def config_xvar(xvar: XVar, env_variable: EnvVariables) -> None:
     xvar.speed = env_variable.speed_animation
 
 
-def main() -> None:
-    xvar = XVar()
-
-    print("\nWelcome to A-Maze-ing!\n")
-
-    # Mlx Initialisation
+def initialize_mlx() -> tuple[Mlx, any, int, int]:
+    """Initialize MLX and get screen size."""
     try:
-        xvar.mlx = Mlx()
-        xvar.mlx_ptr = xvar.mlx.mlx_init()
-        _, xvar.screen_w, xvar.screen_h = xvar.mlx.mlx_get_screen_size(
-            xvar.mlx_ptr)
+        mlx = Mlx()
+        mlx_ptr = mlx.mlx_init()
+        _, screen_w, screen_h = mlx.mlx_get_screen_size(mlx_ptr)
+        return mlx, mlx_ptr, screen_w, screen_h
     except Exception as e:
         print(f"Error: Can't initialize MLX: {e}", file=sys.stderr)
         sys.exit(1)
 
-    # Get user input
-    try:
-        if len(sys.argv) > 2:
-            raise ExecutionError("Too much arguments!")
-        elif len(sys.argv) < 2:
-            config_file: str = "config.txt"
-        else:
-            config_file = sys.argv[1]
-        env_variable: EnvVariables = parsing_config(config_file)
 
-        config_xvar(xvar, env_variable)
-        win_width = (env_variable.width + 1) * env_variable.cell_size
-        win_height = (env_variable.height +
-                      1) * env_variable.cell_size + env_variable.wall_width
+def parse_arguments_and_config() -> tuple[EnvVariables, int, int]:
+    """Parse command line arguments and configuration file."""
+    if len(sys.argv) > 2:
+        raise ExecutionError("Too much arguments!")
 
-        # Add panel's width
-        panel_width: int = PANEL_WIDTH
+    config_file = sys.argv[1] if len(sys.argv) == 2 else "config.txt"
+    env_variable = parsing_config(config_file)
 
-        # Define window width and height and validate it
-        win_width += panel_width + env_variable.cell_size
-        if not parsing.is_valid_window(xvar.screen_w, xvar.screen_h, win_width,
-                                       win_height):
-            raise ValueError("Invalid Window size")
-        if env_variable.width < MIN_COL_42 or env_variable.height < MIN_ROW_42:
-            print('=' * 40)
-            print("Litle Maze setting: NO 42 in the maze!")
-            print('=' * 40 + '\n')
+    win_width = (env_variable.width + 1) * env_variable.cell_size
+    win_height = (env_variable.height +
+                  1) * env_variable.cell_size + env_variable.wall_width
 
-    except ValidationError as e:
-        for error in e.errors():
-            print(
-                f"Error in configuration file: "
-                f"{error['loc'][0]} - {error['msg']}",
-                file=sys.stderr,
-            )
-        sys.exit(1)
-    except ValueError as e:
-        print(
-            "Please enter a valid value for the initialisation of the maze:",
-            e,
-            file=sys.stderr,
-        )
-        sys.exit(1)
-    except ExecutionError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
-    except FileNotFoundError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+    return env_variable, win_width, win_height
 
-    # Window creation
-    try:
-        xvar.win = xvar.mlx.mlx_new_window(xvar.mlx_ptr, win_width, win_height,
-                                           "A-Maze-ing")
-        if not xvar.win:
-            raise Exception("Can't create main window")
-    except Exception as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
 
-    # Generate and draw maze
+def create_window(xvar: XVar, width: int, height: int) -> any:
+    """Create MLX window."""
+    win = xvar.mlx.mlx_new_window(xvar.mlx_ptr, width, height, "A-Maze-ing")
+    if not win:
+        raise Exception("Can't create main window")
+    return win
+
+
+def setup_maze_and_solution(xvar: XVar, env_variable: EnvVariables) -> None:
+    """Initialize maze generator, maze, solver and solution."""
     xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
                                    env_variable.perfect, env_variable.seed)
+
     xvar.maze = Maze(
         xvar,
         env_variable.entry,
@@ -117,17 +79,13 @@ def main() -> None:
         env_variable.wall_width,
         ColorManager.WALL,
     )
-    # Generate solution and draw it
-    try:
-        xvar.solver = Solver(
-            xvar.maze.maze_matrix,
-            xvar.maze.entry,
-            xvar.maze.exit,
-            xvar.generator.forty_two_gps,
-        )
-    except ValueError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        sys.exit(1)
+
+    xvar.solver = Solver(
+        xvar.maze.maze_matrix,
+        xvar.maze.entry,
+        xvar.maze.exit,
+        xvar.generator.forty_two_gps,
+    )
 
     xvar.solution = SolutionPath(
         xvar=xvar,
@@ -145,52 +103,104 @@ def main() -> None:
         cell_size=xvar.maze.cell_size,
     )
 
-    # Output maze to txt file
-    output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
 
-    # Generate MazeUIManager
-    xvar.manager = MazeUIManager(xvar, panel_width)
-    xvar.manager.draw_panel(xvar)
-
-    # Init images' pixels transparent to avoid garbage pixels when rendering
-    # the maze for the first time (especially usefull for little windows)
-    render_init(xvar.maze)
-    render_init(xvar.solution)
-
-    if xvar.animation:
-        xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
-    else:
-        draw_maze_walls(xvar)
-        render_frame(xvar, xvar.maze)
-        xvar.solution.draw_solution(xvar)
-        # render_frame(xvar, xvar.solution)
-
-    # Starting message
-    print(
-        f"\nGenerating maze of size {env_variable.width}x{env_variable.height}"
-    )
-    print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
-
-    # Event hooks
-    xvar.mlx.mlx_key_hook(xvar.win, events.manage_key, xvar)
-    # xvar.mlx.mlx_hook(xvar.win, 2, 1, events.get_key_press, xvar)
-    xvar.mlx.mlx_mouse_hook(xvar.win, handle_click, xvar)
-    xvar.mlx.mlx_hook(xvar.win, 33, 0, events.manage_close, xvar)
-
-    # Main loop
-    xvar.mlx.mlx_loop(xvar.mlx_ptr)
-
-    # Cleaning resources
+def cleanup_resources(xvar: XVar) -> None:
+    """Clean up MLX resources."""
     print("\nDestroying images")
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.maze.img_ptr)
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.solution.img_ptr)
     xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, xvar.manager.img_ptr)
     for button in xvar.manager.buttons:
         xvar.mlx.mlx_destroy_image(xvar.mlx_ptr, button.img_ptr)
+
     print("Destroying window")
     xvar.mlx.mlx_destroy_window(xvar.mlx_ptr, xvar.win)
     print("Destroying mlx")
     xvar.mlx.mlx_release(xvar.mlx_ptr)
+
+
+def main() -> None:
+    print("\nWelcome to A-Maze-ing!\n")
+
+    xvar = XVar()
+
+    # Initialize MLX
+    xvar.mlx, xvar.mlx_ptr, xvar.screen_w, xvar.screen_h = initialize_mlx()
+
+    # Parse configuration
+    try:
+        # Parse arguments from config file and calculate window size
+        env_variable, win_width, win_height = parse_arguments_and_config()
+        config_xvar(xvar, env_variable)
+
+        # Add panel width to window width
+        panel_width = PANEL_WIDTH
+        win_width += panel_width + env_variable.cell_size
+
+        # Validate window size
+        if not parsing.is_valid_window(xvar.screen_w, xvar.screen_h, win_width,
+                                       win_height):
+            raise ValueError("Invalid Window size")
+
+        # In case maze is too small to contain 42, print a warning and
+        # do not generate 42 in the maze (list of 42 coordinates will be empty)
+        if env_variable.width < MIN_COL_42 or env_variable.height < MIN_ROW_42:
+            print('=' * 40)
+            print("Little Maze setting: NO 42 in the maze!")
+            print('=' * 40 + '\n')
+
+    except (ValidationError, ValueError, ExecutionError,
+            FileNotFoundError) as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Create window
+    try:
+        xvar.win = create_window(xvar, win_width, win_height)
+    except Exception as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Setup maze and solution
+    try:
+        setup_maze_and_solution(xvar, env_variable)
+    except ValueError as e:
+        print(f"Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+    # Output and UI
+    output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
+    xvar.manager = MazeUIManager(xvar, panel_width)
+    xvar.manager.draw_panel(xvar)
+
+    # Initialize rendering to avoid glitches on first frame
+    render_init(xvar.maze)
+    render_init(xvar.solution)
+
+    # Animated drawing of maze walls or static rendering
+    if xvar.animation:
+        xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_maze_walls_anim, xvar)
+    else:
+        draw_maze_walls(xvar)
+        render_frame(xvar, xvar.maze)
+        xvar.solution.draw_solution(xvar)
+
+    # Display maze info
+    print(
+        f"\nGenerating maze of size {env_variable.width}x{env_variable.height}"
+    )
+    print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
+
+    # Setup event hooks
+    xvar.mlx.mlx_key_hook(xvar.win, events.manage_key, xvar)
+    xvar.mlx.mlx_mouse_hook(xvar.win, handle_click, xvar)
+    xvar.mlx.mlx_hook(xvar.win, 33, 0, events.manage_close, xvar)
+
+    # Main loop
+    xvar.mlx.mlx_loop(xvar.mlx_ptr)
+
+    # Cleanup
+    cleanup_resources(xvar)
 
 
 if __name__ == "__main__":

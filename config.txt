@@ -1,7 +1,7 @@
 # Maze width (number of rows -> max x + 1)
 WIDTH=20
 # Maze height (number of cols -> max y + 1)
-HEIGHT=20
+HEIGHT=11
 # Entry coordinates (x, y)
 ENTRY=0,0
 # Exit coordinates (x, y) max = (WIDTH - 1, HEIGHT - 1)
