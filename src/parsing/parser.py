@@ -107,6 +107,15 @@ def parsing_config(file_name: str) -> EnvVariables:
                     string_split: list[Any] = line.split("=")
                     if len(string_split) == 2:
                         string_split[1] = string_split[1].strip("\n").strip()
+                        if string_split[0].lower() == "output_file":
+                            if not string_split[1]:
+                                raise MissingKey(
+                                    "Missing a value for output_file variable!"
+                                )
+                            elif not string_split[1].endswith(".txt"):
+                                raise FormatError(
+                                    "Output file must end with .txt extension!"
+                                )
                         if string_split[0].lower() == "seed":
                             if string_split[1].lower() == "false":
                                 string_split[1] = None

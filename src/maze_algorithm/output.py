@@ -1,7 +1,7 @@
 def output_maze(maze_matrix: list[list[int]],
-                sol_matrix: list[tuple[int, int]]) -> None:
+                sol_matrix: list[tuple[int, int]], output_file: str) -> None:
     """Output the maze and its solution to a output_maze.txt file."""
-    with open("output_maze.txt", "w") as f:
+    with open(output_file, "w") as f:
         # Maze in hexadecimal format
         f.write(maze_to_string(maze_matrix) + "\n")
         # Start
@@ -10,6 +10,7 @@ def output_maze(maze_matrix: list[list[int]],
         f.write(str(sol_matrix[-1]).strip('()').replace(' ', '') + "\n")
         # Solution in cardinal direction
         f.write(sol_cardinal_direction(sol_matrix) + "\n")
+    print(f"Maze and solution written to {output_file}")
 
 
 def sol_cardinal_direction(sol_matrix: list[tuple[int, int]]) -> str:

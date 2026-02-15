@@ -7,7 +7,7 @@ ENTRY=0,0
 # Exit coordinates (x, y) max = (WIDTH - 1, HEIGHT - 1)
 EXIT=9,9
 # Output filename
-OUTPUT_FILE=maze.txt
+OUTPUT_FILE=
 PERFECT=true
 # Animation can be true or false
 ANIMATION=false

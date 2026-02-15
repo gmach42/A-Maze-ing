@@ -50,9 +50,8 @@ def parse_arguments_and_config() -> tuple[EnvVariables, int, int]:
     env_variable = parsing_config(config_file)
 
     win_width = (env_variable.width + 1) * env_variable.cell_size
-    win_height = (
-        env_variable.height + 1
-    ) * env_variable.cell_size + env_variable.wall_width
+    win_height = (env_variable.height +
+                  1) * env_variable.cell_size + env_variable.wall_width
 
     return env_variable, win_width, win_height
 
@@ -67,10 +66,8 @@ def create_window(xvar: XVar, width: int, height: int) -> any:
 
 def setup_maze_and_solution(xvar: XVar, env_variable: EnvVariables) -> None:
     """Initialize maze generator, maze, solver and solution."""
-    xvar.generator = MazeGenerator(
-        env_variable.height, env_variable.width, env_variable.perfect,
-        env_variable.seed
-    )
+    xvar.generator = MazeGenerator(env_variable.height, env_variable.width,
+                                   env_variable.perfect, env_variable.seed)
 
     xvar.maze = MazeImage(
         xvar,
@@ -152,9 +149,8 @@ def main() -> None:
         win_width += panel_width + env_variable.cell_size
 
         # Validate window size
-        if not parsing.is_valid_window(
-            env_variable, xvar.screen_w, xvar.screen_h, win_width, win_height
-        ):
+        if not parsing.is_valid_window(env_variable, xvar.screen_w,
+                                       xvar.screen_h, win_width, win_height):
             raise ValueError("Invalid Window size")
 
         # In case maze is too small to contain 42, print a warning and
@@ -184,7 +180,8 @@ def main() -> None:
         sys.exit(1)
 
     # Output and UI
-    output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix)
+    output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix,
+                env_variable.output_file)
     xvar.manager = MazeUIManager(xvar, panel_width)
     xvar.manager.draw_panel(xvar)
 
