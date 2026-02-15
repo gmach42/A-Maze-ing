@@ -3,7 +3,7 @@ from .render_functions import draw_maze_walls, draw_42
 from .color_manager import ColorManager
 
 
-class Maze(MLXImage):
+class MazeImage(MLXImage):
     """
     Class to represent the maze, inheriting from MLXImage.
 

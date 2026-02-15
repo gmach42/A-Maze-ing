@@ -1,7 +1,7 @@
 import sys
 from src import (
     ColorManager,
-    Maze,
+    MazeImage,
     SolutionPath,
     draw_maze_walls_anim,
     draw_maze_walls,
@@ -72,7 +72,7 @@ def setup_maze_and_solution(xvar: XVar, env_variable: EnvVariables) -> None:
         env_variable.seed
     )
 
-    xvar.maze = Maze(
+    xvar.maze = MazeImage(
         xvar,
         env_variable.entry,
         env_variable.exit,
@@ -203,7 +203,7 @@ def main() -> None:
     # Display maze info
     print("\nGenerating maze of size"
           f" {env_variable.width}x{env_variable.height}")
-    print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}\n")
+    print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}")
 
     # Setup event hooks
     xvar.mlx.mlx_key_hook(xvar.win, events.manage_key, xvar)

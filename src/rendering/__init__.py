@@ -1,5 +1,5 @@
 from .maze_ui import MazeUIManager
-from .maze import Maze
+from .maze_image import MazeImage
 from .render_functions import (
     draw_rectangle,
     draw_maze_walls,
@@ -12,7 +12,7 @@ from .animation import draw_maze_walls_anim
 
 __all__ = [
     "MazeUIManager",
-    "Maze",
+    "MazeImage",
     "draw_rectangle",
     "draw_maze_walls",
     "render_frame",

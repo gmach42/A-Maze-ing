@@ -5,7 +5,7 @@ from .core import XVar, MLXImage
 from .maze_algorithm import Border, MazeGenerator, Solver, output_maze
 from .rendering import (
     ColorManager,
-    Maze,
+    MazeImage,
     MazeUIManager,
     SolutionPath,
     draw_maze_walls_anim,
@@ -24,7 +24,7 @@ __all__ = [
     "Solver",
     "output_maze",
     "ColorManager",
-    "Maze",
+    "MazeImage",
     "MazeUIManager",
     "SolutionPath",
     "draw_maze_walls_anim",

@@ -5,7 +5,7 @@ HEIGHT=10
 # Entry coordinates (x, y)
 ENTRY=0,0
 # Exit coordinates (x, y) max = (WIDTH - 1, HEIGHT - 1)
-EXIT=9,7
+EXIT=9,9
 # Output filename
 OUTPUT_FILE=maze.txt
 PERFECT=true
