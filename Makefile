@@ -15,15 +15,21 @@ help:
 	@echo "  make keybind     - Show available keybinds while running the program"
 
 keybind:
+	@echo
 	@echo "Available keybinds while running the programm:"
-	@echo "  - 'a' to change the maze generation algorithm"
-	@echo "  - 'c' to change the color of the maze"
-	@echo "  - 'd' to show/hide the solution path"
-	@echo "  - 'g' to change the color of the 42 symbol"
-	@echo "  - 'h' to show this help message"
-	@echo "  - 'r' to regenerate the maze"
-	@echo "  - 's' to change the color of the solution path"
-	@echo "  - 'ESC' to quit the application"
+	@echo
+	@echo "╔══════════════════════════════════════════════════════╗"
+	@echo "║           A-MAZE-ING - KEYBINDS HELP                 ║"
+	@echo "╠══════════════════════════════════════════════════════╣"
+	@echo "║  ESC   │ Exit application                            ║"
+	@echo "║  a     │ Change Maze generation algorithm            ║"
+	@echo "║  c     │ Cycle maze wall colors                      ║"
+	@echo "║  d     │ Display/Hide solution path                  ║"
+	@echo "║  s     │ Cycle solution path colors                  ║"
+	@echo "║  g     │ Toggle 42 animation                         ║"
+	@echo "║  r     │ Regenerate new maze                         ║"
+	@echo "║  h     │ Show this help message                      ║"
+	@echo "╚══════════════════════════════════════════════════════╝"
 
 install:
 	python3 -m venv $(VENV)
@@ -43,6 +49,8 @@ clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
 	find . -type f -name "*.pyc" -delete
+
+clean-all: clean
 	rm -rf $(VENV)
 
 lint:

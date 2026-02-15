@@ -13,5 +13,5 @@ PERFECT=true
 ANIMATION=false
 # Speed animation can be slow, medium or fast
 SPEED_ANIMATION=medium
-# If you want a random maze, let SEED to False. Else, assign a value
+# If you want a random maze, let SEED to False. Else, assign a str value of your choice
 SEED=false

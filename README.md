@@ -1,14 +1,119 @@
 *This project has been created as part of the 42 curriculum by bfitte and gmach.*
 
 # Description
-A generator of mazes, possibly perfect ones, that writes the result to a file using a hexadecimal wall representation. It also provides a visual
- representation of the maze and some animation possibilities.
+
+**A-Maze-ing** is an interactive maze generation and visualization tool built in Python. Designed as part of the 42 curriculum, it explores complex algorithms through a graphical interface powered by the MLX library.
+
+The application generates perfect and imperfect mazes using algorithms like **Kruskal** and **Recursive Backtracking (DFS)**, while solving them in real-time with __A* Pathfinding__. A unique feature of this project is the preservation of a "42" shaped pattern within the maze structure.
+
+With fully customizable dimensions, color themes, and animation speeds, users can explore the intricacies of algorithmic logic visually. Despite the limitations of the MLX library, the project prioritizes modular architecture, robust error handling, and comprehensive unit testing to ensure a stable and educational experience.
+
 # Instructions
+
+To install and run the application:
+```
+make install
+make run
+```
+
+To display all available make commands:
+```py
+make help
+or
+make
+```
+
+To run unit tests:
+```
+make test
+```
+
+To clean the project:
+```
+make clean
+```
+or
+```py
+make clean-all  # Also removes the virtual environment
+```
+
+To lint the code:
+```py
+make lint
+or
+make lint-strict # Uses mypy --strict mode
+```
+
+To display the help message with keybinds:
+```
+make keybind
+```
+
+For personalization, edit the config file `config.txt` and then run `make run` again
+See the "Config file structure" section for more information.
+
 # Resources
+- [MLX documentation](https://harm-smits.github.io/42docs/libs/minilibx/)
+- [Maze generation algorithms](https://en.wikipedia.org/wiki/Maze_generation_algorithm)
+- [A* pathfinding algorithm](https://en.wikipedia.org/wiki/A*_search_algorithm)
+- [Config file parsing in Python](https://docs.python.org/3/library/configparser.html)
+- [Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
 ## Usage examples
-## Feature list
+## Features
+
+### Core Functionality
+- **Multiple Generation Algorithms**: Choose between **Kruskal** (perfect maze) and **Depth-First Search (DFS)** (recursive backtracker).
+- **Smart Pathfinding**: Solves the maze using the **A* algorithm** to find the optimal path.
+- **Customizable Dimensions**: Define width, height, and entry/exit points via configuration.
+- **"42" Shape Preservation**: Ensures a specific "42" pattern remains intact within the maze structure.
+
+### Visualization & Customization
+- **Animated Generation**: Watch the maze being built and solved in real-time.
+- **Color Themes**: Cycle through different color schemes for walls and the solution path.
+- **Configurable Settings**: creating a `config.txt` allows for easy personalization of all parameters.
+
+### Interactive Controls
+| Key | Action |
+| :--- | :--- |
+| `ESC` | Exit application |
+| `R` | Regenerate a new maze |
+| `A` | Switch generation algorithm |
+| `D` | Toggle solution path visibility |
+| `G` | Toggle "42" animation |
+| `C` | Cycle wall colors |
+| `S` | Cycle path colors |
+| `H` | Show help message |
+
+- **Window buttons**, clickable and with the same functionalities as the keybinds listed above
+
+### Technical Highlights
+- **Robust Error Handling**: Manages invalid configurations and edge cases gracefully.
+- **Modular Architecture**: Clean separation of concerns (Generation, Solving, Rendering, UI).
+- **Unit Testing**: Comprehensive tests for critical components.
+- **Performance**: Optimized for larger maze sizes.
+
 ## Technical choices
+MLX is bad
+like
+really bad
+but it's fun nonetheless
+
 ### Struct and format of config file
+
+The config.txt file allows only strictly defined values following the format `KEY=value`.
+
+| Key | Type | Description |
+| :--- | :--- | :--- |
+| `WIDTH` | Integer | Maze width |
+| `HEIGHT` | Integer | Maze height |
+| `ENTRY` | `(x,y)` | Coordinates for maze entry point |
+| `EXIT` | `(x,y)` | Coordinates for maze exit point |
+| `OUTPUT_FILE` | String | Filename for maze output |
+| `PERFECT` | Boolean | Toggle perfect maze generation (`true`/`false`) |
+| `ANIMATION` | Boolean | Toggle generation and solution animation |
+| `SPEED_ANIMATION` | String | Animation speed (`slow`, `medium`, `fast`) |
+| `SEED` | String | Custom seed for generation (use `'false'` for random) |
+
 ### Maze generation algorithm chosen
 
 A heap queue (also called a priority queue) is a special data structure that allows quick access to the smallest (min-heap) or largest (max-heap) element
@@ -131,30 +236,11 @@ function A_Star(start, goal, h)
 #### Tools used and why
 
 Algorithm used to draw a line ([Bresenham's line algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm))
-```py
-plotLine(x0, y0, x1, y1)
-    dx = abs(x1 - x0)
-    sx = x0 < x1 ? 1 : -1
-    dy = -abs(y1 - y0)
-    sy = y0 < y1 ? 1 : -1
-    error = dx + dy
-
-    while true
-        plot(x0, y0)
-        e2 = 2 * error
-        if e2 >= dy
-            if x0 == x1 break
-            error = error + dy
-            x0 = x0 + sx
-        end if
-        if e2 <= dx
-            if y0 == y1 break
-            error = error + dx
-            y0 = y0 + sy
-        end if
-    end while
-```
-
 
 ### Advanced features (multiple algortithms, display options, animation)
 # IA
+    - Help on writting this README
+    - Documentation (algorithms, logic or python syntax)
+    - Help on wirtting certains docstrings (in particular the class' one)
+    - Problem solving
+    - Advices on programm structure
