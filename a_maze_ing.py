@@ -13,6 +13,7 @@ from src import (
     parsing_config,
     handle_click,
     ExecutionError,
+    ConfigError,
     MazeUIManager,
     output_maze,
     render_init,
@@ -161,7 +162,7 @@ def main() -> None:
             print("=" * 40 + "\n")
 
     except (ValidationError, ValueError, ExecutionError,
-            FileNotFoundError) as e:
+            FileNotFoundError, ConfigError) as e:
         print(f"Error: {e}", file=sys.stderr)
         sys.exit(1)
 

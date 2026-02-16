@@ -1,13 +1,11 @@
 import pytest
-from src import MazeGenerator, parsing_config
-from pydantic import ValidationError
+from src import MazeGenerator, parsing_config, ConfigError
 
 
 class TestMazeProject:
 
-    # --- TESTS ALGORITHMIQUES ---
     def test_generator_dimensions(self):
-        """Vérifie que le labyrinthe généré a les bonnes dimensions"""
+        """Check if generated maze has good dimension"""
         width, height = 10, 15
         generator = MazeGenerator(height, width, False)
         maze_matrix = generator.get_maze()
@@ -15,15 +13,15 @@ class TestMazeProject:
         assert len(maze_matrix) == height
         assert len(maze_matrix[0]) == width
 
-    # --- TESTS DE CONFIGURATION (ERREURS) ---
     def test_parsing_invalid_file(self):
-        """Vérifie que le parsing lève une erreur si le fichier n'existe pas"""
-        with pytest.raises(SystemExit):
-            parsing_config("fichier_inexistant.txt")
+        """Check the behavior with unknown file"""
+        with pytest.raises(FileNotFoundError):
+            parsing_config("unknown_file.txt")
 
     def test_parsing_bad_values(self, tmp_path):
-        """Vérifie le comportement face à des valeurs négatives"""
-        # On crée un fichier temporaire corrompu
+        """Check the behavior with negative values"""
+
+        # Creating a temp_file with wrong values
         d = tmp_path / "sub"
         d.mkdir()
         bad_config = d / "bad_config.txt"
@@ -32,6 +30,21 @@ class TestMazeProject:
             "exit=10\nOUTPUT_FILE=maze.txt\nPERFECT=true\n"
         )
 
-        # On vérifie que ton code lève bien l'erreur attendue
-        with pytest.raises(SystemExit):
+        # Check that the program raise the expected error
+        with pytest.raises(ConfigError):
+            parsing_config(str(bad_config))
+
+    def test_high_sizes(self, tmp_path):
+        """Check the behavior with out of range values"""
+        # Creating a temp_file with wrong values
+        d = tmp_path / "sub"
+        d.mkdir()
+        bad_config = d / "bad_config.txt"
+        bad_config.write_text(
+            "width=1000\nheight=20\nentry=10,19\n"
+            "exit=10\nOUTPUT_FILE=maze.txt\nPERFECT=true\n"
+        )
+
+        # Check that the program raise the expected error
+        with pytest.raises(ConfigError):
             parsing_config(str(bad_config))
