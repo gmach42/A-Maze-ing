@@ -46,8 +46,6 @@ class MazeGenerator:
             seed (str | None): Optional seed for random number generation to
                 ensure reproducibility
         """
-        if seed:
-            rand.seed(seed)
         self.grid: list[list[Cell]] = []
         self.width: int = width
         self.height: int = height
@@ -55,6 +53,7 @@ class MazeGenerator:
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
         self.algo: int = algo
+        self.seed: str | None = seed
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
@@ -210,6 +209,8 @@ class MazeGenerator:
             list[list[int]]: The maze in the form of a list of lists of
             integers
         """
+        if self.seed:
+            rand.seed(self.seed)
         self.grid = []
         for y in range(self.height):
             row: list[Cell] = []

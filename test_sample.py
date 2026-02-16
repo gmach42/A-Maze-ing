@@ -20,6 +20,7 @@ class TestMazeProject:
 
     def test_parsing_bad_values(self, tmp_path):
         """Check the behavior with negative values"""
+
         # Creating a temp_file with wrong values
         d = tmp_path / "sub"
         d.mkdir()
@@ -34,7 +35,7 @@ class TestMazeProject:
             parsing_config(str(bad_config))
 
     def test_high_sizes(self, tmp_path):
-        """Vérifie le comportement face à des valeurs négatives"""
+        """Check the behavior with out of range values"""
         # Creating a temp_file with wrong values
         d = tmp_path / "sub"
         d.mkdir()
