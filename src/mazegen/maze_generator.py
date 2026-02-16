@@ -1,6 +1,10 @@
 import random as rand
 from .utils_algorithm import Cell
 
+# Available to standalone mazegen module
+MIN_ROW_42 = 7
+MIN_COL_42 = 9
+
 
 class MazeGenerator:
     """
@@ -28,6 +32,7 @@ class MazeGenerator:
         width: int,
         perfect: bool,
         seed: str | None = None,
+        algo: int = 1
     ):
         """
         Initialize the MazeGenerator with the given parameters and create the
@@ -49,7 +54,7 @@ class MazeGenerator:
         self.boss_list: list[int] = []
         self.perfect: bool = perfect
         self.list_cells: list[Cell] = []
-        self.algo: int = 1
+        self.algo: int = algo
 
         mid_height: int = int(height / 2) - 2
         mid_width: int = int(width / 2) - 3
@@ -72,7 +77,7 @@ class MazeGenerator:
             (mid_height + 4, mid_width + 4),
             (mid_height + 4, mid_width + 5),
             (mid_height + 4, mid_width + 6),
-        ] if width >= 3 and height >= 3 else []
+        ] if width >= MIN_COL_42 and height >= MIN_ROW_42 else []
 
     def find(self, index: int) -> int:
         """Search for the cell's boss. If it isn't its own boss, it will find

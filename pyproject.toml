@@ -5,11 +5,8 @@ description = "A maze generation and solver tool built in python"
 authors = [
     {name = "Bruno, Gildas"}
 ]
-readme = "README.md"
 packages = [{include = "mazegen"}]
 requires-python = ">=3.10"
-dependencies = [
-]
 
 
 [build-system]
