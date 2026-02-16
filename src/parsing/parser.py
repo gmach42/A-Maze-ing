@@ -144,9 +144,8 @@ def parsing_config(file_name: str) -> EnvVariables:
                 "output_file",
             ]:
                 raise MissingKey(f"Missing a value for {key} variable!")
-    except (ConfigError, OSError) as e:
-        print(e)
-        sys.exit(1)
+    except (ConfigError, OSError):
+        raise
 
     try:
         return EnvVariables(**results)
@@ -155,6 +154,7 @@ def parsing_config(file_name: str) -> EnvVariables:
             f"\nCaught a {type(e).__name__} error during parsing config.txt:",
             file=sys.stderr,
         )
+        
         for error in e.errors():
             # Get location, defaulting to 'Configuration' if empty
             # Model validation errors may not have a specific field
