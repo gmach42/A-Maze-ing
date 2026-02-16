@@ -10,7 +10,7 @@ from .render_functions import (draw_maze_walls, draw_rectangle,
                                render_frame_panel, render_frame, display_path)
 from ..events.keyboard import (change_maze_color, change_42_color, change_algo,
                                change_solution_color)
-from src.mazegen import output_maze
+from mazegen import output_maze
 
 
 class MazeUIManager(MLXImage):

@@ -1,5 +1,5 @@
 from ..core import XVar
-from ..mazegen import Border
+from mazegen import Border
 from .render_functions import draw_rectangle, render_frame, draw_42
 
 

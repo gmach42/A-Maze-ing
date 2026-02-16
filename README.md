@@ -93,7 +93,8 @@ The config.txt file allows only strictly defined values following the format `KE
 ## Algorithms & Logic
 
 ### 1. Maze Generation
-We implemented two distinct algorithms to generate mazes, each offering unique visual and structural characteristics.
+We implemented two distinct algorithms to generate mazes, each offering unique visual and structural characteristics. We chose not to use a recursive algorithm
+because of the handling of the 42 obstacle.
 
 #### **Kruskal's Algorithm** (Randomized)
 *Creates a "perfect" maze with a Minimum Spanning Tree structure.*
@@ -227,7 +228,7 @@ For complete documentation and examples, see the **[mazegen README](src/mazegen/
 We chose **MinilibX (MLX)** over ASCII rendering because, although more challenging to work with, it allows for a more engaging and visually appealing result and we liked the challenge!
 
 - **Graphics**: [MinilibX Documentation](https://harm-smits.github.io/42docs/libs/minilibx) / [Bresenham's Line Algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
-- **Algorithms**: [Maze Generation (Wiki)](https://en.wikipedia.org/wiki/Maze_generation_algorithm) / [A* Search (Wiki)](https://en.wikipedia.org/wiki/A*_search_algorithm) / [A* Algorithm in python](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92)/ [Heuristics](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) / [Border's Idea](https://realpython.com/python-maze-solver/)
+- **Algorithms**: [Maze Generation (Wiki)](https://en.wikipedia.org/wiki/Maze_generation_algorithm) / [A* Search (Wiki)](https://en.wikipedia.org/wiki/A*_search_algorithm) / [A* Algorithm in python](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92)/ [Heuristics](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) / [Border's Idea](https://realpython.com/python-maze-solver/) / [Buckblog](https://weblog.jamisbuck.org/2011/1/3/maze-generation-kruskal-s-algorithm)
 
 ### AI Usage
 Generative AI tools were used during development for:

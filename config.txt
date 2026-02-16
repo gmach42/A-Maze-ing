@@ -8,9 +8,10 @@ ENTRY=0,0
 EXIT=34,42
 # Output filename
 OUTPUT_FILE=maze.txt
+# If perfect, there is just one possible path
 PERFECT=true
 # Animation can be true or false
-ANIMATION=true
+ANIMATION=false
 # Speed animation can be slow, medium or fast
 SPEED_ANIMATION=medium
 # If you want a random maze, let SEED to False. Else, assign a str value of your choice

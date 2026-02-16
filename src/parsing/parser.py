@@ -8,13 +8,8 @@ from pydantic import (
 )
 from typing import Any
 from .errors import FormatError, MissingKey, ConfigError, TooManyVar
-from .constants import (
-    MIN_PIXEL_WIDTH,
-    MIN_PIXEL_HEIGHT,
-    MIN_ROWS,
-    MIN_COLS,
-    PANEL_WIDTH,
-)
+from .constants import (MIN_PIXEL_WIDTH, MIN_PIXEL_HEIGHT, MIN_ROWS, MIN_COLS,
+                        PANEL_WIDTH, DEFAULT_CELL_SIZE, DEFAULT_WALL_WIDTH)
 
 
 class EnvVariables(BaseModel):
@@ -42,11 +37,11 @@ class EnvVariables(BaseModel):
     exit: tuple[int, int] = Field(ge=(0, 0))
     output_file: str
     perfect: StrictBool
-    cell_size: int = 1
-    wall_width: int = 1
-    animation: bool = False
-    speed_animation: str = "medium"
-    seed: str | None = None
+    cell_size: int
+    wall_width: int
+    animation: bool
+    speed_animation: str
+    seed: str | None
 
     @field_validator("entry", "exit", mode="before")
     @classmethod
@@ -95,8 +90,8 @@ def parsing_config(file_name: str) -> EnvVariables:
         "exit": None,
         "output_file": None,
         "perfect": None,
-        "cell_size": 40,
-        "wall_width": 10,
+        "cell_size": DEFAULT_CELL_SIZE,
+        "wall_width": DEFAULT_WALL_WIDTH,
     }
     try:
         with open(file_name, "r") as file:
@@ -116,6 +111,11 @@ def parsing_config(file_name: str) -> EnvVariables:
                                     "Output file must end with .txt extension!"
                                 )
                         if string_split[0].lower() == "seed":
+                            if not string_split[1]:
+                                raise MissingKey(
+                                    "No seed value. Set to false if you want"
+                                    " to randomize"
+                                )
                             if string_split[1].lower() == "false":
                                 string_split[1] = None
                         if string_split[0].lower() in ["perfect", "animation"]:
@@ -125,8 +125,7 @@ def parsing_config(file_name: str) -> EnvVariables:
                                 string_split[1] = False
                             else:
                                 raise MissingKey(
-                                    "Missing a value for perfect variable!"
-                                )
+                                    "Missing a value for perfect variable!")
                         results[string_split[0].lower()] = string_split[1]
                     else:
                         raise FormatError("You need to use <key>=<value>"
@@ -136,11 +135,11 @@ def parsing_config(file_name: str) -> EnvVariables:
             raise TooManyVar("Too much variables in configuration file!")
         for key, value in results.items():
             if not value and key in [
-                "width",
-                "height",
-                "entry",
-                "exit",
-                "output_file",
+                    "width",
+                    "height",
+                    "entry",
+                    "exit",
+                    "output_file",
             ]:
                 raise MissingKey(f"Missing a value for {key} variable!")
     except (ConfigError, OSError):
@@ -172,15 +171,11 @@ def is_valid_window(
     above the minimum pixel requirements.
     """
 
-    max_width: int = int((
-        screen_width - PANEL_WIDTH - env_variable.cell_size
-    ) / env_variable.cell_size - 1)
-    max_height: int = int((
-        screen_height - env_variable.wall_width
-    ) / env_variable.cell_size - 1)
+    max_width: int = int((screen_width - PANEL_WIDTH -
+                          env_variable.cell_size) / env_variable.cell_size - 1)
+    max_height: int = int((screen_height - env_variable.wall_width) /
+                          env_variable.cell_size - 1)
     print(f"Max width for this window: {max_width}")
     print(f"Max height for this window: {max_height}\n")
-    return (
-        MIN_PIXEL_WIDTH < win_width <= screen_width
-        and MIN_PIXEL_HEIGHT < win_height <= screen_height
-    )
+    return (MIN_PIXEL_WIDTH < win_width <= screen_width
+            and MIN_PIXEL_HEIGHT < win_height <= screen_height)

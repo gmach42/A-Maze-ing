@@ -1,7 +1,7 @@
 import array
 import random
 from ..core import MLXImage, XVar
-from ..mazegen import Border
+from mazegen import Border
 from .color_manager import ColorManager
 
 

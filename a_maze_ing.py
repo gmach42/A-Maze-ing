@@ -7,8 +7,6 @@ from src import (
     draw_maze_walls_anim,
     draw_maze_walls,
     render_frame,
-    MazeGenerator,
-    Solver,
     XVar,
     EnvVariables,
     parsing_config,
@@ -16,9 +14,10 @@ from src import (
     ExecutionError,
     ConfigError,
     MazeUIManager,
-    output_maze,
     render_init,
 )
+from mazegen import MazeGenerator, Solver, output_maze
+
 from src import events, parsing
 from mlx import Mlx
 from pydantic import ValidationError
