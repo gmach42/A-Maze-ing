@@ -62,12 +62,12 @@ class MazeUIManager(MLXImage):
         """Add a button to the UI panel and display it."""
         for i, button in enumerate(self.buttons):
             if i < 3:
-                offset_x: int = xvar.maze.img_width + xvar.maze.wall_width + \
+                offset_x: int = xvar.maze.img_width + \
                     xvar.maze.cell_size + round(self.img_width * 0.08)
                 offset_y: int = xvar.maze.cell_size // 2 + (
                     (i + 1) * round(0.25 * self.img_height))
             else:
-                offset_x = xvar.maze.img_width + xvar.maze.wall_width + (
+                offset_x = xvar.maze.img_width + (
                     xvar.maze.cell_size) + round(self.img_width * 0.52)
                 offset_y = xvar.maze.cell_size // 2 + ((
                     (i + 1) - 3) * round(0.25 * self.img_height))
