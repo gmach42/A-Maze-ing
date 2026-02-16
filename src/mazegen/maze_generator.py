@@ -26,14 +26,12 @@ class MazeGenerator:
             this list will be empty.
     """
 
-    def __init__(
-        self,
-        height: int,
-        width: int,
-        perfect: bool,
-        seed: str | None = None,
-        algo: int = 1
-    ):
+    def __init__(self,
+                 height: int,
+                 width: int,
+                 perfect: bool,
+                 seed: str | None = None,
+                 algo: int = 1):
         """
         Initialize the MazeGenerator with the given parameters and create the
         grid of cells.

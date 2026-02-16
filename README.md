@@ -26,7 +26,8 @@ make run
 | `make test` | Run unit tests |
 | `make clean` | Remove temporary files |
 | `make clean-all` | Full cleanup (includes virtual environment) |
-| `make lint` | Check code quality |
+| `make lint` | Check code with flake 8 and mypy |
+| `make lint-strict` | Check code with flake 8 and mypy in strict mode |
 | `make keybind` | Display keybindings help message |
 
 ### Configuration
@@ -38,14 +39,14 @@ To customize the maze, edit the `config.txt` file and run `make run` again.
 
 ### Core Functionality
 - **Multiple Generation Algorithms**: Choose between **Kruskal** (perfect maze) and **Depth-First Search (DFS)** (recursive backtracker).
-- **Smart Pathfinding**: Solves the maze using the **A* algorithm** to find the optimal path.
+- **Smart Pathfinding**: Solves the maze using the __A* algorithm__ to find the optimal path.
 - **Customizable Dimensions**: Define width, height, and entry/exit points via configuration.
-- **"42" Shape Preservation**: Ensures a specific "42" pattern remains intact within the maze structure.
+- **"42" Shape Preservation**: Ensures a specific "42" pattern remains intact within the maze structure (when dimensions allow it).
 
 ### Visualization & Customization
 - **Animated Generation**: Watch the maze being built and solved in real-time.
 - **Color Themes**: Cycle through different color schemes for walls and the solution path.
-- **Configurable Settings**: creating a `config.txt` allows for easy personalization of all parameters (See the [Config file structure](#struct-and-format-of-config-file) for more information).
+- **Configurable Settings**: modifying the `config.txt` file allows for easy personalization of all parameters (See the [Config file structure](#struct-and-format-of-config-file) for more information).
 
 ### Interactive Controls
 | Key | Action |
@@ -59,13 +60,7 @@ To customize the maze, edit the `config.txt` file and run `make run` again.
 | `s` | Cycle path colors |
 | `h` | Show help message |
 
-- **Window buttons**, clickable and with the same functionalities as the keybinds listed above
-
-### Technical Highlights
-- **Robust Error Handling**: Manages invalid configurations and edge cases.
-- **Modular Architecture**: Clean separation of concerns (Generation, Solving, Rendering, UI).
-- **Unit Testing**: Comprehensive tests for critical components.
-- **Performance**: Optimized for larger maze sizes.
+- **Window buttons**, clickable and with the same functionalities as the keybinds listed above, are also available for users who prefer mouse interaction.
 
 ## Technical Choices & Constraints
 
@@ -107,7 +102,7 @@ Kruskal's algorithm is a "greedy" approach that treats every cell as a separate 
 **Logic & Implementation:**
 
 1.  **Wall Collection**: The algorithm begins by identifying all possible "breakable" walls between adjacent cells, strictly excluding any walls that form the protected "42" shape.
-2.  **Randomization**: This list of potential walls (`walls_to_broke`) is shuffled randomly to ensure the generated maze is non-deterministic and unique every run.
+2.  **Randomization**: This list of potential walls (`walls_to_break`) is shuffled randomly to ensure the generated maze is non-deterministic and unique every run.
 3.  **Set Union (The "Boss" System)**: For each wall in the list, we check the "boss" (set identifier) of the two cells separated by that wall.
     - **Wall Breaking**: If the cells have different bosses (meaning they are not yet connected), we call a `union` function to merge their sets and delete the wall.
     - **Cycle Prevention**: If both cells already share the same boss, the wall is left intact to prevent creating loops or cycles.
@@ -142,9 +137,7 @@ DFS, often called the "recursive backtracker," is a randomized algorithm that ex
 </p>
 
 ### 2. Pathfinding: A* Algorithm
-To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that finds the shortest path by combining actual cost with a [heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) estimate. The heuristic function chosen is the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry) :
-
-
+To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that finds the shortest path by combining actual cost with a [heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) estimate. The heuristic function chosen is the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry). During the processing of the algorithm, each cell has a value assigned to it based on the following formula:
 
 - **Cost Function :** $f(n) = g(n) + h(n)$
     - $f(n)$: Total estimated cost of the cheapest solution through node $n$.
@@ -178,9 +171,28 @@ To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that 
 
 The codebase follows a strict **modular architecture**:
 
-- **Standalone Modules**: Components like `maze_generator`, `solver`, and `rendering` are decoupled. The generation logic can be extracted and reused in other projects (e.g., a Pacman clone) without dependencies on the UI.
+- **Standalone Mazegen Module**: `mazegen` module can be used independently for maze generation and solving, making it reusable for other projects (like for a Pacman project for example)
 - **Config-Driven**: The system is fully data-driven via `config.txt`, making it adaptable without code changes.
 - **Type Safety**: Extensive use of Python type hints and `mypy` strict mode ensures code reliability.
+
+### Using Mazegen as a Library
+
+The `mazegen` module is designed to be able to be used independently and can be imported into other projects:
+
+```python
+from mazegen import MazeManager
+
+# Generate a complete maze with solution and save it to a file
+maze_manager = MazeManager()
+maze_manager.create_complete_maze(height=20, width=10, perfect=True, start=(0, 0), end=(19, 9), output_file="maze.txt", seed=None, algo=1)
+```
+
+To install the module, you can use pip (in a virtual environment if desired):
+```bash
+pip install ./mazegen.tar.gz
+```
+
+For complete documentation and examples, see the **[mazegen README](src/mazegen/README.md)**.
 
 ## Team & Project Management
 
