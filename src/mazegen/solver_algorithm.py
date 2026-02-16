@@ -41,10 +41,9 @@ class Solver:
         self.start = start
         self.end = end
         self.is_42 = is_42
-        if not self.is_valid_maze():
-            raise ValueError(
-                "The maze is not valid: "
-                "Start and End are out of bound or in 42 obstacle")
+        valid, message = self.is_valid_maze()
+        if not valid:
+            raise ValueError(f"The maze is not valid: {message}")
 
     @staticmethod
     def parse_maze_str(maze_str: str) -> list[list[int]]:
@@ -161,14 +160,23 @@ class Solver:
 
         raise NoSolutionError("No solution for this maze!")
 
-    def is_valid_maze(self) -> bool:
+    def is_valid_maze(self) -> tuple[bool, str]:
         """Check if the maze is valid (start and end are within bounds)"""
         rows = len(self.maze)
         cols = len(self.maze[0]) if rows > 0 else 0
         start_row, start_col = self.start
         end_row, end_col = self.end
 
-        return (0 <= start_row < rows and 0 <= start_col < cols
-                and 0 <= end_row < rows and 0 <= end_col < cols
-                and self.start not in self.is_42
-                and self.end not in self.is_42)
+        if not 0 <= start_row < rows and 0 <= start_col < cols:
+            return False, f"Start position {self.start} is out of bounds."
+
+        if not 0 <= end_row < rows and 0 <= end_col < cols:
+            return False, f"End position {self.end} is out of bounds."
+
+        if self.start in self.is_42:
+            return False, f"Start position {self.start} is in 42 obstacles."
+
+        if self.end in self.is_42:
+            return False, f"End position {self.end} is in 42 obstacles."
+
+        return True, "Maze is valid."
