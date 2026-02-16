@@ -1,12 +1,12 @@
 import pytest
 from pathlib import Path
 from src import (
-    MazeGenerator,
     MissingKey,
     parsing_config,
     FormatError,
     ConfigError
     )
+from mazegen import MazeGenerator
 
 
 class TestMazeProject:
