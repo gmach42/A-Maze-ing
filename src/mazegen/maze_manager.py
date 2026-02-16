@@ -5,7 +5,7 @@ from .solver_algorithm import Solver
 
 class MazeManager:
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.forty_two: list[tuple[int, int]]
 
     def get_maze(

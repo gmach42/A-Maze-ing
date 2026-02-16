@@ -51,13 +51,13 @@ To customize the maze, edit the `config.txt` file and run `make run` again.
 | Key | Action |
 | :--- | :--- |
 | `ESC` | Exit application |
-| `R` | Regenerate a new maze |
-| `A` | Switch generation algorithm |
-| `D` | Toggle solution path visibility |
-| `G` | Toggle "42" animation |
-| `C` | Cycle wall colors |
-| `S` | Cycle path colors |
-| `H` | Show help message |
+| `r` | Regenerate a new maze |
+| `a` | Switch generation algorithm |
+| `d` | Toggle solution path visibility |
+| `g` | Toggle "42" animation |
+| `c` | Cycle wall colors |
+| `s` | Cycle path colors |
+| `h` | Show help message |
 
 - **Window buttons**, clickable and with the same functionalities as the keybinds listed above
 
