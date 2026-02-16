@@ -70,6 +70,7 @@ The uses of **MinilibX (MLX)** throughout this project has been an enjoyable and
 - **Color Management**: Developed a custom palette system to handle color cycling within MLX's limited capabilities.
 - **Performance Optimization**: Added an additional code layer to use the mlx base function to allow faster rendering and computing (Passing directly 16-bit color values instead of ARGB tuples for example).
 - **Font Constraints**: Adapted UI design to fixed-size fonts, as scalable text is not supported.
+- **Callback Handling**: Due to MLX limitations, we had to implement a big `XVar` structure to store all necessary state and data for the application, which made the code more complex and less modular than we would have liked.
 
 > **Note**: We encountered and worked around several MLX limitations, such as inconsistent color formats (ABGR vs ARGB) and sparse documentation. Despite these challenges, we successfully created a visually appealing and interactive maze generator that meets our project goals.
 
