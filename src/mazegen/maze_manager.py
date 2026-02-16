@@ -31,3 +31,19 @@ class MazeManager:
                            sol_matrix: list[tuple[int, int]],
                            file_name: str) -> None:
         output_maze(maze_matrix, sol_matrix, file_name)
+
+    def create_complete_maze(
+        self,
+        height: int,
+        width: int,
+        perfect: bool,
+        start: tuple[int, int],
+        end: tuple[int, int],
+        file_name: str,
+        seed: str | None = None,
+        algo: int | None = 1,
+    ):
+        maze: list[list[int]] = self.get_maze(height, width, perfect, seed,
+                                              algo)
+        solve: list[tuple[int, int]] = self.solve_maze(maze, start, end)
+        self.create_output_file(maze, solve, file_name)
