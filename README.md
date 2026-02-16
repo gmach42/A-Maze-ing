@@ -171,9 +171,11 @@ To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that 
 
 The codebase follows a strict **modular architecture**:
 
-- **Standalone Mazegen Module**: `mazegen` module can be used independently for maze generation and solving, making it reusable for other projects (like for a Pacman project for example)
-- **Config-Driven**: The system is fully data-driven via `config.txt`, making it adaptable without code changes.
-- **Type Safety**: Extensive use of Python type hints and `mypy` strict mode ensures code reliability.
+- **Standalone Mazegen Module**: `mazegen` module can be used independently for maze generation and solving, making it reusable for other projects (like for a Pacman project for example). See the [Using Mazegen as a Library](#using-mazegen-as-a-library) section for more details.
+- **Configurability**: The system is designed to be highly configurable through the `config.txt` file, allowing users to easily modify parameters without changing the code.
+- **Type Safety**: Extensive use of Python type hints and `mypy` ensures code reliability.
+- **Unit Testing**: Comprehensive tests for the project, ensuring that the program catches edge cases and behaves as expected under various conditions.
+- **Extensive Documentation**: Docstrings and comments throughout the codebase provide clarity on the purpose and functionality of each component, (Hopefully) making it easier for future developers to understand and extend the project.
 
 ### Using Mazegen as a Library
 
