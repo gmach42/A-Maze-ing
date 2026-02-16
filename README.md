@@ -196,8 +196,8 @@ For complete documentation and examples, see the **[mazegen README](src/mazegen/
 
 ## Team & Project Management
 
-**Project Context**: 42 School Curriculum
-**Development Time**: ~7 days
+**Project Context**: 42 School Curriculum\
+**Development Time**: ~8 days
 
 ### Task Distribution
 
@@ -212,11 +212,12 @@ For complete documentation and examples, see the **[mazegen README](src/mazegen/
 
 **Successes:**
 - Successfully delivered all planned features, including bonus UI elements like clickable buttons (o7 changing button color on click).
-- Overcame significant limitations in the MLX library to build a robust rendering engine.
+- Overcame significant limitations in the MLX library and achieved a great visual result.
 
 **Areas for Improvement:**
 - **Initial Planning**: We started with a monolithic structure and had to refactor heavily midway. A more detailed architecture plan upfront would have saved time.
 - **Scope Management**: We had many ambitious ideas but had to cut some due to time constraints and the complexity of working with MLX.
+- **Time Management**: We fixed a deadline for ourselves to have the project finished within a certain time frame. Turns out it was quite difficult to hold on to it!
 
 ## Resources & Tools
 
