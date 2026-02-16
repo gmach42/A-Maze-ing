@@ -2,9 +2,9 @@
 
 # Description
 
-**A-Maze-ing** is an interactive maze generation and visualization tool built in Python. Designed as part of the 42 curriculum, it explores complex algorithms through a graphical interface powered by the MLX library.
+**A-Maze-ing** is an interactive maze generation and visualization tool built in Python. Designed as part of the 42 curriculum, it generates mazes through a graphical interface powered by the MLX library.
 
-The application generates perfect and imperfect mazes using algorithms like **Kruskal** and **Recursive Backtracking (DFS)**, while solving them in real-time with __A* Pathfinding__. A unique feature of this project is the preservation of a "42" shaped pattern within the maze structure.
+The application generates perfect and imperfect mazes using algorithms like **Kruskal** and **Recursive Backtracking (DFS)**, while solving them with the __A* Pathfinding__ algorithm. A unique feature of this project is the preservation of a "42" shaped pattern within the maze structure.
 
 With fully customizable dimensions, color themes, and animation speeds, users can explore the intricacies of algorithmic logic visually. Despite the limitations of the MLX library, the project prioritizes modular architecture, robust error handling, and comprehensive unit testing to ensure a stable and educational experience.
 

@@ -54,8 +54,8 @@ clean-all: clean
 	rm -rf $(VENV)
 
 lint:
-	$(PYTHON) -m flake8 .
-	$(PYTHON) -m mypy . \
+	python3 -m flake8 .
+	python3 -m mypy . \
 	--warn-return-any \
 	--warn-unused-ignores \
 	--ignore-missing-imports \
@@ -63,7 +63,7 @@ lint:
 	--check-untyped-defs \
 
 lint-strict:
-	$(PYTHON) -m flake8 .
-	$(PYTHON) -m mypy . --strict
+	python3 -m flake8 .
+	python3 -m mypy . --strict
 
 .PHONY: help install run test clean debug lint lint-strict
