@@ -16,7 +16,7 @@ MIN_ROWS: Final[int] = 3
 MIN_COLS: Final[int] = 3
 PANEL_WIDTH: Final[int] = 550
 
-MIN_BUTTON_WIDTH: Final[int] = 200
+MIN_BUTTON_WIDTH: Final[int] = 230
 MIN_BUTTON_HEIGHT: Final[int] = 25
 
 MIN_ROW_42: Final[int] = 7
