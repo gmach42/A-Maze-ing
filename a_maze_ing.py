@@ -1,4 +1,5 @@
 import sys
+from typing import Any
 from src import (
     ColorManager,
     MazeImage,
@@ -28,9 +29,10 @@ def config_xvar(xvar: XVar, env_variable: EnvVariables) -> None:
     """Configure XVar with environment variables."""
     xvar.animation = env_variable.animation
     xvar.speed = env_variable.speed_animation
+    xvar.output = env_variable.output_file
 
 
-def initialize_mlx() -> tuple[Mlx, any, int, int]:
+def initialize_mlx() -> tuple[Mlx, Any, int, int]:
     """Initialize MLX and get screen size."""
     try:
         mlx = Mlx()
@@ -57,7 +59,7 @@ def parse_arguments_and_config() -> tuple[EnvVariables, int, int]:
     return env_variable, win_width, win_height
 
 
-def create_window(xvar: XVar, width: int, height: int) -> any:
+def create_window(xvar: XVar, width: int, height: int) -> Any:
     """Create MLX window."""
     win = xvar.mlx.mlx_new_window(xvar.mlx_ptr, width, height, "A-Maze-ing")
     if not win:

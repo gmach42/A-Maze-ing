@@ -3,7 +3,7 @@ from mlx import Mlx
 from ..mazegen import MazeGenerator, Solver
 
 if TYPE_CHECKING:
-    from ..rendering import Maze, SolutionPath, MazeUIManager
+    from ..rendering import MazeImage, SolutionPath, MazeUIManager
 
 
 class XVar:
@@ -40,10 +40,11 @@ class XVar:
         self.win: Any = None
         self.generator: MazeGenerator
         self.solver: Solver
-        self.maze: "Maze"
+        self.maze: "MazeImage"
         self.solution: "SolutionPath"
         self.animation: bool = False
         self.speed: str = "medium"
         self.row: int = 0
         self.col: int = 0
         self.manager: "MazeUIManager"
+        self.output: str

@@ -18,6 +18,8 @@ from .parsing import (
     EnvVariables,
     parsing_config,
     ConfigError,
+    FormatError,
+    MissingKey,
     errors,
     ExecutionError
 )
@@ -26,6 +28,8 @@ __all__ = [
     "MLXImage",
     "Border",
     "MazeGenerator",
+    "FormatError",
+    "MissingKey",
     "Solver",
     "output_maze",
     "ColorManager",

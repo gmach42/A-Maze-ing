@@ -10,6 +10,7 @@ from .render_functions import (draw_maze_walls, draw_rectangle,
                                render_frame_panel, render_frame, display_path)
 from ..events.keyboard import (change_maze_color, change_42_color, change_algo,
                                change_solution_color)
+from src.mazegen import output_maze
 
 
 class MazeUIManager(MLXImage):
@@ -67,8 +68,8 @@ class MazeUIManager(MLXImage):
                 offset_y: int = xvar.maze.cell_size // 2 + (
                     (i + 1) * round(0.25 * self.img_height))
             else:
-                offset_x = xvar.maze.img_width + (
-                    xvar.maze.cell_size) + round(self.img_width * 0.52)
+                offset_x = xvar.maze.img_width + (xvar.maze.cell_size) + round(
+                    self.img_width * 0.52)
                 offset_y = xvar.maze.cell_size // 2 + ((
                     (i + 1) - 3) * round(0.25 * self.img_height))
             button.x = offset_x
@@ -150,6 +151,8 @@ class MazeUIManager(MLXImage):
             xvar.solution.draw_solution(xvar)
             if xvar.solution.display:
                 render_frame(xvar, xvar.solution)
+        output_maze(xvar.maze.maze_matrix, xvar.solution.path_matrix,
+                    xvar.output)
 
     def reset_draw(self, xvar: XVar) -> None:
         pass

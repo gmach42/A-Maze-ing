@@ -79,19 +79,22 @@ def change_maze_color(xvar: XVar) -> None:
 
 def change_42_color(xvar: XVar) -> None:
     """Change 42's color and redraw it."""
-    if xvar.animation:
-        if not xvar.mlx._python_ref_std.get("loop_f"):
-            xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
-        else:
-            if xvar.row == xvar.maze.rows and (
-                (xvar.solution.step == len(xvar.solution.path_matrix)
-                 and xvar.solution.display) or
-                    (xvar.solution.step == 0 and not xvar.solution.display)):
-                xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+    if len(xvar.generator.forty_two_gps) > 0:
+        if xvar.animation:
+            if not xvar.mlx._python_ref_std.get("loop_f"):
+                xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, draw_42, xvar)
             else:
-                print("Wait until the animation ends")
+                if xvar.row == xvar.maze.rows and (
+                    (xvar.solution.step == len(xvar.solution.path_matrix)
+                     and xvar.solution.display) or
+                   (xvar.solution.step == 0 and not xvar.solution.display)):
+                    xvar.mlx.mlx_loop_hook(xvar.mlx_ptr, None, None)
+                else:
+                    print("Wait until the animation ends")
+        else:
+            draw_42(xvar)
     else:
-        draw_42(xvar)
+        print("No 42 in this maze. Don't waste your time clicking")
 
 
 def change_algo(xvar: XVar) -> None:

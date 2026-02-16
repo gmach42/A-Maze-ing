@@ -23,7 +23,7 @@ class MazeManager:
         width: int,
         perfect: bool,
         seed: str | None = None,
-        algo: int | None = 1,
+        algo: int = 1,
     ) -> list[list[int]]:
         """Generate a maze using the MazeGenerator and store the 42 obstacle"""
         generator: MazeGenerator = MazeGenerator(height, width, perfect, seed,
@@ -53,8 +53,8 @@ class MazeManager:
         end: tuple[int, int],
         file_name: str,
         seed: str | None = None,
-        algo: int | None = 1,
-    ):
+        algo: int = 1,
+    ) -> None:
         """Create a complete maze, solve it, and generate an output file"""
         maze: list[list[int]] = self.get_maze(height, width, perfect, seed,
                                               algo)
