@@ -112,6 +112,14 @@ Kruskal's algorithm is a "greedy" approach that treats every cell as a separate 
     - **Wall Breaking**: If the cells have different bosses (meaning they are not yet connected), we call a `union` function to merge their sets and delete the wall.
     - **Cycle Prevention**: If both cells already share the same boss, the wall is left intact to prevent creating loops or cycles.
 
+
+<p align="center">
+  <img src="https://miro.medium.com/v2/resize:fit:640/format:webp/1*t3EZxEDdnzwhaYzCARzzUA.gif" width="300" alt="Kruskal's Algorithm">
+    <br>
+  <em>Kruskal's Algorithm</em>
+</p>
+
+
 #### **Depth-First Search (DFS)** (Recursive Backtracker)
 *Creates a maze with long, winding corridors and fewer dead ends.*
 
@@ -127,8 +135,16 @@ DFS, often called the "recursive backtracker," is a randomized algorithm that ex
     - This creates a long, continuous corridor.
 5.  **Backtracking**: If no unvisited neighbors exist (a dead end), the algorithm pops the current cell from the stack and backtracks to the previous one, repeating the process until the stack is empty.
 
+<p align="center">
+  <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*unQanD3lFwpajj6lsJVw8g.gif" width="300" alt="Depth-First Search Algorithm">
+    <br>
+  <em>Depth-First Search Algorithm</em>
+</p>
+
 ### 2. Pathfinding: A* Algorithm
-To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that finds the shortest path by combining actual cost with a [heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) estimate.
+To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that finds the shortest path by combining actual cost with a [heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) estimate. The heuristic function chosen is the [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry) :
+
+
 
 - **Cost Function :** $f(n) = g(n) + h(n)$
     - $f(n)$: Total estimated cost of the cheapest solution through node $n$.
@@ -137,14 +153,26 @@ To solve the maze, we utilize __A* (A-Star)__, a powerful search algorithm that 
 - **Logic**: The algorithm prioritizes exploring cells with the lowest $f(n)$, ensuring the most promising paths are checked first.
 
 <p align="center">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Manhattan_distance.svg/960px-Manhattan_distance.svg.png" width="300" alt="Manhattan Distance">
-  <br>
-  <em>Manhattan Distance in red, blue and yellow</em>
-    <br>
-  <em>Green represents the Euclidean distance</em>
+  <table>
+    <tr>
+      <td align="center">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/0/08/Manhattan_distance.svg/960px-Manhattan_distance.svg.png" width="300" alt="Manhattan Distance">
+        <br>
+        <em>Manhattan Distance in red, blue and yellow</em>
+        <br>
+        <em>Green represents the Euclidean distance</em>
+      </td>
+      <td align="center">
+        <img src="https://miro.medium.com/v2/resize:fit:720/format:webp/1*oais-M3DTKygQKO6cpszXQ.gif" width="300" alt="A* Algorithm">
+        <br>
+        <em>A* Algorithm visualization</em>
+      </td>
+    </tr>
+  </table>
 </p>
 
-> **Resources**: [Bitwise Operations](https://github.com/Tutors42Lyon/bitwise_operations/tree/main) | [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry)
+
+> **Resources**: [Bitwise Operations](https://github.com/Tutors42Lyon/bitwise_operations/tree/main) | [Manhattan Distance](https://en.wikipedia.org/wiki/Taxicab_geometry) | [Heuristic](https://en.wikipedia.org/wiki/Heuristic_(computer_science))
 
 ## Architecture & Reusability
 
@@ -183,7 +211,7 @@ The codebase follows a strict **modular architecture**:
 We chose **MinilibX (MLX)** over ASCII rendering because, although more challenging to work with, it allows for a more engaging and visually appealing result and we liked the challenge!
 
 - **Graphics**: [MinilibX Documentation](https://harm-smits.github.io/42docs/libs/minilibx) / [Bresenham's Line Algorithm](https://en.wikipedia.org/wiki/Bresenham%27s_line_algorithm)
-- **Algorithms**: [Maze Generation (Wiki)](https://en.wikipedia.org/wiki/Maze_generation_algorithm) / [A* Search (Wiki)](https://en.wikipedia.org/wiki/A*_search_algorithm) / [A* Algorithm in python](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92) / [Heuristics](https://en.wikipedia.org/wiki/Heuristic_(computer_science))
+- **Algorithms**: [Maze Generation (Wiki)](https://en.wikipedia.org/wiki/Maze_generation_algorithm) / [A* Search (Wiki)](https://en.wikipedia.org/wiki/A*_search_algorithm) / [A* Algorithm in python](https://levelup.gitconnected.com/a-star-a-search-for-solving-a-maze-using-python-with-visualization-b0cae1c3ba92)/ [Heuristics](https://en.wikipedia.org/wiki/Heuristic_(computer_science)) / [Border's Idea](https://realpython.com/python-maze-solver/)
 
 ### AI Usage
 Generative AI tools were used during development for:
