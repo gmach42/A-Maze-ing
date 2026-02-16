@@ -1,0 +1,17 @@
+[project]
+name = "mazegen"
+version = "0.1.0"
+description = "A maze generation and solver tool built in python"
+authors = [
+    {name = "Bruno, Gildas"}
+]
+readme = "README.md"
+packages = [{include = "mazegen"}]
+requires-python = ">=3.10"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"

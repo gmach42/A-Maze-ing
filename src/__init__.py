@@ -2,7 +2,7 @@ __authors__ = "Gildas", "Bruno"
 __version__ = "0.1.0"
 
 from .core import XVar, MLXImage
-from .maze_algorithm import Border, MazeGenerator, Solver, output_maze
+from .mazegen import Border, MazeGenerator, Solver, output_maze
 from .rendering import (
     ColorManager,
     MazeImage,

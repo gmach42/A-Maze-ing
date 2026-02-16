@@ -1,6 +1,6 @@
 from typing import Any, TYPE_CHECKING
 from mlx import Mlx
-from ..maze_algorithm import MazeGenerator, Solver
+from ..mazegen import MazeGenerator, Solver
 
 if TYPE_CHECKING:
     from ..rendering import Maze, SolutionPath, MazeUIManager
