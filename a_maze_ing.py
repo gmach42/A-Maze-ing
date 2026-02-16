@@ -201,7 +201,11 @@ def main() -> None:
     # Display maze info
     print("\nGenerating maze of size"
           f" {env_variable.width}x{env_variable.height}")
-    print(f"START at {env_variable.entry} and EXIT at {env_variable.exit}")
+
+    # Had to reverse the coordinates to match (x, y) format display
+    # The whole program is built in reversed coordinates for easier handling
+    print(f"START at {tuple(reversed(env_variable.entry))} and EXIT at"
+          f" {tuple(reversed(env_variable.exit))}")
 
     # Setup event hooks
     xvar.mlx.mlx_key_hook(xvar.win, events.manage_key, xvar)
